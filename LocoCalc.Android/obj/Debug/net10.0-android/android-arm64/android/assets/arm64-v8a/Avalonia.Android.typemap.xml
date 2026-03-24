@@ -1,0 +1,28 @@
+<api type="debug" assembly-name="Avalonia.Android" mvid="d8c6387e2be6447db6a747f4d0c5fc27">
+  <java-to-managed>
+    <entry java-name="crc6431345fe65afe8d98/AvaloniaActivity" managed-name="Avalonia.Android.AvaloniaActivity, Avalonia.Android" managed-type-token-id="33554442" />
+    <entry java-name="crc6431345fe65afe8d98/AvaloniaActivity_GlobalLayoutListener" managed-name="Avalonia.Android.AvaloniaActivity+GlobalLayoutListener, Avalonia.Android" managed-type-token-id="33554507" />
+    <entry java-name="crc6431345fe65afe8d98/AvaloniaMainActivity_1" managed-name="Avalonia.Android.AvaloniaMainActivity`1, Avalonia.Android" skip-in-java-to-managed="True" managed-type-token-id="33554443" />
+    <entry java-name="crc6431345fe65afe8d98/AvaloniaMainActivity" managed-name="Avalonia.Android.AvaloniaMainActivity, Avalonia.Android" managed-type-token-id="33554444" />
+    <entry java-name="crc6431345fe65afe8d98/AvaloniaView" managed-name="Avalonia.Android.AvaloniaView, Avalonia.Android" managed-type-token-id="33554445" />
+    <entry java-name="crc6431345fe65afe8d98/ChoreographerTimer" managed-name="Avalonia.Android.ChoreographerTimer, Avalonia.Android" managed-type-token-id="33554446" />
+    <entry java-name="crc6431345fe65afe8d98/InvalidationAwareSurfaceView" managed-name="Avalonia.Android.InvalidationAwareSurfaceView, Avalonia.Android" managed-type-token-id="33554455" />
+    <entry java-name="crc641fe58d40b3a958ab/AndroidInsetsManager" managed-name="Avalonia.Android.Platform.AndroidInsetsManager, Avalonia.Android" managed-type-token-id="33554462" />
+    <entry java-name="crc641fe58d40b3a958ab/AndroidScreens_DisplayListener" managed-name="Avalonia.Android.Platform.AndroidScreens+DisplayListener, Avalonia.Android" managed-type-token-id="33554515" />
+    <entry java-name="crc64bd239b21961e24ab/TopLevelImpl_ViewImpl" managed-name="Avalonia.Android.Platform.SkiaPlatform.TopLevelImpl+ViewImpl, Avalonia.Android" managed-type-token-id="33554550" />
+    <entry java-name="crc643ec2256bd5ff4bdb/AvaloniaInputConnection" managed-name="Avalonia.Android.Platform.Input.AvaloniaInputConnection, Avalonia.Android" managed-type-token-id="33554491" />
+  </java-to-managed>
+  <managed-to-java>
+    <entry java-name="crc6431345fe65afe8d98/AvaloniaActivity" managed-name="Avalonia.Android.AvaloniaActivity, Avalonia.Android" managed-type-token-id="33554442" />
+    <entry java-name="crc6431345fe65afe8d98/AvaloniaActivity_GlobalLayoutListener" managed-name="Avalonia.Android.AvaloniaActivity+GlobalLayoutListener, Avalonia.Android" managed-type-token-id="33554507" />
+    <entry java-name="crc6431345fe65afe8d98/AvaloniaMainActivity_1" managed-name="Avalonia.Android.AvaloniaMainActivity`1, Avalonia.Android" skip-in-java-to-managed="True" managed-type-token-id="33554443" />
+    <entry java-name="crc6431345fe65afe8d98/AvaloniaMainActivity" managed-name="Avalonia.Android.AvaloniaMainActivity, Avalonia.Android" managed-type-token-id="33554444" />
+    <entry java-name="crc6431345fe65afe8d98/AvaloniaView" managed-name="Avalonia.Android.AvaloniaView, Avalonia.Android" managed-type-token-id="33554445" />
+    <entry java-name="crc6431345fe65afe8d98/ChoreographerTimer" managed-name="Avalonia.Android.ChoreographerTimer, Avalonia.Android" managed-type-token-id="33554446" />
+    <entry java-name="crc6431345fe65afe8d98/InvalidationAwareSurfaceView" managed-name="Avalonia.Android.InvalidationAwareSurfaceView, Avalonia.Android" managed-type-token-id="33554455" />
+    <entry java-name="crc641fe58d40b3a958ab/AndroidInsetsManager" managed-name="Avalonia.Android.Platform.AndroidInsetsManager, Avalonia.Android" managed-type-token-id="33554462" />
+    <entry java-name="crc641fe58d40b3a958ab/AndroidScreens_DisplayListener" managed-name="Avalonia.Android.Platform.AndroidScreens+DisplayListener, Avalonia.Android" managed-type-token-id="33554515" />
+    <entry java-name="crc64bd239b21961e24ab/TopLevelImpl_ViewImpl" managed-name="Avalonia.Android.Platform.SkiaPlatform.TopLevelImpl+ViewImpl, Avalonia.Android" managed-type-token-id="33554550" />
+    <entry java-name="crc643ec2256bd5ff4bdb/AvaloniaInputConnection" managed-name="Avalonia.Android.Platform.Input.AvaloniaInputConnection, Avalonia.Android" managed-type-token-id="33554491" />
+  </managed-to-java>
+</api>

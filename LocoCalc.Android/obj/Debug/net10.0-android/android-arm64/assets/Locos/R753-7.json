@@ -1,0 +1,10 @@
+{
+  "Id": "r753_7",
+  "Designation": "Řada 753.7",
+  "TotalWeightTonnes": 72.0,
+  "BrakingWeightTonnes": 50,
+  "LengthM": 17,
+  "traction": "diesel",
+  "maxSpeed": 100,
+  "fp": "FP2"
+}

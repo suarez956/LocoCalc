@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LocoCalcAvalonia.Android</name>
+    </assembly>
+    <members>
+        <member name="T:LocoCalcAvalonia.Android.AndroidLocoDataProvider">
+            <summary>Reads loco JSONs from APK assets (Locos/ folder).</summary>
+        </member>
+        <member name="T:LocoCalcAvalonia.Android.AndroidPdfGenerator">
+            <summary>
+            Generates PDF using the built-in Android.Graphics.Pdf API.
+            No QuestPDF or SkiaSharp required.
+            </summary>
+        </member>
+        <member name="T:LocoCalcAvalonia.Android.AndroidPdfSaveService">
+            <summary>
+            Android PDF implementation using the built-in Android.Graphics.Pdf.PdfDocument API.
+            No QuestPDF/SkiaSharp needed. Saves to CacheDir and shares via FileProvider intent.
+            </summary>
+        </member>
+        <member name="M:LocoCalcAvalonia.Android.AndroidPdfSaveService.PickSavePathAsync(System.String)">
+            <summary>
+            On Android we don't show a save dialog — we save to cache and share later.
+            Returns the temp path so the caller can generate + write the bytes.
+            </summary>
+        </member>
+        <member name="M:LocoCalcAvalonia.Android.AndroidPdfSaveService.OpenFile(System.String)">
+            <summary>Opens the PDF via FileProvider share intent.</summary>
+        </member>
+        <member name="T:LocoCalcAvalonia.Resource">
+            <summary>
+            Android Resource Designer class.
+            Exposes the Android Resource designer assembly into the project Namespace.
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,10 @@
+{
+  "Id": "r186",
+  "Designation": "Řada 186",
+  "TotalWeightTonnes": 84.0,
+  "BrakingWeightTonnes": 128,
+  "LengthM": 19,
+  "traction": "ms",
+  "maxSpeed": 140,
+  "fp": "FP3"
+}

@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- Prevent Android workload RID injection -->
+    <_IsAndroidProject>false</_IsAndroidProject>
+    <ExcludeFromAndroidBuild>true</ExcludeFromAndroidBuild>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>LocoCalcAvalonia</RootNamespace>
+    <AssemblyName>LocoCalc.Core</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia"               Version="11.2.3"/>
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.3"/>
+    <PackageReference Include="Avalonia.Fonts.Inter"   Version="11.2.3"/>
+    <PackageReference Include="Avalonia.ReactiveUI"    Version="11.2.3"/>
+    <PackageReference Include="CommunityToolkit.Mvvm"  Version="8.3.2"/>
+    <PackageReference Include="QuestPDF"               Version="2024.12.4"/>
+  </ItemGroup>
+
+  <!-- Loco JSONs embedded — not user-accessible -->
+  <ItemGroup>
+    <EmbeddedResource Include="Data\Locos\*.json"
+                      LogicalName="Locos\%(Filename)%(Extension)"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**"/>
+    <!-- Embed NotoColorEmoji so emoji render on all Android versions -->
+    <AvaloniaResource Include="Assets\NotoColorEmoji.ttf"/>
+    <!-- Font Awesome 6 Free Solid — place fa-solid-900.ttf in Assets/ -->
+    <AvaloniaResource Include="Assets\fa-solid-900.ttf" Condition="Exists('Assets\fa-solid-900.ttf')"/>
+  </ItemGroup>
+
+</Project>

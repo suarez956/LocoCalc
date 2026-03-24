@@ -1,0 +1,36 @@
+{
+  "version": 2,
+  "dgSpecHash": "YdotwIi/crI=",
+  "success": true,
+  "projectFilePath": "/home/hanz/Projects/C#/repos/LocoCalc/LocoCalc/LocoCalc.Core/LocoCalc.Core.csproj",
+  "expectedPackageFiles": [
+    "/home/hanz/.nuget/packages/avalonia/11.2.3/avalonia.11.2.3.nupkg.sha512",
+    "/home/hanz/.nuget/packages/avalonia.buildservices/0.0.29/avalonia.buildservices.0.0.29.nupkg.sha512",
+    "/home/hanz/.nuget/packages/avalonia.fonts.inter/11.2.3/avalonia.fonts.inter.11.2.3.nupkg.sha512",
+    "/home/hanz/.nuget/packages/avalonia.reactiveui/11.2.3/avalonia.reactiveui.11.2.3.nupkg.sha512",
+    "/home/hanz/.nuget/packages/avalonia.remote.protocol/11.2.3/avalonia.remote.protocol.11.2.3.nupkg.sha512",
+    "/home/hanz/.nuget/packages/avalonia.themes.fluent/11.2.3/avalonia.themes.fluent.11.2.3.nupkg.sha512",
+    "/home/hanz/.nuget/packages/communitytoolkit.mvvm/8.3.2/communitytoolkit.mvvm.8.3.2.nupkg.sha512",
+    "/home/hanz/.nuget/packages/dynamicdata/8.4.1/dynamicdata.8.4.1.nupkg.sha512",
+    "/home/hanz/.nuget/packages/microcom.runtime/0.11.0/microcom.runtime.0.11.0.nupkg.sha512",
+    "/home/hanz/.nuget/packages/questpdf/2025.1.0/questpdf.2025.1.0.nupkg.sha512",
+    "/home/hanz/.nuget/packages/reactiveui/20.1.1/reactiveui.20.1.1.nupkg.sha512",
+    "/home/hanz/.nuget/packages/splat/15.1.1/splat.15.1.1.nupkg.sha512",
+    "/home/hanz/.nuget/packages/system.componentmodel.annotations/5.0.0/system.componentmodel.annotations.5.0.0.nupkg.sha512",
+    "/home/hanz/.nuget/packages/system.reactive/6.0.1/system.reactive.6.0.1.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1603",
+      "level": "Warning",
+      "message": "LocoCalc.Core depends on QuestPDF (>= 2024.12.4) but QuestPDF 2024.12.4 was not found. QuestPDF 2025.1.0 was resolved instead.",
+      "projectPath": "/home/hanz/Projects/C#/repos/LocoCalc/LocoCalc/LocoCalc.Core/LocoCalc.Core.csproj",
+      "warningLevel": 1,
+      "filePath": "/home/hanz/Projects/C#/repos/LocoCalc/LocoCalc/LocoCalc.Core/LocoCalc.Core.csproj",
+      "libraryId": "QuestPDF",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "Id": "r111",
+  "Designation": "Řada 111",
+  "TotalWeightTonnes": 70.4,
+  "BrakingWeightTonnes": 52,
+  "LengthM": 15,
+  "traction": "dc",
+  "maxSpeed": 80,
+  "fp": "FP2"
+}

@@ -1,0 +1,53 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-android</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>LocoCalcAvalonia</RootNamespace>
+    <AssemblyName>LocoCalcAvalonia.Android</AssemblyName>
+    <ApplicationId>cz.lococalc.app</ApplicationId>
+    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <Optimize>false</Optimize>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AndroidManifest>Platforms\Android\AndroidManifest.xml</AndroidManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Android"              Version="11.2.3"/>
+    <PackageReference Include="Xamarin.AndroidX.Core"         Version="1.13.1.4"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LocoCalc.Core\LocoCalc.Core.csproj"/>
+  </ItemGroup>
+
+  <!-- Android resources: icons + theme -->
+  <ItemGroup>
+    <AndroidResource Include="Resources\**\*" />
+  </ItemGroup>
+
+  <!-- Loco JSONs embedded as APK assets under Locos/ -->
+  <ItemGroup>
+    <AndroidAsset Include="..\LocoCalc.Core\Data\Locos\*.json"
+                  Link="Locos\%(Filename)%(Extension)"/>
+  </ItemGroup>
+
+</Project>

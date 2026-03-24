@@ -1,0 +1,10 @@
+{
+  "Id": "r210",
+  "Designation": "Řada 210",
+  "TotalWeightTonnes": 72.0,
+  "BrakingWeightTonnes": 52,
+  "LengthM": 15,
+  "traction": "ac",
+  "maxSpeed": 80,
+  "fp": "FP2"
+}

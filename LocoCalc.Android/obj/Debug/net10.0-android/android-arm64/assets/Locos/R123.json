@@ -1,0 +1,10 @@
+{
+  "Id": "r123",
+  "Designation": "Řada 123",
+  "TotalWeightTonnes": 85.0,
+  "BrakingWeightTonnes": 48,
+  "LengthM": 17,
+  "traction": "dc",
+  "maxSpeed": 90,
+  "fp": "FP2"
+}

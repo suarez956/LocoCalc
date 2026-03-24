@@ -1,0 +1,10 @@
+{
+  "Id": "r708",
+  "Designation": "Řada 708",
+  "TotalWeightTonnes": 34.0,
+  "BrakingWeightTonnes": 23,
+  "LengthM": 10,
+  "traction": "diesel",
+  "maxSpeed": 80,
+  "fp": "FP2"
+}

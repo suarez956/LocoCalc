@@ -1,0 +1,35 @@
+# Build outputs
+bin/
+obj/
+publish/
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.user
+*.suo
+*.userprefs
+*.VC.db
+*.VC.opendb
+
+# NuGet
+*.nupkg
+**/packages/
+!**/packages/build/
+*.lock.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Android keystore — NEVER commit signing keys
+*.jks
+*.keystore
+
+# Release artifacts
+*.apk
+*.aab
+*.zip
+
+# Logs
+*.log

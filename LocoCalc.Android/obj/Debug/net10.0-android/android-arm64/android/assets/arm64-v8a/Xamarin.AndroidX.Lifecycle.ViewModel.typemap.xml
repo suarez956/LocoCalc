@@ -1,0 +1,74 @@
+<api type="debug" assembly-name="Xamarin.AndroidX.Lifecycle.ViewModel" mvid="45bdbeaf93474133a8e0096cc9f0be40">
+  <java-to-managed>
+    <entry java-name="androidx/lifecycle/AndroidViewModel" managed-name="AndroidX.Lifecycle.AndroidViewModel, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554445" />
+    <entry java-name="androidx/lifecycle/HasDefaultViewModelProviderFactory" managed-name="AndroidX.Lifecycle.IHasDefaultViewModelProviderFactory, Xamarin.AndroidX.Lifecycle.ViewModel" skip-in-java-to-managed="True" managed-type-token-id="33554446" />
+    <entry java-name="androidx/lifecycle/HasDefaultViewModelProviderFactory" managed-name="AndroidX.Lifecycle.IHasDefaultViewModelProviderFactoryInvoker, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554447" />
+    <entry java-name="androidx/lifecycle/ViewModelStoreOwner" managed-name="AndroidX.Lifecycle.IViewModelStoreOwner, Xamarin.AndroidX.Lifecycle.ViewModel" skip-in-java-to-managed="True" managed-type-token-id="33554448" />
+    <entry java-name="androidx/lifecycle/ViewModelStoreOwner" managed-name="AndroidX.Lifecycle.IViewModelStoreOwnerInvoker, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554449" />
+    <entry java-name="androidx/lifecycle/ViewModel" managed-name="AndroidX.Lifecycle.ViewModel, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554450" />
+    <entry java-name="androidx/lifecycle/ViewModel" managed-name="AndroidX.Lifecycle.ViewModelInvoker, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554451" />
+    <entry java-name="androidx/lifecycle/ViewModelLazy" managed-name="AndroidX.Lifecycle.ViewModelLazy, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554452" />
+    <entry java-name="androidx/lifecycle/ViewModelProvider" managed-name="AndroidX.Lifecycle.ViewModelProvider, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554453" />
+    <entry java-name="androidx/lifecycle/ViewModelProvider$AndroidViewModelFactory" managed-name="AndroidX.Lifecycle.ViewModelProvider+AndroidViewModelFactory, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554467" />
+    <entry java-name="androidx/lifecycle/ViewModelProvider$AndroidViewModelFactory$Companion" managed-name="AndroidX.Lifecycle.ViewModelProvider+AndroidViewModelFactory+Companion, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554478" />
+    <entry java-name="androidx/lifecycle/ViewModelProvider$Factory$Companion" managed-name="AndroidX.Lifecycle.ViewModelProvider+FactoryCompanion, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554468" />
+    <entry java-name="androidx/lifecycle/ViewModelProvider$Factory" managed-name="AndroidX.Lifecycle.ViewModelProvider+Factory, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554469" />
+    <entry java-name="androidx/lifecycle/ViewModelProvider$Factory" managed-name="AndroidX.Lifecycle.ViewModelProvider+FactoryConsts, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554470" />
+    <entry java-name="androidx/lifecycle/ViewModelProvider$Factory" managed-name="AndroidX.Lifecycle.ViewModelProvider+IFactory, Xamarin.AndroidX.Lifecycle.ViewModel" skip-in-java-to-managed="True" managed-type-token-id="33554471" />
+    <entry java-name="androidx/lifecycle/ViewModelProvider$Factory" managed-name="AndroidX.Lifecycle.ViewModelProvider+IFactoryInvoker, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554472" />
+    <entry java-name="androidx/lifecycle/ViewModelProvider$NewInstanceFactory" managed-name="AndroidX.Lifecycle.ViewModelProvider+NewInstanceFactory, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554473" />
+    <entry java-name="androidx/lifecycle/ViewModelProvider$NewInstanceFactory$Companion" managed-name="AndroidX.Lifecycle.ViewModelProvider+NewInstanceFactory+Companion, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554480" />
+    <entry java-name="androidx/lifecycle/ViewModelProvider$OnRequeryFactory" managed-name="AndroidX.Lifecycle.ViewModelProvider+OnRequeryFactory, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554474" />
+    <entry java-name="androidx/lifecycle/ViewModelProviderGetKt" managed-name="AndroidX.Lifecycle.ViewModelProviderGetKt, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554454" />
+    <entry java-name="androidx/lifecycle/ViewModelStore" managed-name="AndroidX.Lifecycle.ViewModelStore, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554455" />
+    <entry java-name="androidx/lifecycle/ViewTreeViewModelKt" managed-name="AndroidX.Lifecycle.ViewTreeViewModelKt, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554456" />
+    <entry java-name="androidx/lifecycle/ViewTreeViewModelStoreOwner" managed-name="AndroidX.Lifecycle.ViewTreeViewModelStoreOwner, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554457" />
+    <entry java-name="androidx/lifecycle/viewmodel/CreationExtras" managed-name="AndroidX.Lifecycle.ViewModels.CreationExtras, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554458" />
+    <entry java-name="androidx/lifecycle/viewmodel/CreationExtras$Empty" managed-name="AndroidX.Lifecycle.ViewModels.CreationExtras+Empty, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554475" />
+    <entry java-name="androidx/lifecycle/viewmodel/CreationExtras$Key" managed-name="AndroidX.Lifecycle.ViewModels.CreationExtras+IKey, Xamarin.AndroidX.Lifecycle.ViewModel" skip-in-java-to-managed="True" managed-type-token-id="33554476" />
+    <entry java-name="androidx/lifecycle/viewmodel/CreationExtras$Key" managed-name="AndroidX.Lifecycle.ViewModels.CreationExtras+IKeyInvoker, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554477" />
+    <entry java-name="androidx/lifecycle/viewmodel/CreationExtras" managed-name="AndroidX.Lifecycle.ViewModels.CreationExtrasInvoker, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554459" />
+    <entry java-name="androidx/lifecycle/viewmodel/InitializerViewModelFactoryBuilder" managed-name="AndroidX.Lifecycle.ViewModels.InitializerViewModelFactoryBuilder, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554460" />
+    <entry java-name="androidx/lifecycle/viewmodel/InitializerViewModelFactoryKt" managed-name="AndroidX.Lifecycle.ViewModels.InitializerViewModelFactoryKt, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554461" />
+    <entry java-name="androidx/lifecycle/viewmodel/ViewModelFactoryDsl" managed-name="AndroidX.Lifecycle.ViewModels.IViewModelFactoryDsl, Xamarin.AndroidX.Lifecycle.ViewModel" skip-in-java-to-managed="True" managed-type-token-id="33554462" />
+    <entry java-name="androidx/lifecycle/viewmodel/ViewModelFactoryDsl" managed-name="AndroidX.Lifecycle.ViewModels.IViewModelFactoryDslInvoker, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554463" />
+    <entry java-name="androidx/lifecycle/viewmodel/MutableCreationExtras" managed-name="AndroidX.Lifecycle.ViewModels.MutableCreationExtras, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554464" />
+    <entry java-name="androidx/lifecycle/viewmodel/ViewModelInitializer" managed-name="AndroidX.Lifecycle.ViewModels.ViewModelInitializer, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554466" />
+  </java-to-managed>
+  <managed-to-java>
+    <entry java-name="androidx/lifecycle/AndroidViewModel" managed-name="AndroidX.Lifecycle.AndroidViewModel, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554445" />
+    <entry java-name="androidx/lifecycle/HasDefaultViewModelProviderFactory" managed-name="AndroidX.Lifecycle.IHasDefaultViewModelProviderFactory, Xamarin.AndroidX.Lifecycle.ViewModel" skip-in-java-to-managed="True" managed-type-token-id="33554446" />
+    <entry java-name="androidx/lifecycle/HasDefaultViewModelProviderFactory" managed-name="AndroidX.Lifecycle.IHasDefaultViewModelProviderFactoryInvoker, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554447" />
+    <entry java-name="androidx/lifecycle/ViewModelStoreOwner" managed-name="AndroidX.Lifecycle.IViewModelStoreOwner, Xamarin.AndroidX.Lifecycle.ViewModel" skip-in-java-to-managed="True" managed-type-token-id="33554448" />
+    <entry java-name="androidx/lifecycle/ViewModelStoreOwner" managed-name="AndroidX.Lifecycle.IViewModelStoreOwnerInvoker, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554449" />
+    <entry java-name="androidx/lifecycle/ViewModel" managed-name="AndroidX.Lifecycle.ViewModel, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554450" />
+    <entry java-name="androidx/lifecycle/ViewModel" managed-name="AndroidX.Lifecycle.ViewModelInvoker, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554451" />
+    <entry java-name="androidx/lifecycle/ViewModelLazy" managed-name="AndroidX.Lifecycle.ViewModelLazy, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554452" />
+    <entry java-name="androidx/lifecycle/ViewModelProvider" managed-name="AndroidX.Lifecycle.ViewModelProvider, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554453" />
+    <entry java-name="androidx/lifecycle/ViewModelProvider$AndroidViewModelFactory" managed-name="AndroidX.Lifecycle.ViewModelProvider+AndroidViewModelFactory, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554467" />
+    <entry java-name="androidx/lifecycle/ViewModelProvider$AndroidViewModelFactory$Companion" managed-name="AndroidX.Lifecycle.ViewModelProvider+AndroidViewModelFactory+Companion, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554478" />
+    <entry java-name="androidx/lifecycle/ViewModelProvider$Factory$Companion" managed-name="AndroidX.Lifecycle.ViewModelProvider+FactoryCompanion, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554468" />
+    <entry java-name="androidx/lifecycle/ViewModelProvider$Factory" managed-name="AndroidX.Lifecycle.ViewModelProvider+Factory, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554469" />
+    <entry java-name="androidx/lifecycle/ViewModelProvider$Factory" managed-name="AndroidX.Lifecycle.ViewModelProvider+FactoryConsts, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554470" />
+    <entry java-name="androidx/lifecycle/ViewModelProvider$Factory" managed-name="AndroidX.Lifecycle.ViewModelProvider+IFactory, Xamarin.AndroidX.Lifecycle.ViewModel" skip-in-java-to-managed="True" managed-type-token-id="33554471" />
+    <entry java-name="androidx/lifecycle/ViewModelProvider$Factory" managed-name="AndroidX.Lifecycle.ViewModelProvider+IFactoryInvoker, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554472" />
+    <entry java-name="androidx/lifecycle/ViewModelProvider$NewInstanceFactory" managed-name="AndroidX.Lifecycle.ViewModelProvider+NewInstanceFactory, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554473" />
+    <entry java-name="androidx/lifecycle/ViewModelProvider$NewInstanceFactory$Companion" managed-name="AndroidX.Lifecycle.ViewModelProvider+NewInstanceFactory+Companion, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554480" />
+    <entry java-name="androidx/lifecycle/ViewModelProvider$OnRequeryFactory" managed-name="AndroidX.Lifecycle.ViewModelProvider+OnRequeryFactory, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554474" />
+    <entry java-name="androidx/lifecycle/ViewModelProviderGetKt" managed-name="AndroidX.Lifecycle.ViewModelProviderGetKt, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554454" />
+    <entry java-name="androidx/lifecycle/ViewModelStore" managed-name="AndroidX.Lifecycle.ViewModelStore, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554455" />
+    <entry java-name="androidx/lifecycle/ViewTreeViewModelKt" managed-name="AndroidX.Lifecycle.ViewTreeViewModelKt, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554456" />
+    <entry java-name="androidx/lifecycle/ViewTreeViewModelStoreOwner" managed-name="AndroidX.Lifecycle.ViewTreeViewModelStoreOwner, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554457" />
+    <entry java-name="androidx/lifecycle/viewmodel/CreationExtras" managed-name="AndroidX.Lifecycle.ViewModels.CreationExtras, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554458" />
+    <entry java-name="androidx/lifecycle/viewmodel/CreationExtras$Empty" managed-name="AndroidX.Lifecycle.ViewModels.CreationExtras+Empty, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554475" />
+    <entry java-name="androidx/lifecycle/viewmodel/CreationExtras$Key" managed-name="AndroidX.Lifecycle.ViewModels.CreationExtras+IKey, Xamarin.AndroidX.Lifecycle.ViewModel" skip-in-java-to-managed="True" managed-type-token-id="33554476" />
+    <entry java-name="androidx/lifecycle/viewmodel/CreationExtras$Key" managed-name="AndroidX.Lifecycle.ViewModels.CreationExtras+IKeyInvoker, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554477" />
+    <entry java-name="androidx/lifecycle/viewmodel/CreationExtras" managed-name="AndroidX.Lifecycle.ViewModels.CreationExtrasInvoker, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554459" />
+    <entry java-name="androidx/lifecycle/viewmodel/InitializerViewModelFactoryBuilder" managed-name="AndroidX.Lifecycle.ViewModels.InitializerViewModelFactoryBuilder, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554460" />
+    <entry java-name="androidx/lifecycle/viewmodel/InitializerViewModelFactoryKt" managed-name="AndroidX.Lifecycle.ViewModels.InitializerViewModelFactoryKt, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554461" />
+    <entry java-name="androidx/lifecycle/viewmodel/ViewModelFactoryDsl" managed-name="AndroidX.Lifecycle.ViewModels.IViewModelFactoryDsl, Xamarin.AndroidX.Lifecycle.ViewModel" skip-in-java-to-managed="True" managed-type-token-id="33554462" />
+    <entry java-name="androidx/lifecycle/viewmodel/ViewModelFactoryDsl" managed-name="AndroidX.Lifecycle.ViewModels.IViewModelFactoryDslInvoker, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554463" />
+    <entry java-name="androidx/lifecycle/viewmodel/MutableCreationExtras" managed-name="AndroidX.Lifecycle.ViewModels.MutableCreationExtras, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554464" />
+    <entry java-name="androidx/lifecycle/viewmodel/ViewModelInitializer" managed-name="AndroidX.Lifecycle.ViewModels.ViewModelInitializer, Xamarin.AndroidX.Lifecycle.ViewModel" managed-type-token-id="33554466" />
+  </managed-to-java>
+</api>

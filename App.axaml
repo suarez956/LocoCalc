@@ -1,0 +1,22 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="LocoCalc.App"
+             RequestedThemeVariant="Dark">
+
+  <Application.Styles>
+    <FluentTheme />
+  </Application.Styles>
+
+  <Application.Resources>
+    <!-- Brand colours -->
+    <Color x:Key="AccentColor">#f97316</Color>   <!-- Orange -->
+    <Color x:Key="SurfaceColor">#1e1e2e</Color>
+    <Color x:Key="PanelColor">#2a2a3e</Color>
+    <Color x:Key="BorderColor">#3a3a55</Color>
+
+    <SolidColorBrush x:Key="AccentBrush"  Color="{StaticResource AccentColor}" />
+    <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}" />
+    <SolidColorBrush x:Key="PanelBrush"   Color="{StaticResource PanelColor}" />
+    <SolidColorBrush x:Key="BorderBrush"  Color="{StaticResource BorderColor}" />
+  </Application.Resources>
+</Application>

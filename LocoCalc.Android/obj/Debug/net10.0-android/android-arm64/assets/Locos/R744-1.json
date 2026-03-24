@@ -1,0 +1,10 @@
+{
+  "Id": "r744_1",
+  "Designation": "Řada 744.1",
+  "TotalWeightTonnes": 80.0,
+  "BrakingWeightTonnes": 77,
+  "LengthM": 17,
+  "traction": "diesel",
+  "maxSpeed": 100,
+  "fp": "FP2"
+}

@@ -1,0 +1,3 @@
+mipmap/ic_launcher;mipmap/ic_launcher
+values/styles;values/styles
+xml/file_paths;xml/file_paths

@@ -1,0 +1,14 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="LocoCalcAvalonia.App"
+             RequestedThemeVariant="Dark">
+  <Application.Styles>
+    <FluentTheme/>
+  </Application.Styles>
+  <Application.Resources>
+    <!-- Embedded NotoColorEmoji guarantees emoji rendering on all Android versions -->
+    <FontFamily x:Key="EmojiFont">avares://LocoCalc.Core/Assets#Noto Color Emoji</FontFamily>
+    <!-- Font Awesome 6 Free Solid for UI icons -->
+    <FontFamily x:Key="FaFont">avares://LocoCalc.Core/Assets#Font Awesome 6 Free Solid</FontFamily>
+  </Application.Resources>
+</Application>

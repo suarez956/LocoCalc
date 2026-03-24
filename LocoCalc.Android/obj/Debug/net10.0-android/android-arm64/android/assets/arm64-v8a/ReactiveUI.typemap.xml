@@ -1,0 +1,34 @@
+<api type="debug" assembly-name="ReactiveUI" mvid="df542179c2df4b12803c4d2ba28467d7">
+  <java-to-managed>
+    <entry java-name="crc64bd4a3c52fec04726/AutoSuspendHelper_ObservableLifecycle" managed-name="ReactiveUI.AutoSuspendHelper+ObservableLifecycle, ReactiveUI" managed-type-token-id="33554859" />
+    <entry java-name="crc64bd4a3c52fec04726/ContextExtensions_ServiceConnection_1" managed-name="ReactiveUI.ContextExtensions+ServiceConnection`1, ReactiveUI" skip-in-java-to-managed="True" managed-type-token-id="33554861" />
+    <entry java-name="crc64bd4a3c52fec04726/JavaHolder" managed-name="ReactiveUI.JavaHolder, ReactiveUI" managed-type-token-id="33554585" />
+    <entry java-name="crc64bd4a3c52fec04726/ReactiveActivity" managed-name="ReactiveUI.ReactiveActivity, ReactiveUI" managed-type-token-id="33554591" />
+    <entry java-name="crc64bd4a3c52fec04726/ReactiveActivity_1" managed-name="ReactiveUI.ReactiveActivity`1, ReactiveUI" skip-in-java-to-managed="True" managed-type-token-id="33554592" />
+    <entry java-name="crc64bd4a3c52fec04726/ReactiveFragment" managed-name="ReactiveUI.ReactiveFragment, ReactiveUI" managed-type-token-id="33554593" />
+    <entry java-name="crc64bd4a3c52fec04726/ReactiveFragment_1" managed-name="ReactiveUI.ReactiveFragment`1, ReactiveUI" skip-in-java-to-managed="True" managed-type-token-id="33554594" />
+    <entry java-name="crc64bd4a3c52fec04726/ReactivePreferenceActivity" managed-name="ReactiveUI.ReactivePreferenceActivity, ReactiveUI" managed-type-token-id="33554595" />
+    <entry java-name="crc64bd4a3c52fec04726/ReactivePreferenceActivity_1" managed-name="ReactiveUI.ReactivePreferenceActivity`1, ReactiveUI" skip-in-java-to-managed="True" managed-type-token-id="33554596" />
+    <entry java-name="crc64bd4a3c52fec04726/ReactivePreferenceFragment" managed-name="ReactiveUI.ReactivePreferenceFragment, ReactiveUI" managed-type-token-id="33554597" />
+    <entry java-name="crc64bd4a3c52fec04726/ReactivePreferenceFragment_1" managed-name="ReactiveUI.ReactivePreferenceFragment`1, ReactiveUI" skip-in-java-to-managed="True" managed-type-token-id="33554598" />
+    <entry java-name="crc64bd4a3c52fec04726/SharedPreferencesExtensions_OnSharedPreferenceChangeListener" managed-name="ReactiveUI.SharedPreferencesExtensions+OnSharedPreferenceChangeListener, ReactiveUI" managed-type-token-id="33554881" />
+    <entry java-name="crc64bd4a3c52fec04726/UsbManagerExtensions_UsbDevicePermissionReceiver" managed-name="ReactiveUI.UsbManagerExtensions+UsbDevicePermissionReceiver, ReactiveUI" managed-type-token-id="33554884" />
+    <entry java-name="crc64bd4a3c52fec04726/UsbManagerExtensions_UsbAccessoryPermissionReceiver" managed-name="ReactiveUI.UsbManagerExtensions+UsbAccessoryPermissionReceiver, ReactiveUI" managed-type-token-id="33554885" />
+  </java-to-managed>
+  <managed-to-java>
+    <entry java-name="crc64bd4a3c52fec04726/AutoSuspendHelper_ObservableLifecycle" managed-name="ReactiveUI.AutoSuspendHelper+ObservableLifecycle, ReactiveUI" managed-type-token-id="33554859" />
+    <entry java-name="crc64bd4a3c52fec04726/ContextExtensions_ServiceConnection_1" managed-name="ReactiveUI.ContextExtensions+ServiceConnection`1, ReactiveUI" skip-in-java-to-managed="True" managed-type-token-id="33554861" />
+    <entry java-name="crc64bd4a3c52fec04726/JavaHolder" managed-name="ReactiveUI.JavaHolder, ReactiveUI" managed-type-token-id="33554585" />
+    <entry java-name="crc64bd4a3c52fec04726/ReactiveActivity" managed-name="ReactiveUI.ReactiveActivity, ReactiveUI" managed-type-token-id="33554591" />
+    <entry java-name="crc64bd4a3c52fec04726/ReactiveActivity_1" managed-name="ReactiveUI.ReactiveActivity`1, ReactiveUI" skip-in-java-to-managed="True" managed-type-token-id="33554592" />
+    <entry java-name="crc64bd4a3c52fec04726/ReactiveFragment" managed-name="ReactiveUI.ReactiveFragment, ReactiveUI" managed-type-token-id="33554593" />
+    <entry java-name="crc64bd4a3c52fec04726/ReactiveFragment_1" managed-name="ReactiveUI.ReactiveFragment`1, ReactiveUI" skip-in-java-to-managed="True" managed-type-token-id="33554594" />
+    <entry java-name="crc64bd4a3c52fec04726/ReactivePreferenceActivity" managed-name="ReactiveUI.ReactivePreferenceActivity, ReactiveUI" managed-type-token-id="33554595" />
+    <entry java-name="crc64bd4a3c52fec04726/ReactivePreferenceActivity_1" managed-name="ReactiveUI.ReactivePreferenceActivity`1, ReactiveUI" skip-in-java-to-managed="True" managed-type-token-id="33554596" />
+    <entry java-name="crc64bd4a3c52fec04726/ReactivePreferenceFragment" managed-name="ReactiveUI.ReactivePreferenceFragment, ReactiveUI" managed-type-token-id="33554597" />
+    <entry java-name="crc64bd4a3c52fec04726/ReactivePreferenceFragment_1" managed-name="ReactiveUI.ReactivePreferenceFragment`1, ReactiveUI" skip-in-java-to-managed="True" managed-type-token-id="33554598" />
+    <entry java-name="crc64bd4a3c52fec04726/SharedPreferencesExtensions_OnSharedPreferenceChangeListener" managed-name="ReactiveUI.SharedPreferencesExtensions+OnSharedPreferenceChangeListener, ReactiveUI" managed-type-token-id="33554881" />
+    <entry java-name="crc64bd4a3c52fec04726/UsbManagerExtensions_UsbDevicePermissionReceiver" managed-name="ReactiveUI.UsbManagerExtensions+UsbDevicePermissionReceiver, ReactiveUI" managed-type-token-id="33554884" />
+    <entry java-name="crc64bd4a3c52fec04726/UsbManagerExtensions_UsbAccessoryPermissionReceiver" managed-name="ReactiveUI.UsbManagerExtensions+UsbAccessoryPermissionReceiver, ReactiveUI" managed-type-token-id="33554885" />
+  </managed-to-java>
+</api>

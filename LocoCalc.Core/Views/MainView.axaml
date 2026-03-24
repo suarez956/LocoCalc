@@ -1,0 +1,1260 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:LocoCalcAvalonia.ViewModels"
+             xmlns:models="using:LocoCalcAvalonia.Models"
+             xmlns:conv="using:LocoCalcAvalonia.Converters"
+             x:Class="LocoCalcAvalonia.Views.MainView"
+             x:DataType="vm:MainViewModel"
+             Background="#0f0f1a">
+
+  <UserControl.Resources>
+    <conv:HexColorConverter    x:Key="HexColor"/>
+    <conv:InverseBoolConverter x:Key="InvBool"/>
+  </UserControl.Resources>
+
+  <UserControl.Styles>
+    <Style Selector="ListBoxItem">
+      <Setter Property="Padding"         Value="0"/>
+      <Setter Property="Margin"          Value="0"/>
+      <Setter Property="Background"      Value="Transparent"/>
+      <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style Selector="ListBoxItem:focus /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <!-- Emoji font fallback for Android 16+ -->
+    <Style Selector="TextBlock.emoji">
+      <Setter Property="FontFamily" Value="{StaticResource EmojiFont}"/>
+    </Style>
+  </UserControl.Styles>
+
+  <Panel>
+  <!-- Desktop layout: hidden on mobile -->
+  <Grid RowDefinitions="Auto,Auto,*" x:Name="DesktopLayout">
+
+    <!-- ═══ HEADER ═══════════════════════════════════════════════════════════ -->
+    <Border Grid.Row="0" Background="#161626" BorderBrush="#2e2e50" BorderThickness="0,0,0,1" Padding="14,10">
+      <Grid ColumnDefinitions="*,Auto">
+        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+          <TextBlock Text="🚂" FontSize="22" VerticalAlignment="Center"/>
+          <StackPanel Spacing="0">
+            <TextBlock Text="LocoCalc" FontSize="20" FontWeight="Bold" Foreground="#f97316" LetterSpacing="1"/>
+            <TextBlock Text="{Binding L.AppSubtitle}" FontSize="11" Foreground="#8888aa"/>
+          </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+          <Border BorderBrush="#3a3a60" BorderThickness="0" CornerRadius="0" ClipToBounds="True">
+            <StackPanel Orientation="Horizontal">
+              <Button Content="🇨🇿" Padding="12,6" BorderThickness="0" CornerRadius="6"
+                      FontSize="12" FontWeight="SemiBold" Foreground="White" Cursor="Hand"
+                      Command="{Binding SetCzechCommand}">
+                <Button.Background>
+                  <Binding Path="IsCzech">
+                    <Binding.Converter><conv:BoolToColorConverter TrueColor="#f97316" FalseColor="#252540"/></Binding.Converter>
+                  </Binding>
+                </Button.Background>
+              </Button>
+              <Button Content="🇬🇧" Padding="12,6" BorderThickness="0" CornerRadius="6"
+                      FontSize="12" FontWeight="SemiBold" Foreground="White" Cursor="Hand"
+                      Command="{Binding SetEnglishCommand}">
+                <Button.Background>
+                  <Binding Path="IsEnglish">
+                    <Binding.Converter><conv:BoolToColorConverter TrueColor="#f97316" FalseColor="#252540"/></Binding.Converter>
+                  </Binding>
+                </Button.Background>
+              </Button>
+            </StackPanel>
+          </Border>
+          <Border Background="#f97316" CornerRadius="8" Padding="14,7">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="{Binding L.BrakingWeightLabel}" FontSize="11" Foreground="#ffffffcc" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding BrakingPercentageDisplay}" FontSize="20" FontWeight="Bold"
+                         Foreground="White" FontFamily="Consolas,monospace" MinWidth="72" TextAlignment="Center"/>
+            </StackPanel>
+          </Border>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- ═══ ERROR BAR ════════════════════════════════════════════════════════ -->
+    <Border Grid.Row="1" Background="#3f0f0f" BorderBrush="#7f2020" BorderThickness="0,0,0,1"
+            Padding="14,8" IsVisible="{Binding ErrorVisible}">
+      <Grid ColumnDefinitions="*,Auto">
+        <TextBlock Grid.Column="0" Text="{Binding ErrorMessage}" Foreground="#fca5a5" FontSize="13" TextWrapping="Wrap"/>
+        <Button Grid.Column="1" Content="✕" Background="Transparent" Foreground="#fca5a5"
+                BorderThickness="0" FontSize="16" Command="{Binding ClearErrorCommand}" Cursor="Hand"/>
+      </Grid>
+    </Border>
+
+    <!-- ═══ BODY ══════════════════════════════════════════════════════════════ -->
+    <Grid Grid.Row="2" ColumnDefinitions="270,*,220,265">
+
+      <!-- ══════════════════════════════════════════════════════════════════════
+           COL 0 — Loco catalogue
+           ══════════════════════════════════════════════════════════════════════ -->
+      <Border Grid.Column="0" Background="#161626" BorderBrush="#2e2e50" BorderThickness="0,0,1,0">
+        <Grid RowDefinitions="Auto,*,Auto">
+
+          <StackPanel Grid.Row="0" Spacing="6" Margin="10,10,10,6">
+            <TextBlock Text="{Binding L.PanelLocos}" FontSize="10" FontWeight="Bold"
+                       Foreground="#8888aa" LetterSpacing="1.5"/>
+            <TextBox Text="{Binding SearchText}" Watermark="{Binding L.SearchPlaceholder}"
+                     Background="#1e1e32" BorderBrush="#2e2e50" Foreground="#e8e8ff"
+                     FontSize="12" CornerRadius="6" Padding="8,6"
+                     IsTabStop="False"/>
+          </StackPanel>
+
+          <ListBox Grid.Row="1" Name="LocoListBox" x:Name="DesktopLocoListBox"
+                   ItemsSource="{Binding LocoFlatList}"
+                   Background="Transparent" BorderThickness="0" Padding="6,0,6,6"
+                   ScrollViewer.VerticalScrollBarVisibility="Auto"
+                   SelectionChanged="OnLocoListSelectionChanged"
+                   DoubleTapped="OnLocoListDoubleTapped">
+            <ListBox.ItemContainerTheme>
+              <ControlTheme TargetType="ListBoxItem">
+                <Setter Property="Padding"         Value="0"/>
+                <Setter Property="Margin"          Value="0"/>
+                <Setter Property="Background"      Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Template">
+                  <ControlTemplate>
+                    <ContentPresenter Content="{TemplateBinding Content}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                  </ControlTemplate>
+                </Setter>
+              </ControlTheme>
+            </ListBox.ItemContainerTheme>
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:LocoListItem">
+                <Panel IsVisible="{Binding RowVisible}">
+
+                  <!-- GROUP HEADER — Button so it's keyboard accessible too -->
+                  <Button IsVisible="{Binding IsHeader}"
+                          Background="Transparent" BorderThickness="0"
+                          Padding="4,8,4,4" HorizontalAlignment="Stretch"
+                          HorizontalContentAlignment="Left"
+                          Command="{Binding $parent[UserControl].DataContext.ToggleGroupCommand}"
+                          CommandParameter="{Binding Group}"
+                          Cursor="Hand">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                      <Ellipse Width="8" Height="8" VerticalAlignment="Center"
+                               Fill="{Binding HeaderDotColor, Converter={StaticResource HexColor}}"/>
+                      <TextBlock Text="{Binding HeaderLabel}" FontSize="10" FontWeight="Bold"
+                                 Foreground="#8888aa" LetterSpacing="1" VerticalAlignment="Center"/>
+                      <TextBlock Text="{Binding HeaderCount}" FontSize="10" Foreground="#555577"
+                                 FontFamily="Consolas,monospace" VerticalAlignment="Center"/>
+                      <TextBlock Text="{Binding ArrowText}" FontSize="12" Foreground="#555577"
+                                 VerticalAlignment="Center" Margin="4,0,0,0"/>
+                    </StackPanel>
+                  </Button>
+
+                  <!-- LOCO ROW -->
+                  <Border IsVisible="{Binding IsLoco}" CornerRadius="6" Padding="10,8"
+                          Margin="0,2,0,0" BorderThickness="1" Cursor="Hand">
+                    <Border.Styles>
+                      <Style Selector="Border">
+                        <Setter Property="Background"  Value="#1e1e32"/>
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                      </Style>
+                      <Style Selector="ListBoxItem:selected Border">
+                        <Setter Property="Background"  Value="#221a0d"/>
+                        <Setter Property="BorderBrush" Value="#f97316"/>
+                      </Style>
+                      <Style Selector="ListBoxItem:pointerover Border">
+                        <Setter Property="BorderBrush" Value="#55f97316"/>
+                      </Style>
+                    </Border.Styles>
+                    <StackPanel>
+                      <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBlock Text="{Binding Loco.Designation}" FontSize="13"
+                                   FontWeight="Medium" Foreground="#e8e8ff"/>
+                        <Border Background="#2a1a08" CornerRadius="3" Padding="5,1"
+                                IsVisible="{Binding Loco.HasEDB}">
+                          <TextBlock Text="EDB" FontSize="10" FontWeight="Bold" Foreground="#f97316"/>
+                        </Border>
+                      </StackPanel>
+                      <TextBlock FontSize="10" Foreground="#8888aa" Margin="0,2,0,0"
+                                 FontFamily="Consolas,monospace">
+                        <TextBlock.Text>
+                          <MultiBinding StringFormat="{}{0} t · {1} t · {2} m · {3} km/h">
+                            <Binding Path="Loco.TotalWeightTonnes"/>
+                            <Binding Path="Loco.BrakingWeightTonnes"/>
+                            <Binding Path="Loco.LengthM"/>
+                            <Binding Path="Loco.MaxSpeed"/>
+                          </MultiBinding>
+                        </TextBlock.Text>
+                      </TextBlock>
+                    </StackPanel>
+                  </Border>
+
+                </Panel>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+
+          <Border Grid.Row="2" Padding="10" BorderBrush="#2e2e50" BorderThickness="0,1,0,0">
+            <Button Content="{Binding L.AddToConsist}"
+                    Background="#f97316" Foreground="White" FontSize="14" FontWeight="Bold"
+                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                    Padding="0,11" CornerRadius="8" IsEnabled="{Binding CanAddLoco}"
+                    Command="{Binding AddLocoToConsistCommand}" Cursor="Hand"/>
+          </Border>
+        </Grid>
+      </Border>
+
+      <!-- ══════════════════════════════════════════════════════════════════════
+           COL 1 — Consist builder
+           ══════════════════════════════════════════════════════════════════════ -->
+      <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto,Auto" Background="#0f0f1a">
+
+        <!-- Toolbar -->
+        <Border Grid.Row="0" Background="#161626" BorderBrush="#2e2e50" BorderThickness="0,0,0,1" Padding="10,8">
+          <Grid ColumnDefinitions="*,Auto,Auto">
+            <TextBox Grid.Column="0" Text="{Binding ConsistName}" Watermark="{Binding L.ConsistNamePh}"
+                     Background="#1e1e32" BorderBrush="#2e2e50" Foreground="#e8e8ff"
+                     FontSize="13" CornerRadius="6" Padding="10,7" Margin="0,0,8,0"
+                     IsTabStop="False"/>
+            <Button Grid.Column="1" Content="{Binding L.SaveButton}" Background="#3b82f6" Foreground="White"
+                    FontSize="13" FontWeight="Bold" Padding="14,7" CornerRadius="6"
+                    Margin="0,0,5,0" Command="{Binding SaveConsistCommand}" Cursor="Hand"/>
+            <Button Grid.Column="2" Content="{Binding L.NewButton}" Background="#1e1e32" Foreground="#8888aa"
+                    FontSize="13" FontWeight="SemiBold" Padding="14,7" CornerRadius="6"
+                    BorderBrush="#2e2e50" BorderThickness="1" Margin="0,0,5,0"
+                    Command="{Binding NewConsistCommand}" Cursor="Hand"/>
+            <!-- StatusMessage moved to toast overlay -->
+          </Grid>
+        </Border>
+
+        <!-- Consist entries -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+          <StackPanel Margin="10,8" Spacing="5">
+            <TextBlock Text="{Binding L.EmptyConsist}" Foreground="#8888aa" FontSize="13"
+                       TextAlignment="Center" Margin="0,40" IsVisible="{Binding !ConsistEntries.Count}"/>
+            <ItemsControl ItemsSource="{Binding ConsistEntries}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:ConsistEntryViewModel">
+                  <Border CornerRadius="8" Padding="12,10" Margin="0,0,0,4" BorderThickness="3,0,0,0">
+                    <Border.Background><SolidColorBrush Color="#161626"/></Border.Background>
+                    <Border.BorderBrush>
+                      <Binding Path="EntryBorderColor" Converter="{StaticResource HexColor}"/>
+                    </Border.BorderBrush>
+                    <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto">
+                      <!-- Info -->
+                      <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Designation}" FontSize="13" FontWeight="Medium" Foreground="#e8e8ff"/>
+                        <TextBlock FontSize="10" Foreground="#8888aa" FontFamily="Consolas,monospace">
+                          <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0} t · {1} · {2} m">
+                              <Binding Path="TotalWeightTonnes"/>
+                              <Binding Path="ActiveBrakeDisplay"/>
+                              <Binding Path="LengthM"/>
+                            </MultiBinding>
+                          </TextBlock.Text>
+                        </TextBlock>
+                      </StackPanel>
+                      <!-- Position badge -->
+                      <Border Grid.Column="1" CornerRadius="4" Padding="8,3" Margin="6,0">
+                        <Border.Background>
+                          <Binding Path="PositionBadgeColor" Converter="{StaticResource HexColor}"/>
+                        </Border.Background>
+                        <TextBlock Text="{Binding PositionDisplay}" FontSize="11" Foreground="White"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                      </Border>
+                      <!-- Brake toggle -->
+                      <Button Grid.Column="2" Content="{Binding BrakesButtonText}"
+                              Foreground="White" FontSize="11" FontWeight="Bold"
+                              FontFamily="Consolas,monospace" Padding="8,5" CornerRadius="5"
+                              Margin="0,0,4,0" MinWidth="62" IsEnabled="{Binding !BrakesLocked}"
+                              Command="{Binding $parent[UserControl].DataContext.ToggleBrakesCommand}"
+                              CommandParameter="{Binding}" Cursor="Hand">
+                        <Button.Background>
+                          <Binding Path="BrakesOnColor" Converter="{StaticResource HexColor}"/>
+                        </Button.Background>
+                      </Button>
+                      <!-- EDB toggle -->
+                      <Button Grid.Column="3" Content="{Binding EdbButtonText}"
+                              Foreground="White" FontSize="11" FontWeight="Bold"
+                              Padding="7,5" CornerRadius="5" Margin="0,0,4,0"
+                              IsVisible="{Binding HasEDB}"
+                              Command="{Binding $parent[UserControl].DataContext.ToggleEdbCommand}"
+                              CommandParameter="{Binding}" Cursor="Hand">
+                        <Button.Background>
+                          <Binding Path="EdbButtonColor" Converter="{StaticResource HexColor}"/>
+                        </Button.Background>
+                      </Button>
+                      <!-- Move up/down -->
+                      <StackPanel Grid.Column="4" Spacing="2" Margin="0,0,4,0">
+                        <Button Content="↑" Background="#252540" Foreground="#e8e8ff" BorderThickness="0"
+                                Width="22" Height="22" Padding="0" FontSize="11" CornerRadius="3"
+                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                                Command="{Binding $parent[UserControl].DataContext.MoveUpCommand}"
+                                CommandParameter="{Binding}" Cursor="Hand"/>
+                        <Button Content="↓" Background="#252540" Foreground="#e8e8ff" BorderThickness="0"
+                                Width="22" Height="22" Padding="0" FontSize="11" CornerRadius="3"
+                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                                Command="{Binding $parent[UserControl].DataContext.MoveDownCommand}"
+                                CommandParameter="{Binding}" Cursor="Hand"/>
+                      </StackPanel>
+                      <!-- Remove -->
+                      <Button Grid.Column="5" Content="✕" Background="Transparent"
+                              Foreground="#ef4444" BorderThickness="0" FontSize="16" Padding="3,0" Opacity="0.7"
+                              Command="{Binding $parent[UserControl].DataContext.RemoveEntryCommand}"
+                              CommandParameter="{Binding}" Cursor="Hand"/>
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </ScrollViewer>
+
+        <!-- Strip overview -->
+        <Border Grid.Row="2" Background="#161626" BorderBrush="#2e2e50" BorderThickness="0,1,0,1" Padding="10,8">
+          <StackPanel Spacing="5">
+            <TextBlock Text="{Binding L.ConsistOverview}" FontSize="11" FontWeight="Bold"
+                       Foreground="#8888aa" LetterSpacing="2"/>
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+              <ItemsControl ItemsSource="{Binding ConsistEntries}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="5"/></ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:ConsistEntryViewModel">
+                    <Border Background="#1e1e32" CornerRadius="5" Padding="8,6" MinWidth="78"
+                            BorderThickness="0,0,0,3">
+                      <Border.BorderBrush>
+                        <Binding Path="EntryBorderColor" Converter="{StaticResource HexColor}"/>
+                      </Border.BorderBrush>
+                      <StackPanel HorizontalAlignment="Center" Spacing="2">
+                        <TextBlock Text="🚂" FontSize="14" TextAlignment="Center"/>
+                        <TextBlock Text="{Binding Designation}" FontSize="9" Foreground="#8888aa"
+                                   TextAlignment="Center" TextWrapping="Wrap"/>
+                        <TextBlock Text="{Binding PositionDisplay}" FontSize="9" FontWeight="SemiBold"
+                                   TextAlignment="Center">
+                          <TextBlock.Foreground>
+                            <Binding Path="EntryBorderColor" Converter="{StaticResource HexColor}"/>
+                          </TextBlock.Foreground>
+                        </TextBlock>
+                      </StackPanel>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </ScrollViewer>
+          </StackPanel>
+        </Border>
+
+        <!-- Stats bar -->
+        <Border Grid.Row="3" Background="#161626" Padding="10,8">
+          <Grid ColumnDefinitions="*,*,*,*,*">
+            <Border Grid.Column="0" Background="#1e1e32" CornerRadius="6" Padding="8,7">
+              <StackPanel>
+                <TextBlock Text="{Binding L.StatLocos}" FontSize="9" FontWeight="Bold" Foreground="#8888aa" LetterSpacing="1"/>
+                <TextBlock Text="{Binding ConsistEntries.Count}" FontSize="16" FontWeight="Bold"
+                           Foreground="#e8e8ff" FontFamily="Consolas,monospace"/>
+              </StackPanel>
+            </Border>
+            <Border Grid.Column="1" Background="#1e1e32" CornerRadius="6" Padding="8,7">
+              <StackPanel>
+                <TextBlock Text="{Binding L.StatTotalWeight}" FontSize="9" FontWeight="Bold" Foreground="#8888aa" LetterSpacing="1"/>
+                <TextBlock Text="{Binding TotalWeightDisplay}" FontSize="16" FontWeight="Bold"
+                           Foreground="#e8e8ff" FontFamily="Consolas,monospace"/>
+              </StackPanel>
+            </Border>
+            <Border Grid.Column="2" Background="#1e1e32" CornerRadius="6" Padding="8,7">
+              <StackPanel>
+                <TextBlock Text="{Binding L.StatLength}" FontSize="9" FontWeight="Bold" Foreground="#8888aa" LetterSpacing="1"/>
+                <TextBlock Text="{Binding TotalLengthDisplay}" FontSize="16" FontWeight="Bold"
+                           Foreground="#e8e8ff" FontFamily="Consolas,monospace"/>
+              </StackPanel>
+            </Border>
+            <Border Grid.Column="3" Background="#1e1e32" CornerRadius="6" Padding="8,7">
+              <StackPanel>
+                <TextBlock Text="{Binding L.StatActiveBrake}" FontSize="9" FontWeight="Bold" Foreground="#8888aa" LetterSpacing="1"/>
+                <TextBlock Text="{Binding ActiveBrakeWeightDisplay}" FontSize="16" FontWeight="Bold"
+                           Foreground="#22c55e" FontFamily="Consolas,monospace"/>
+              </StackPanel>
+            </Border>
+            <Border Grid.Column="4" Background="#1e1e32" CornerRadius="6" Padding="8,7">
+              <StackPanel>
+                <TextBlock Text="{Binding L.StatBrakingPct}" FontSize="9" FontWeight="Bold" Foreground="#8888aa" LetterSpacing="1"/>
+                <TextBlock Text="{Binding BrakingPercentageDisplay}" FontSize="16" FontWeight="Bold"
+                           FontFamily="Consolas,monospace">
+                  <TextBlock.Foreground>
+                    <Binding Path="BrakingPercentageColor" Converter="{StaticResource HexColor}"/>
+                  </TextBlock.Foreground>
+                </TextBlock>
+              </StackPanel>
+            </Border>
+          </Grid>
+        </Border>
+      </Grid>
+
+      <!-- ══════════════════════════════════════════════════════════════════════
+           COL 2 — Saved consists
+           ══════════════════════════════════════════════════════════════════════ -->
+      <Border Grid.Column="2" Background="#161626" BorderBrush="#2e2e50" BorderThickness="1,0,1,0">
+        <Grid RowDefinitions="Auto,*">
+          <Border Grid.Row="0" Padding="10,10,10,6" BorderBrush="#2e2e50" BorderThickness="0,0,0,1">
+            <TextBlock Text="{Binding L.SavedConsists}" FontSize="10" FontWeight="Bold"
+                       Foreground="#8888aa" LetterSpacing="1.5"/>
+          </Border>
+          <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="6">
+            <StackPanel Spacing="4">
+              <TextBlock Text="{Binding L.NoSaved}" Foreground="#8888aa" FontSize="12"
+                         Margin="4,10" IsVisible="{Binding !SavedConsists.Count}"/>
+              <ItemsControl ItemsSource="{Binding SavedConsists}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="models:Consist">
+                    <Border Background="#1e1e32" CornerRadius="8" Padding="10" Margin="0,2">
+                      <StackPanel Spacing="5">
+                        <TextBlock Text="{Binding Name}" FontSize="13" FontWeight="SemiBold" Foreground="#e8e8ff"/>
+                        <TextBlock FontSize="10" Foreground="#8888aa" FontFamily="Consolas,monospace">
+                          <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0} · {1:dd MMM HH:mm}">
+                              <Binding Path="Entries.Count"/>
+                              <Binding Path="LastModified"/>
+                            </MultiBinding>
+                          </TextBlock.Text>
+                        </TextBlock>
+                        <Grid ColumnDefinitions="*,Auto">
+                          <Button Grid.Column="0"
+                                  Content="{Binding $parent[UserControl].DataContext.L.LoadButton}"
+                                  Background="#3b82f6" Foreground="White" FontSize="12" FontWeight="Bold"
+                                  Padding="0,6" CornerRadius="5" HorizontalAlignment="Stretch"
+                                  HorizontalContentAlignment="Center" Margin="0,0,4,0"
+                                  Command="{Binding $parent[UserControl].DataContext.LoadConsistCommand}"
+                                  CommandParameter="{Binding}" Cursor="Hand"/>
+                          <Button Grid.Column="1" Content="✕" Background="Transparent" Foreground="#ef4444"
+                                  BorderBrush="#2e2e50" BorderThickness="1" Width="28" Height="28"
+                                  Padding="0" FontSize="13" CornerRadius="5"
+                                  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                                  Command="{Binding $parent[UserControl].DataContext.DeleteConsistCommand}"
+                                  CommandParameter="{Binding}" Cursor="Hand"/>
+                        </Grid>
+                      </StackPanel>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </ScrollViewer>
+        </Grid>
+      </Border>
+
+      <!-- ══════════════════════════════════════════════════════════════════════
+           COL 3 — ETCS panel
+           ══════════════════════════════════════════════════════════════════════ -->
+      <Border Grid.Column="3" Background="#161626" BorderBrush="#2e2e50" BorderThickness="1,0,0,0">
+        <Grid RowDefinitions="Auto,*">
+          <Border Grid.Row="0" Padding="10,10,10,6" BorderBrush="#2e2e50" BorderThickness="0,0,0,1">
+            <TextBlock Text="{Binding L.EtcsData}" FontSize="10" FontWeight="Bold"
+                       Foreground="#8888aa" LetterSpacing="1.5"/>
+          </Border>
+          <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="8,8" Spacing="7">
+
+              <!-- Warning -->
+              <Border Background="#3f1a0a" BorderBrush="#f97316" BorderThickness="1"
+                      CornerRadius="6" Padding="10,9" IsVisible="{Binding EtcsWarningVisible}">
+                <TextBlock Text="{Binding EtcsWarningText}" FontSize="11"
+                           Foreground="#fdba74" TextWrapping="Wrap" LineHeight="17"/>
+              </Border>
+
+              <!-- Speed -->
+              <Border Background="#1e1e32" CornerRadius="8" Padding="11,9">
+                <StackPanel Spacing="7">
+                  <TextBlock Text="{Binding L.SpeedSection}" FontSize="9" FontWeight="Bold"
+                             Foreground="#8888aa" LetterSpacing="1.5"/>
+                  <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Grid.Column="0" Text="{Binding L.SpeedLabel}" FontSize="12"
+                               Foreground="#8888aa" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="1" Text="{Binding EtcsDefSpeed, StringFormat='{}{0} km/h'}"
+                               FontSize="15" FontWeight="Bold" Foreground="#f97316" FontFamily="Consolas,monospace"/>
+                  </Grid>
+                  <StackPanel Spacing="4">
+                    <TextBlock Text="{Binding L.SpeedOverride}" FontSize="11" Foreground="#8888aa"/>
+                    <Grid ColumnDefinitions="*,Auto">
+                      <NumericUpDown Grid.Column="0" Value="{Binding SpeedOverride}"
+                                     Minimum="10" Maximum="200" Increment="10"
+                                     Background="#252540" Foreground="#e8e8ff"
+                                     BorderBrush="#3a3a60" CornerRadius="5"
+                                     FormatString="0 km/h" FontSize="13"/>
+                      <Button Grid.Column="1" Content="↺" Background="Transparent" Foreground="#8888aa"
+                              BorderThickness="0" FontSize="14" Margin="4,0,0,0"
+                              Command="{Binding ClearSpeedOverrideCommand}" Cursor="Hand"/>
+                    </Grid>
+                  </StackPanel>
+                </StackPanel>
+              </Border>
+
+              <!-- Consist params -->
+              <Border Background="#1e1e32" CornerRadius="8" Padding="11,9">
+                <StackPanel Spacing="2">
+                  <TextBlock Text="PARAMETRY" FontSize="9" FontWeight="Bold"
+                             Foreground="#8888aa" LetterSpacing="1.5" Margin="0,0,0,5"/>
+                  <Grid ColumnDefinitions="*,Auto" Margin="0,3">
+                    <TextBlock Grid.Column="0" Text="{Binding L.StatBrakingPct}" FontSize="12" Foreground="#8888aa"/>
+                    <TextBlock Grid.Column="1" Text="{Binding BrakingPercentageDisplay}"
+                               FontSize="14" FontWeight="Bold" FontFamily="Consolas,monospace">
+                      <TextBlock.Foreground>
+                        <Binding Path="BrakingPercentageColor" Converter="{StaticResource HexColor}"/>
+                      </TextBlock.Foreground>
+                    </TextBlock>
+                  </Grid>
+                  <Border Background="#2e2e50" Height="1"/>
+                  <Grid ColumnDefinitions="*,Auto" Margin="0,3">
+                    <TextBlock Grid.Column="0" Text="{Binding L.StatTotalWeight}" FontSize="12" Foreground="#8888aa"/>
+                    <TextBlock Grid.Column="1" Text="{Binding TotalWeightDisplay}"
+                               FontSize="14" FontWeight="Bold" Foreground="#e8e8ff" FontFamily="Consolas,monospace"/>
+                  </Grid>
+                  <Border Background="#2e2e50" Height="1"/>
+                  <Grid ColumnDefinitions="*,Auto" Margin="0,3">
+                    <TextBlock Grid.Column="0" Text="{Binding L.TrainLength}" FontSize="12" Foreground="#8888aa"/>
+                    <TextBlock Grid.Column="1" Text="{Binding TotalLengthDisplay}"
+                               FontSize="14" FontWeight="Bold" Foreground="#e8e8ff" FontFamily="Consolas,monospace"/>
+                  </Grid>
+                </StackPanel>
+              </Border>
+
+              <!-- ETCS box -->
+              <Border Background="#252540" CornerRadius="8" Padding="11,9"
+                      BorderBrush="#3a3a60" BorderThickness="1">
+                <StackPanel Spacing="2">
+                  <TextBlock Text="{Binding L.EtcsParameters}" FontSize="9" FontWeight="Bold"
+                             Foreground="#8888aa" LetterSpacing="1.5" Margin="0,0,0,6"/>
+                  <Grid ColumnDefinitions="*,Auto" Margin="0,3">
+                    <TextBlock Grid.Column="0" Text="{Binding L.CrossSection}" FontSize="12" Foreground="#8888aa"/>
+                    <TextBlock Grid.Column="1" Text="GC" FontSize="14" FontWeight="Bold"
+                               Foreground="#f97316" FontFamily="Consolas,monospace"/>
+                  </Grid>
+                  <Border Background="#2e2e50" Height="1"/>
+                  <Grid ColumnDefinitions="*,Auto" Margin="0,3">
+                    <TextBlock Grid.Column="0" Text="{Binding L.CantDeficiency}" FontSize="12" Foreground="#8888aa"/>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5">
+                      <TextBlock Text="{Binding EtcsFpClass}" FontSize="14" FontWeight="Bold"
+                                 Foreground="#e8e8ff" FontFamily="Consolas,monospace"/>
+                      <Border Background="#f97316" CornerRadius="3" Padding="5,1">
+                        <TextBlock Text="{Binding EtcsFpMm, StringFormat='{}{0} mm'}"
+                                   FontSize="11" FontWeight="Bold" Foreground="White" FontFamily="Consolas,monospace"/>
+                      </Border>
+                    </StackPanel>
+                  </Grid>
+                  <Border Background="#2e2e50" Height="1"/>
+                  <Grid ColumnDefinitions="*,Auto" Margin="0,3">
+                    <TextBlock Grid.Column="0" Text="{Binding L.EtcsMaxSpeed}" FontSize="12" Foreground="#8888aa"/>
+                    <TextBlock Grid.Column="1" Text="{Binding EtcsMaxSpeedDisplay}"
+                               FontSize="14" FontWeight="Bold" Foreground="#f97316" FontFamily="Consolas,monospace"/>
+                  </Grid>
+                  <Border Background="#2e2e50" Height="1"/>
+                  <Grid ColumnDefinitions="*,Auto" Margin="0,3">
+                    <TextBlock Grid.Column="0" Text="{Binding L.BrakingPctLabel}" FontSize="12" Foreground="#8888aa"/>
+                    <TextBlock Grid.Column="1" Text="{Binding BrakingPercentageDisplay}"
+                               FontSize="14" FontWeight="Bold" FontFamily="Consolas,monospace">
+                      <TextBlock.Foreground>
+                        <Binding Path="EtcsBrakingColor" Converter="{StaticResource HexColor}"/>
+                      </TextBlock.Foreground>
+                    </TextBlock>
+                  </Grid>
+                  <Border Background="#2e2e50" Height="1"/>
+                  <Grid ColumnDefinitions="*,Auto" Margin="0,3">
+                    <TextBlock Grid.Column="0" Text="{Binding L.TrainLength}" FontSize="12" Foreground="#8888aa"/>
+                    <TextBlock Grid.Column="1" Text="{Binding TotalLengthDisplay}"
+                               FontSize="14" FontWeight="Bold" Foreground="#e8e8ff" FontFamily="Consolas,monospace"/>
+                  </Grid>
+                </StackPanel>
+              </Border>
+
+              <!-- PDF controls (hidden when PdfSaveService not injected, e.g. Android) -->
+              <StackPanel Spacing="6" IsVisible="{Binding IsPdfSupported}">
+                <CheckBox IsChecked="{Binding AutoOpenPdf}"
+                          Foreground="#8888aa" FontSize="11"
+                          Content="{Binding L.AutoOpenPdf}"/>
+                <Grid ColumnDefinitions="Auto,*">
+                  <Button Grid.Column="0"
+                          Background="#252540" Foreground="#e8e8ff"
+                          Padding="10,11" CornerRadius="8" BorderThickness="1" BorderBrush="#3a3a60"
+                          Command="{Binding TogglePdfDarkModeCommand}" Cursor="Hand">
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                      <TextBlock Text="{Binding PdfModeButtonIconLabel}" FontFamily="{StaticResource FaFont}" FontSize="12"/>
+                      <TextBlock Text="{Binding PdfModeButtonLabel}" FontSize="12" FontWeight="SemiBold"/>
+                    </StackPanel>
+                  </Button>
+                  <Button Grid.Column="1"
+                          Background="#3b82f6" Foreground="White"
+                          HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                          Padding="0,11" CornerRadius="8" IsEnabled="True"
+                          Command="{Binding GeneratePdfCommand}" Cursor="Hand">
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                      <TextBlock Text="{Binding L.PrintReportIcon}" FontFamily="{StaticResource FaFont}" FontSize="13"/>
+                      <TextBlock Text="{Binding L.PrintReport}" FontSize="13" FontWeight="Bold"/>
+                    </StackPanel>
+                  </Button>
+                </Grid>
+              </StackPanel>
+
+              <!-- FP legend -->
+              <TextBlock FontSize="10" Foreground="#8888aa" TextWrapping="Wrap" Margin="1,0" LineHeight="17">FP3 (130 mm): 163, 186, 189, 363, 363.5, 372, 383, 386, 388, 393<LineBreak/>FP2 (100 mm): ostatní řady</TextBlock>
+
+            </StackPanel>
+          </ScrollViewer>
+        </Grid>
+      </Border>
+
+    </Grid><!-- /body -->
+
+  </Grid>
+
+  <!-- ═══ MOBILE LAYOUT ══════════════════════════════════════════════════ -->
+  <!-- Shown on mobile (narrow), hidden on desktop — toggled from code-behind -->
+  <Grid x:Name="MobileLayout" RowDefinitions="Auto,Auto,*,Auto" IsVisible="False">
+
+    <!-- Mobile header -->
+    <Border Grid.Row="0" Background="#161626" BorderBrush="#2e2e50" BorderThickness="0,0,0,1" Padding="14,14">
+      <Grid ColumnDefinitions="*,Auto">
+        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+          <TextBlock Text="🚂" FontSize="22" VerticalAlignment="Center" FontFamily="{StaticResource EmojiFont}" Margin="0,1,0,0"/>
+          <TextBlock Text="LocoCalc" FontSize="22" FontWeight="Bold" Foreground="#f97316"/>
+        </StackPanel>
+        <Border Grid.Column="1" Background="#f97316" CornerRadius="8" Padding="12,8">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <TextBlock Text="{Binding L.BrakingWeightLabel}" FontSize="12" Foreground="#ffffffcc" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding BrakingPercentageDisplay}" FontSize="22" FontWeight="Bold"
+                       Foreground="White" FontFamily="Consolas,monospace" MinWidth="68" TextAlignment="Center"/>
+          </StackPanel>
+        </Border>
+      </Grid>
+    </Border>
+
+    <!-- Error bar -->
+    <Border Grid.Row="1" Background="#3f0f0f" BorderBrush="#7f2020" BorderThickness="0,0,0,1"
+            Padding="12,8" IsVisible="{Binding ErrorVisible}">
+      <Grid ColumnDefinitions="*,Auto">
+        <TextBlock Grid.Column="0" Text="{Binding ErrorMessage}" Foreground="#fca5a5" FontSize="12" TextWrapping="Wrap"/>
+        <Button Grid.Column="1" Content="✕" Background="Transparent" Foreground="#fca5a5"
+                BorderThickness="0" FontSize="15" Command="{Binding ClearErrorCommand}"/>
+      </Grid>
+    </Border>
+
+    <!-- Mobile content area — swaps between tabs -->
+    <Grid Grid.Row="2" Background="#0f0f1a">
+
+      <!-- ── TAB: CONSIST ───────────────────────────────────────────────── -->
+      <Grid RowDefinitions="*,Auto,Auto" IsVisible="{Binding MobileTabConsist}">
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+          <StackPanel Margin="10,8" Spacing="5">
+            <TextBlock Text="{Binding L.EmptyConsistMobile}" Foreground="#8888aa" FontSize="13"
+                       TextAlignment="Center" Margin="0,40" IsVisible="{Binding !ConsistEntries.Count}"/>
+            <ItemsControl ItemsSource="{Binding ConsistEntries}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:ConsistEntryViewModel">
+                  <Border CornerRadius="8" Padding="10,9" Margin="0,0,0,4" BorderThickness="3,0,0,0">
+                    <Border.Background><SolidColorBrush Color="#161626"/></Border.Background>
+                    <Border.BorderBrush>
+                      <Binding Path="EntryBorderColor" Converter="{StaticResource HexColor}"/>
+                    </Border.BorderBrush>
+                    <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto">
+                      <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Designation}" FontSize="13" FontWeight="Medium" Foreground="#e8e8ff"/>
+                        <TextBlock FontSize="10" Foreground="#8888aa" FontFamily="Consolas,monospace">
+                          <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0} t · {1} · {2} m">
+                              <Binding Path="TotalWeightTonnes"/>
+                              <Binding Path="ActiveBrakeDisplay"/>
+                              <Binding Path="LengthM"/>
+                            </MultiBinding>
+                          </TextBlock.Text>
+                        </TextBlock>
+                      </StackPanel>
+                      <Border Grid.Column="1" CornerRadius="4" Padding="7,3" Margin="5,0">
+                        <Border.Background>
+                          <Binding Path="PositionBadgeColor" Converter="{StaticResource HexColor}"/>
+                        </Border.Background>
+                        <TextBlock Text="{Binding PositionDisplay}" FontSize="10" Foreground="White"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                      </Border>
+                      <Button Grid.Column="2" Content="{Binding BrakesButtonText}"
+                              Foreground="White" FontSize="10" FontWeight="Bold"
+                              FontFamily="Consolas,monospace" Padding="7,5" CornerRadius="5"
+                              Margin="0,0,3,0" MinWidth="52" IsEnabled="{Binding !BrakesLocked}"
+                              Command="{Binding $parent[UserControl].DataContext.ToggleBrakesCommand}"
+                              CommandParameter="{Binding}" Cursor="Hand">
+                        <Button.Background>
+                          <Binding Path="BrakesOnColor" Converter="{StaticResource HexColor}"/>
+                        </Button.Background>
+                      </Button>
+                      <Button Grid.Column="3" Content="{Binding EdbButtonText}"
+                              Foreground="White" FontSize="10" FontWeight="Bold"
+                              Padding="6,5" CornerRadius="5" Margin="0,0,3,0"
+                              IsVisible="{Binding HasEDB}"
+                              Command="{Binding $parent[UserControl].DataContext.ToggleEdbCommand}"
+                              CommandParameter="{Binding}" Cursor="Hand">
+                        <Button.Background>
+                          <Binding Path="EdbButtonColor" Converter="{StaticResource HexColor}"/>
+                        </Button.Background>
+                      </Button>
+                      <StackPanel Grid.Column="4" Spacing="2" Margin="0,0,3,0">
+                        <Button Content="↑" Background="#252540" Foreground="#e8e8ff" BorderThickness="0"
+                                Width="22" Height="22" Padding="0" FontSize="11" CornerRadius="3"
+                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                                Command="{Binding $parent[UserControl].DataContext.MoveUpCommand}"
+                                CommandParameter="{Binding}" Cursor="Hand"/>
+                        <Button Content="↓" Background="#252540" Foreground="#e8e8ff" BorderThickness="0"
+                                Width="22" Height="22" Padding="0" FontSize="11" CornerRadius="3"
+                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                                Command="{Binding $parent[UserControl].DataContext.MoveDownCommand}"
+                                CommandParameter="{Binding}" Cursor="Hand"/>
+                      </StackPanel>
+                      <Button Grid.Column="5" Content="✕" Background="Transparent"
+                              Foreground="#ef4444" BorderThickness="0" FontSize="15" Padding="3,0" Opacity="0.7"
+                              Command="{Binding $parent[UserControl].DataContext.RemoveEntryCommand}"
+                              CommandParameter="{Binding}" Cursor="Hand"/>
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </ScrollViewer>
+
+        <!-- Consist strip -->
+        <Border Grid.Row="1" Background="#161626" BorderBrush="#2e2e50" BorderThickness="0,1,0,1" Padding="8,6">
+          <StackPanel Spacing="4">
+            <TextBlock Text="{Binding L.ConsistOverview}" FontSize="9" FontWeight="Bold"
+                       Foreground="#8888aa" LetterSpacing="2"/>
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+              <ItemsControl ItemsSource="{Binding ConsistEntries}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="4"/></ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:ConsistEntryViewModel">
+                    <Border Background="#1e1e32" CornerRadius="6" Padding="10,8" MinWidth="88" BorderThickness="0,0,0,3">
+                      <Border.BorderBrush>
+                        <Binding Path="EntryBorderColor" Converter="{StaticResource HexColor}"/>
+                      </Border.BorderBrush>
+                      <StackPanel HorizontalAlignment="Center" Spacing="2">
+                        <TextBlock Text="🚂" FontSize="16" TextAlignment="Center" FontFamily="{StaticResource EmojiFont}" Margin="0,1,0,0"/>
+                        <TextBlock Text="{Binding Designation}" FontSize="10" Foreground="#8888aa"
+                                   TextAlignment="Center" TextWrapping="Wrap"/>
+                        <TextBlock Text="{Binding PositionDisplay}" FontSize="10" FontWeight="SemiBold"
+                                   TextAlignment="Center">
+                          <TextBlock.Foreground>
+                            <Binding Path="EntryBorderColor" Converter="{StaticResource HexColor}"/>
+                          </TextBlock.Foreground>
+                        </TextBlock>
+                      </StackPanel>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </ScrollViewer>
+          </StackPanel>
+        </Border>
+
+        <!-- Stats bar -->
+        <Border Grid.Row="2" Background="#161626" Padding="8,6">
+          <Grid ColumnDefinitions="*,*,*,*,*">
+            <Border Grid.Column="0" Background="#1e1e32" CornerRadius="5" Padding="6,5" Margin="0,0,3,0">
+              <StackPanel>
+                <TextBlock Text="{Binding L.StatLocos}" FontSize="8" FontWeight="Bold" Foreground="#8888aa"/>
+                <TextBlock Text="{Binding ConsistEntries.Count}" FontSize="14" FontWeight="Bold"
+                           Foreground="#e8e8ff" FontFamily="Consolas,monospace"/>
+              </StackPanel>
+            </Border>
+            <Border Grid.Column="1" Background="#1e1e32" CornerRadius="5" Padding="6,5" Margin="0,0,3,0">
+              <StackPanel>
+                <TextBlock Text="{Binding L.StatTotalWeight}" FontSize="8" FontWeight="Bold" Foreground="#8888aa"/>
+                <TextBlock Text="{Binding TotalWeightDisplay}" FontSize="14" FontWeight="Bold"
+                           Foreground="#e8e8ff" FontFamily="Consolas,monospace"/>
+              </StackPanel>
+            </Border>
+            <Border Grid.Column="2" Background="#1e1e32" CornerRadius="5" Padding="6,5" Margin="0,0,3,0">
+              <StackPanel>
+                <TextBlock Text="{Binding L.StatLength}" FontSize="8" FontWeight="Bold" Foreground="#8888aa"/>
+                <TextBlock Text="{Binding TotalLengthDisplay}" FontSize="14" FontWeight="Bold"
+                           Foreground="#e8e8ff" FontFamily="Consolas,monospace"/>
+              </StackPanel>
+            </Border>
+            <Border Grid.Column="3" Background="#1e1e32" CornerRadius="5" Padding="6,5" Margin="0,0,3,0">
+              <StackPanel>
+                <TextBlock Text="{Binding L.StatActiveBrake}" FontSize="8" FontWeight="Bold" Foreground="#8888aa"/>
+                <TextBlock Text="{Binding ActiveBrakeWeightDisplay}" FontSize="14" FontWeight="Bold"
+                           Foreground="#22c55e" FontFamily="Consolas,monospace"/>
+              </StackPanel>
+            </Border>
+            <Border Grid.Column="4" Background="#1e1e32" CornerRadius="5" Padding="6,5">
+              <StackPanel>
+                <TextBlock Text="{Binding L.StatBrakingPct}" FontSize="8" FontWeight="Bold" Foreground="#8888aa"/>
+                <TextBlock Text="{Binding BrakingPercentageDisplay}" FontSize="14" FontWeight="Bold"
+                           FontFamily="Consolas,monospace">
+                  <TextBlock.Foreground>
+                    <Binding Path="BrakingPercentageColor" Converter="{StaticResource HexColor}"/>
+                  </TextBlock.Foreground>
+                </TextBlock>
+              </StackPanel>
+            </Border>
+          </Grid>
+        </Border>
+      </Grid>
+
+      <!-- ── TAB: ADD LOCO ──────────────────────────────────────────────── -->
+      <Grid RowDefinitions="Auto,*,Auto" IsVisible="{Binding MobileTabAddLoco}">
+        <StackPanel Grid.Row="0" Spacing="6" Margin="10,10,10,6">
+          <TextBlock Text="{Binding L.PanelLocos}" FontSize="10" FontWeight="Bold"
+                     Foreground="#8888aa" LetterSpacing="1.5"/>
+          <TextBox Text="{Binding SearchText}" Watermark="{Binding L.SearchPlaceholder}"
+                   Background="#1e1e32" BorderBrush="#2e2e50" Foreground="#e8e8ff"
+                   FontSize="12" CornerRadius="6" Padding="8,6"
+                   IsTabStop="False"/>
+        </StackPanel>
+
+        <ListBox Grid.Row="1" Name="MobileLocoListBox"
+                 ItemsSource="{Binding LocoFlatList}"
+                 Background="Transparent" BorderThickness="0" Padding="6,0,6,6"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                 SelectionChanged="OnLocoListSelectionChanged"
+                 DoubleTapped="OnLocoListDoubleTapped">
+          <ListBox.ItemContainerTheme>
+            <ControlTheme TargetType="ListBoxItem">
+              <Setter Property="Padding"         Value="0"/>
+              <Setter Property="Margin"          Value="0"/>
+              <Setter Property="Background"      Value="Transparent"/>
+              <Setter Property="BorderThickness" Value="0"/>
+              <Setter Property="Template">
+                <ControlTemplate>
+                  <ContentPresenter Content="{TemplateBinding Content}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                </ControlTemplate>
+              </Setter>
+            </ControlTheme>
+          </ListBox.ItemContainerTheme>
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="vm:LocoListItem">
+              <Panel IsVisible="{Binding RowVisible}">
+                <Button IsVisible="{Binding IsHeader}"
+                        Background="Transparent" BorderThickness="0"
+                        Padding="4,8,4,4" HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Command="{Binding $parent[UserControl].DataContext.ToggleGroupCommand}"
+                        CommandParameter="{Binding Group}" Cursor="Hand">
+                  <StackPanel Orientation="Horizontal" Spacing="7">
+                    <Ellipse Width="8" Height="8" VerticalAlignment="Center"
+                             Fill="{Binding HeaderDotColor, Converter={StaticResource HexColor}}"/>
+                    <TextBlock Text="{Binding HeaderLabel}" FontSize="10" FontWeight="Bold"
+                               Foreground="#8888aa" LetterSpacing="1" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding HeaderCount}" FontSize="10" Foreground="#555577"
+                               FontFamily="Consolas,monospace" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding ArrowText}" FontSize="12" Foreground="#555577"
+                               VerticalAlignment="Center" Margin="4,0,0,0"/>
+                  </StackPanel>
+                </Button>
+                <Border IsVisible="{Binding IsLoco}" CornerRadius="6" Padding="10,8"
+                        Margin="0,2,0,0" BorderThickness="1" Cursor="Hand">
+                  <Border.Styles>
+                    <Style Selector="Border">
+                      <Setter Property="Background"  Value="#1e1e32"/>
+                      <Setter Property="BorderBrush" Value="Transparent"/>
+                    </Style>
+                    <Style Selector="ListBoxItem:selected Border">
+                      <Setter Property="Background"  Value="#221a0d"/>
+                      <Setter Property="BorderBrush" Value="#f97316"/>
+                    </Style>
+                    <Style Selector="ListBoxItem:pointerover Border">
+                      <Setter Property="BorderBrush" Value="#55f97316"/>
+                    </Style>
+                  </Border.Styles>
+                  <StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                      <TextBlock Text="{Binding Loco.Designation}" FontSize="13"
+                                 FontWeight="Medium" Foreground="#e8e8ff"/>
+                      <Border Background="#2a1a08" CornerRadius="3" Padding="5,1"
+                              IsVisible="{Binding Loco.HasEDB}">
+                        <TextBlock Text="EDB" FontSize="10" FontWeight="Bold" Foreground="#f97316"/>
+                      </Border>
+                    </StackPanel>
+                    <TextBlock FontSize="10" Foreground="#8888aa" Margin="0,2,0,0"
+                               FontFamily="Consolas,monospace">
+                      <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} t · {1} t · {2} m · {3} km/h">
+                          <Binding Path="Loco.TotalWeightTonnes"/>
+                          <Binding Path="Loco.BrakingWeightTonnes"/>
+                          <Binding Path="Loco.LengthM"/>
+                          <Binding Path="Loco.MaxSpeed"/>
+                        </MultiBinding>
+                      </TextBlock.Text>
+                    </TextBlock>
+                  </StackPanel>
+                </Border>
+              </Panel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+
+        <Border Grid.Row="2" Padding="10" BorderBrush="#2e2e50" BorderThickness="0,1,0,0">
+          <Button Content="{Binding L.AddToConsist}"
+                  Background="#f97316" Foreground="White" FontSize="14" FontWeight="Bold"
+                  HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                  Padding="0,12" CornerRadius="8" IsEnabled="{Binding CanAddLoco}"
+                  Command="{Binding AddLocoToConsistCommand}" Cursor="Hand"/>
+        </Border>
+      </Grid>
+
+      <!-- ── TAB: ETCS ──────────────────────────────────────────────────── -->
+      <ScrollViewer IsVisible="{Binding MobileTabEtcs}" VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="10,10" Spacing="7">
+          <Border Background="#3f1a0a" BorderBrush="#f97316" BorderThickness="1"
+                  CornerRadius="6" Padding="10,9" IsVisible="{Binding EtcsWarningVisible}">
+            <TextBlock Text="{Binding EtcsWarningText}" FontSize="11"
+                       Foreground="#fdba74" TextWrapping="Wrap" LineHeight="17"/>
+          </Border>
+          <Border Background="#1e1e32" CornerRadius="8" Padding="11,9">
+            <StackPanel Spacing="7">
+              <TextBlock Text="{Binding L.SpeedSection}" FontSize="9" FontWeight="Bold"
+                         Foreground="#8888aa" LetterSpacing="1.5"/>
+              <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0" Text="{Binding L.SpeedLabel}" FontSize="12"
+                           Foreground="#8888aa" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="1" Text="{Binding EtcsDefSpeed, StringFormat='{}{0} km/h'}"
+                           FontSize="15" FontWeight="Bold" Foreground="#f97316" FontFamily="Consolas,monospace"/>
+              </Grid>
+              <StackPanel Spacing="4">
+                <TextBlock Text="{Binding L.SpeedOverride}" FontSize="11" Foreground="#8888aa"/>
+                <Grid ColumnDefinitions="*,Auto">
+                  <NumericUpDown Grid.Column="0" Value="{Binding SpeedOverride}"
+                                 Minimum="10" Maximum="200" Increment="10"
+                                 Background="#252540" Foreground="#e8e8ff"
+                                 BorderBrush="#3a3a60" CornerRadius="5"
+                                 FormatString="0 km/h" FontSize="13"/>
+                  <Button Grid.Column="1" Content="↺" Background="Transparent" Foreground="#8888aa"
+                          BorderThickness="0" FontSize="14" Margin="4,0,0,0"
+                          Command="{Binding ClearSpeedOverrideCommand}" Cursor="Hand"/>
+                </Grid>
+              </StackPanel>
+            </StackPanel>
+          </Border>
+          <Border Background="#252540" CornerRadius="8" Padding="11,9" BorderBrush="#3a3a60" BorderThickness="1">
+            <StackPanel Spacing="2">
+              <TextBlock Text="{Binding L.EtcsParameters}" FontSize="9" FontWeight="Bold"
+                         Foreground="#8888aa" LetterSpacing="1.5" Margin="0,0,0,6"/>
+              <Grid ColumnDefinitions="*,Auto" Margin="0,3">
+                <TextBlock Grid.Column="0" Text="{Binding L.CrossSection}" FontSize="12" Foreground="#8888aa"/>
+                <TextBlock Grid.Column="1" Text="GC" FontSize="14" FontWeight="Bold"
+                           Foreground="#f97316" FontFamily="Consolas,monospace"/>
+              </Grid>
+              <Border Background="#2e2e50" Height="1"/>
+              <Grid ColumnDefinitions="*,Auto" Margin="0,3">
+                <TextBlock Grid.Column="0" Text="{Binding L.CantDeficiency}" FontSize="12" Foreground="#8888aa"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5">
+                  <TextBlock Text="{Binding EtcsFpClass}" FontSize="14" FontWeight="Bold"
+                             Foreground="#e8e8ff" FontFamily="Consolas,monospace"/>
+                  <Border Background="#f97316" CornerRadius="3" Padding="5,1">
+                    <TextBlock Text="{Binding EtcsFpMm, StringFormat='{}{0} mm'}"
+                               FontSize="11" FontWeight="Bold" Foreground="White" FontFamily="Consolas,monospace"/>
+                  </Border>
+                </StackPanel>
+              </Grid>
+              <Border Background="#2e2e50" Height="1"/>
+              <Grid ColumnDefinitions="*,Auto" Margin="0,3">
+                <TextBlock Grid.Column="0" Text="{Binding L.EtcsMaxSpeed}" FontSize="12" Foreground="#8888aa"/>
+                <TextBlock Grid.Column="1" Text="{Binding EtcsMaxSpeedDisplay}"
+                           FontSize="14" FontWeight="Bold" Foreground="#f97316" FontFamily="Consolas,monospace"/>
+              </Grid>
+              <Border Background="#2e2e50" Height="1"/>
+              <Grid ColumnDefinitions="*,Auto" Margin="0,3">
+                <TextBlock Grid.Column="0" Text="{Binding L.BrakingPctLabel}" FontSize="12" Foreground="#8888aa"/>
+                <TextBlock Grid.Column="1" Text="{Binding BrakingPercentageDisplay}"
+                           FontSize="14" FontWeight="Bold" FontFamily="Consolas,monospace">
+                  <TextBlock.Foreground>
+                    <Binding Path="EtcsBrakingColor" Converter="{StaticResource HexColor}"/>
+                  </TextBlock.Foreground>
+                </TextBlock>
+              </Grid>
+              <Border Background="#2e2e50" Height="1"/>
+              <Grid ColumnDefinitions="*,Auto" Margin="0,3">
+                <TextBlock Grid.Column="0" Text="{Binding L.TrainLength}" FontSize="12" Foreground="#8888aa"/>
+                <TextBlock Grid.Column="1" Text="{Binding TotalLengthDisplay}"
+                           FontSize="14" FontWeight="Bold" Foreground="#e8e8ff" FontFamily="Consolas,monospace"/>
+              </Grid>
+            </StackPanel>
+          </Border>
+          <StackPanel Spacing="6" IsVisible="{Binding IsPdfSupported}">
+            <CheckBox IsChecked="{Binding AutoOpenPdf}" Foreground="#8888aa" FontSize="11"
+                      Content="{Binding L.AutoOpenPdf}"/>
+            <Grid ColumnDefinitions="Auto,*">
+              <Button Grid.Column="0"
+                      Background="#252540" Foreground="#e8e8ff"
+                      Padding="10,11" CornerRadius="8" BorderThickness="1" BorderBrush="#3a3a60"
+                      Command="{Binding TogglePdfDarkModeCommand}" Cursor="Hand">
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                  <TextBlock Text="{Binding PdfModeButtonIconLabel}" FontFamily="{StaticResource FaFont}" FontSize="12"/>
+                  <TextBlock Text="{Binding PdfModeButtonLabel}" FontSize="12" FontWeight="SemiBold"/>
+                </StackPanel>
+              </Button>
+              <Button Grid.Column="1"
+                      Background="#3b82f6" Foreground="White"
+                      HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                      Padding="0,11" CornerRadius="8" IsEnabled="True"
+                      Command="{Binding GeneratePdfCommand}" Cursor="Hand">
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                  <TextBlock Text="{Binding L.PrintReportIcon}" FontFamily="{StaticResource FaFont}" FontSize="13"/>
+                  <TextBlock Text="{Binding L.PrintReport}" FontSize="13" FontWeight="Bold"/>
+                </StackPanel>
+              </Button>
+            </Grid>
+          </StackPanel>
+          <TextBlock FontSize="10" Foreground="#8888aa" TextWrapping="Wrap" Margin="1,0" LineHeight="17">FP3 (130 mm): 163, 186, 189, 363, 363.5, 372, 383, 386, 388, 393<LineBreak/>FP2 (100 mm): ostatní řady</TextBlock>
+        </StackPanel>
+      </ScrollViewer>
+
+      <!-- ── TAB: MENU ──────────────────────────────────────────────────── -->
+      <ScrollViewer IsVisible="{Binding MobileTabMenu}" VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="12,12" Spacing="10">
+
+          <!-- Consist name -->
+          <TextBlock Text="{Binding L.MenuConsistInfo}" FontSize="10" FontWeight="Bold"
+                     Foreground="#8888aa" LetterSpacing="1.5" Margin="0,0,0,4"/>
+          <TextBox Text="{Binding ConsistName}" Watermark="{Binding L.ConsistNamePh}"
+                   Background="#1e1e32" BorderBrush="#2e2e50" Foreground="#e8e8ff"
+                   FontSize="13" CornerRadius="6" Padding="10,9"
+                   IsTabStop="False"/>
+
+          <Border Background="#2e2e50" Height="1"/>
+
+          <!-- Consist actions -->
+          <Button Content="{Binding L.SaveButton}" Background="#3b82f6" Foreground="White"
+                  FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Center" Padding="0,12" CornerRadius="8"
+                  Command="{Binding SaveConsistCommand}" Cursor="Hand"/>
+          <Button Content="{Binding L.NewButton}" Background="#1e1e32" Foreground="#8888aa"
+                  FontSize="14" FontWeight="SemiBold" HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Center" Padding="0,12" CornerRadius="8"
+                  BorderBrush="#2e2e50" BorderThickness="1"
+                  Command="{Binding NewConsistCommand}" Cursor="Hand"/>
+
+          <Border Background="#2e2e50" Height="1"/>
+
+          <!-- Saved consists -->
+          <TextBlock Text="{Binding L.MenuSaved}" FontSize="10" FontWeight="Bold"
+                     Foreground="#8888aa" LetterSpacing="1.5" Margin="0,0,0,4"/>
+          <TextBlock Text="{Binding L.NoSaved}" Foreground="#8888aa" FontSize="12"
+                     IsVisible="{Binding !SavedConsists.Count}"/>
+          <ItemsControl ItemsSource="{Binding SavedConsists}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="models:Consist">
+                <Border Background="#1e1e32" CornerRadius="8" Padding="10" Margin="0,0,0,5">
+                  <StackPanel Spacing="5">
+                    <TextBlock Text="{Binding Name}" FontSize="13" FontWeight="SemiBold" Foreground="#e8e8ff"/>
+                    <TextBlock FontSize="10" Foreground="#8888aa" FontFamily="Consolas,monospace">
+                      <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} · {1:dd MMM HH:mm}">
+                          <Binding Path="Entries.Count"/>
+                          <Binding Path="LastModified"/>
+                        </MultiBinding>
+                      </TextBlock.Text>
+                    </TextBlock>
+                    <Grid ColumnDefinitions="*,Auto">
+                      <Button Grid.Column="0"
+                              Content="{Binding $parent[UserControl].DataContext.L.LoadButton}"
+                              Background="#3b82f6" Foreground="White" FontSize="12" FontWeight="Bold"
+                              Padding="0,7" CornerRadius="5" HorizontalAlignment="Stretch"
+                              HorizontalContentAlignment="Center" Margin="0,0,4,0"
+                              Command="{Binding $parent[UserControl].DataContext.LoadConsistCommand}"
+                              CommandParameter="{Binding}" Cursor="Hand"/>
+                      <Button Grid.Column="1" Content="✕" Background="Transparent" Foreground="#ef4444"
+                              BorderBrush="#2e2e50" BorderThickness="1" Width="30" Height="30"
+                              Padding="0" FontSize="13" CornerRadius="5"
+                              HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                              Command="{Binding $parent[UserControl].DataContext.DeleteConsistCommand}"
+                              CommandParameter="{Binding}" Cursor="Hand"/>
+                    </Grid>
+                  </StackPanel>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+
+          <Border Background="#2e2e50" Height="1"/>
+
+          <!-- Language -->
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button Content="🇨🇿" Padding="14,10" BorderThickness="0" CornerRadius="8"
+                    FontSize="16" Cursor="Hand" Command="{Binding SetCzechCommand}">
+              <Button.Background>
+                <Binding Path="IsCzech">
+                  <Binding.Converter><conv:BoolToColorConverter TrueColor="#f97316" FalseColor="#252540"/></Binding.Converter>
+                </Binding>
+              </Button.Background>
+            </Button>
+            <Button Content="🇬🇧" Padding="14,10" BorderThickness="0" CornerRadius="8"
+                    FontSize="16" Cursor="Hand" Command="{Binding SetEnglishCommand}">
+              <Button.Background>
+                <Binding Path="IsEnglish">
+                  <Binding.Converter><conv:BoolToColorConverter TrueColor="#f97316" FalseColor="#252540"/></Binding.Converter>
+                </Binding>
+              </Button.Background>
+            </Button>
+          </StackPanel>
+
+        </StackPanel>
+      </ScrollViewer>
+
+    </Grid><!-- /mobile content -->
+
+    <!-- ── BOTTOM NAV BAR ─────────────────────────────────────────────── -->
+    <Border Grid.Row="3" Background="#161626" BorderBrush="#2e2e50" BorderThickness="0,1,0,0" Padding="0,0" MinHeight="72">
+      <Grid ColumnDefinitions="*,*,*,*">
+
+        <!-- Consist -->
+        <Button Grid.Column="0" BorderThickness="0" Padding="0,10" HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center" Cursor="Hand"
+                Command="{Binding SetMobileTabConsistCommand}" MinHeight="72">
+          <Button.Background>
+            <Binding Path="MobileTabConsist">
+              <Binding.Converter><conv:BoolToColorConverter TrueColor="#1a1a2e" FalseColor="#161626"/></Binding.Converter>
+            </Binding>
+          </Button.Background>
+          <StackPanel HorizontalAlignment="Center" Spacing="2" ClipToBounds="False">
+            <TextBlock Text="{Binding L.NavConsistEmoji}" FontSize="18" TextAlignment="Center" FontFamily="{StaticResource FaFont}" Margin="2,0" Padding="0"/>
+            <TextBlock Text="{Binding L.NavConsist}" FontSize="10" FontWeight="Bold" TextAlignment="Center">
+              <TextBlock.Foreground>
+                <Binding Path="MobileTabConsist">
+                  <Binding.Converter><conv:BoolToColorConverter TrueColor="#f97316" FalseColor="#555577"/></Binding.Converter>
+                </Binding>
+              </TextBlock.Foreground>
+            </TextBlock>
+          </StackPanel>
+        </Button>
+
+        <!-- AddLoco -->
+        <Button Grid.Column="1" BorderThickness="0" Padding="0,10" HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center" Cursor="Hand"
+                Command="{Binding SetMobileTabAddLocoCommand}" MinHeight="72">
+          <Button.Background>
+            <Binding Path="MobileTabAddLoco">
+              <Binding.Converter><conv:BoolToColorConverter TrueColor="#1a1a2e" FalseColor="#161626"/></Binding.Converter>
+            </Binding>
+          </Button.Background>
+          <StackPanel HorizontalAlignment="Center" Spacing="2" ClipToBounds="False">
+            <TextBlock Text="{Binding L.NavAddLocoEmoji}" FontSize="18" TextAlignment="Center" FontFamily="{StaticResource FaFont}" Margin="2,0" Padding="0"/>
+            <TextBlock Text="{Binding L.NavAddLoco}" FontSize="10" FontWeight="Bold" TextAlignment="Center">
+              <TextBlock.Foreground>
+                <Binding Path="MobileTabAddLoco">
+                  <Binding.Converter><conv:BoolToColorConverter TrueColor="#f97316" FalseColor="#555577"/></Binding.Converter>
+                </Binding>
+              </TextBlock.Foreground>
+            </TextBlock>
+          </StackPanel>
+        </Button>
+
+        <!-- Etcs -->
+        <Button Grid.Column="2" BorderThickness="0" Padding="0,10" HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center" Cursor="Hand"
+                Command="{Binding SetMobileTabEtcsCommand}" MinHeight="72">
+          <Button.Background>
+            <Binding Path="MobileTabEtcs">
+              <Binding.Converter><conv:BoolToColorConverter TrueColor="#1a1a2e" FalseColor="#161626"/></Binding.Converter>
+            </Binding>
+          </Button.Background>
+          <StackPanel HorizontalAlignment="Center" Spacing="2" ClipToBounds="False">
+            <TextBlock Text="{Binding L.NavEtcsEmoji}" FontSize="18" TextAlignment="Center" FontFamily="{StaticResource FaFont}" Margin="2,0" Padding="0"/>
+            <TextBlock Text="{Binding L.NavEtcs}" FontSize="10" FontWeight="Bold" TextAlignment="Center">
+              <TextBlock.Foreground>
+                <Binding Path="MobileTabEtcs">
+                  <Binding.Converter><conv:BoolToColorConverter TrueColor="#f97316" FalseColor="#555577"/></Binding.Converter>
+                </Binding>
+              </TextBlock.Foreground>
+            </TextBlock>
+          </StackPanel>
+        </Button>
+
+        <!-- Menu -->
+        <Button Grid.Column="3" BorderThickness="0" Padding="0,10" HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center" Cursor="Hand"
+                Command="{Binding SetMobileTabMenuCommand}" MinHeight="72">
+          <Button.Background>
+            <Binding Path="MobileTabMenu">
+              <Binding.Converter><conv:BoolToColorConverter TrueColor="#1a1a2e" FalseColor="#161626"/></Binding.Converter>
+            </Binding>
+          </Button.Background>
+          <StackPanel HorizontalAlignment="Center" Spacing="2" ClipToBounds="False">
+            <TextBlock Text="{Binding L.NavMenuEmoji}" FontSize="18" TextAlignment="Center" FontFamily="{StaticResource FaFont}" Margin="2,0" Padding="0"/>
+            <TextBlock Text="{Binding L.NavMenu}" FontSize="10" FontWeight="Bold" TextAlignment="Center">
+              <TextBlock.Foreground>
+                <Binding Path="MobileTabMenu">
+                  <Binding.Converter><conv:BoolToColorConverter TrueColor="#f97316" FalseColor="#555577"/></Binding.Converter>
+                </Binding>
+              </TextBlock.Foreground>
+            </TextBlock>
+          </StackPanel>
+        </Button>
+
+
+
+      </Grid>
+    </Border>
+
+  </Grid><!-- /mobile root grid -->
+
+    <!-- ═══ EDB DIALOG OVERLAY — Panel level: works on desktop and mobile ═══ -->
+  <Border Background="#cc000010"
+          IsVisible="{Binding EdbDialogVisible}" ZIndex="300">
+    <Border Background="#2a2a3e" CornerRadius="12" Padding="28,22"
+            HorizontalAlignment="Center" VerticalAlignment="Center"
+            MaxWidth="420" BorderBrush="#f97316" BorderThickness="2">
+      <StackPanel Spacing="14">
+        <TextBlock Text="{Binding L.EdbDialogTitle}" FontSize="17" FontWeight="Bold" Foreground="#f97316"/>
+        <TextBlock Text="{Binding EdbDialogBody}" FontSize="13" Foreground="#e2e2f0"
+                   TextWrapping="Wrap" LineHeight="22"/>
+        <Grid ColumnDefinitions="*,*" Margin="0,4,0,0">
+          <Button Grid.Column="0" Content="{Binding L.EdbYes}" Background="#f97316" Foreground="White"
+                  FontSize="13" FontWeight="Bold" Padding="0,11" HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Center" CornerRadius="7" Margin="0,0,6,0"
+                  BorderThickness="0" Command="{Binding EdbYesCommand}" Cursor="Hand"/>
+          <Button Grid.Column="1" Content="{Binding L.EdbNo}" Background="#2a2a3e" Foreground="#a0a0c0"
+                  FontSize="13" Padding="0,11" HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Center" BorderBrush="#3a3a55" BorderThickness="1"
+                  CornerRadius="7" Command="{Binding EdbNoCommand}" Cursor="Hand"/>
+        </Grid>
+      </StackPanel>
+    </Border>
+  </Border>
+
+  <!-- ═══ TOAST NOTIFICATION ══════════════════════════════════════════ -->
+  <!-- Second child of Panel — floats above everything via ZIndex        -->
+  <Border x:Name="ToastBorder"
+          CornerRadius="8" Padding="14,10"
+          HorizontalAlignment="Center" VerticalAlignment="Bottom"
+          Margin="0,0,0,32"
+          Opacity="0" IsHitTestVisible="False"
+          ZIndex="500">
+    <Border.Background>
+      <Binding Path="IsErrorToast">
+        <Binding.Converter><conv:BoolToColorConverter TrueColor="#2a1010" FalseColor="#1e2a1e"/></Binding.Converter>
+      </Binding>
+    </Border.Background>
+    <Border.BorderBrush>
+      <Binding Path="IsErrorToast">
+        <Binding.Converter><conv:BoolToColorConverter TrueColor="#ef4444" FalseColor="#22c55e"/></Binding.Converter>
+      </Binding>
+    </Border.BorderBrush>
+    <Border.BorderThickness><Thickness>1</Thickness></Border.BorderThickness>
+    <TextBlock x:Name="ToastText"
+               FontSize="13" FontWeight="SemiBold"
+               Text="{Binding StatusMessage}">
+      <TextBlock.Foreground>
+        <Binding Path="IsErrorToast">
+          <Binding.Converter><conv:BoolToColorConverter TrueColor="#fca5a5" FalseColor="#22c55e"/></Binding.Converter>
+        </Binding>
+      </TextBlock.Foreground>
+    </TextBlock>
+  </Border>
+
+  </Panel>
+</UserControl>
