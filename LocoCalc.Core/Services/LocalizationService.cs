@@ -48,7 +48,6 @@ public partial class LocalizationService : ObservableObject
     public string AppSubtitle        => T("AppSubtitle");
     public string BrakingWeightLabel => T("BrakingWeightLabel");
     public string PanelLocos         => T("PanelLocos");
-    public string ReloadLocos        => T("ReloadLocos");
     public string AddToConsist       => T("AddToConsist");
     public string SearchPlaceholder  => T("SearchPlaceholder");
     public string ConsistNamePh      => T("ConsistNamePh");
@@ -94,17 +93,11 @@ public partial class LocalizationService : ObservableObject
     public string NavMenuEmoji    => T("NavMenuEmoji");
     public string MenuConsistInfo => T("MenuConsistInfo");
     public string MenuSaved       => T("MenuSaved");
-    public string MenuNewConsist  => T("MenuNewConsist");
 
     public string PrintReport        => T("PrintReport");
     public string PrintReportIcon    => T("PrintReportIcon");
-    public string PdfDarkMode        => T("PdfDarkMode");
-    public string PdfDarkModeIcon    => T("PdfDarkModeIcon");
-    public string PdfLightMode       => T("PdfLightMode");
-    public string PdfLightModeIcon   => T("PdfLightModeIcon");
     public string AutoOpenPdf        => T("AutoOpenPdf");
     public string ErrorNothingToPrint => T("ErrorNothingToPrint");
-    public string LightDarkToggle    => T("LightDarkToggle");
     public string ConsistTotalWeight => T("ConsistTotalWeight");
     public string ConsistBrakingPct => T("ConsistBrakingPct");
 
@@ -128,9 +121,6 @@ public partial class LocalizationService : ObservableObject
     public string StatusLoaded(string name)  => string.Format(T("StatusLoaded"), name);
     public string StatusDeleted(string name) => string.Format(T("StatusDeleted"), name);
     public string StatusNew                  => T("StatusNew");
-
-    public string LastSuffix => T("LastSuffix");
-    public string CountSep   => T("CountSep");
 
     /// <summary>Gets a string by key with an explicit language flag (for PDF generators).</summary>
     public static string GetString(string key, bool cs)

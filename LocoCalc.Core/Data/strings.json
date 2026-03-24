@@ -2,7 +2,6 @@
   "AppSubtitle":          { "cs": "Kalkulátor brzdících procent",          "en": "Braking Percentage Calculator" },
   "BrakingWeightLabel":   { "cs": "Brzdící procenta:",                     "en": "Braking percent:" },
   "PanelLocos":           { "cs": "LOKOMOTIVY",                            "en": "LOCOMOTIVES" },
-  "ReloadLocos":          { "cs": "↻  Znovu načíst",                       "en": "↻  Reload" },
   "AddToConsist":         { "cs": "＋  Přidat do soupravy",                "en": "＋  Add to Consist" },
   "SearchPlaceholder":    { "cs": "Hledat…",                               "en": "Search…" },
   "ConsistNamePh":        { "cs": "Název soupravy…",                       "en": "Consist name…" },
@@ -50,15 +49,11 @@
   "NavMenuEmoji":         { "cs": "\uF0C9",                                "en": "\uF0C9" },
   "MenuConsistInfo":      { "cs": "Info soupravy",                         "en": "Consist Info" },
   "MenuSaved":            { "cs": "Uložené soupravy",                      "en": "Saved Consists" },
-  "MenuNewConsist":       { "cs": "Nová souprava",                         "en": "New Consist" },
 
   "PrintReport":          { "cs": "Tisknout / PDF",                        "en": "Print / PDF" },
   "PrintReportIcon":      { "cs": "\uF02F",                                "en": "\uF02F" },
-  "PdfDarkModeIcon":      { "cs": "\uF186",                                "en": "\uF186" },
-  "PdfLightModeIcon":     { "cs": "\uF185",                                "en": "\uF185" },
   "AutoOpenPdf":          { "cs": "Automaticky otevřít PDF",               "en": "Auto-open PDF" },
   "ErrorNothingToPrint":  { "cs": "Souprava je prázdná — přidejte lokomotivy před generováním PDF.", "en": "Consist is empty — add locomotives before generating a PDF." },
-  "LightDarkToggle":      { "cs": "\uF186 Tmavý report",                   "en": "\uF186 Dark report" },
 
   "TrDc":                 { "cs": "Stejnosměrné",                          "en": "DC Electric" },
   "TrAc":                 { "cs": "Střídavé",                              "en": "AC Electric" },
@@ -83,9 +78,6 @@
   "StatusDeleted":        { "cs": "Smazáno \u201e{0}\u201c",               "en": "Deleted \"{0}\"" },
   "StatusNew":            { "cs": "Nová souprava",                         "en": "New consist" },
 
-  "LastSuffix":           { "cs": " posl.",                                "en": " lst." },
-  "CountSep":             { "cs": "× ",                                    "en": "× " },
-
   "PdfCrossSectionValue":   { "cs": "GC",                                  "en": "GC" },
   "PdfBrakingPctLabel":     { "cs": "BRZDÍCÍ %",                           "en": "BRAKING %" },
   "PdfMaxSpeedLabel":       { "cs": "MAX. RYCHLOST",                       "en": "MAX SPEED" },
@@ -103,9 +95,6 @@
   "PdfColLength":           { "cs": "Délka",                               "en": "Length" },
   "PdfColBrakes":           { "cs": "Brzdy",                               "en": "Brakes" },
   "PdfTotal":               { "cs": "Celkem",                              "en": "Total" },
-  "PdfBrakesOn":            { "cs": "ZAP",                                 "en": "ON" },
-  "PdfBrakesOff":           { "cs": "VYP",                                 "en": "OFF" },
-  "PdfBrakesLocked":        { "cs": "ZAP (zámek)",                         "en": "ON (locked)" },
   "PdfFpLegend":            { "cs": "FP3 (130 mm): 163, 186, 189, 363, 363.5, 372, 383, 386, 388, 393  |  FP2 (100 mm): ostatní",
                               "en": "FP3 (130 mm): 163, 186, 189, 363, 363.5, 372, 383, 386, 388, 393  |  FP2 (100 mm): others" }
 }

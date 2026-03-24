@@ -413,21 +413,6 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void SelectLoco(LocomotiveDefinition? loco)
-    {
-        if (loco is null) return;
-        SelectedLoco = loco;
-    }
-
-    [RelayCommand]
-    private void SelectAndAdd(LocomotiveDefinition? loco)
-    {
-        if (loco is null) return;
-        SelectedLoco = loco;
-        AddLocoToConsistCommand.Execute(null);
-    }
-
-    [RelayCommand]
     private void ClearSpeedOverride()
     {
         SpeedOverride = null;
