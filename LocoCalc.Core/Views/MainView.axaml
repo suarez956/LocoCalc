@@ -342,7 +342,10 @@
                         <Binding Path="EntryBorderColor" Converter="{StaticResource HexColor}"/>
                       </Border.BorderBrush>
                       <StackPanel HorizontalAlignment="Center" Spacing="2">
-                        <TextBlock Text="🚂" FontSize="14" TextAlignment="Center"/>
+                        <Image Source="{Binding LocoImage}" Width="62" Height="36" Stretch="Uniform"
+                               IsVisible="{Binding LocoImage, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                        <TextBlock Text="🚂" FontSize="14" TextAlignment="Center"
+                                   IsVisible="{Binding LocoImage, Converter={x:Static ObjectConverters.IsNull}}"/>
                         <TextBlock Text="{Binding Designation}" FontSize="9" Foreground="#8888aa"
                                    TextAlignment="Center" TextWrapping="Wrap"/>
                         <TextBlock Text="{Binding PositionDisplay}" FontSize="9" FontWeight="SemiBold"
@@ -726,7 +729,8 @@
                       </Border>
                       <Button Grid.Column="2" Content="{Binding BrakesButtonText}"
                               Foreground="White" FontSize="10" FontWeight="Bold"
-                              FontFamily="Consolas,monospace" Padding="7,5" CornerRadius="5"
+                              FontFamily="Consolas,monospace" Height="44" Padding="7,0" CornerRadius="6"
+                              HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                               Margin="0,0,3,0" MinWidth="52" IsEnabled="{Binding !BrakesLocked}"
                               Command="{Binding $parent[UserControl].DataContext.ToggleBrakesCommand}"
                               CommandParameter="{Binding}" Cursor="Hand">
@@ -736,7 +740,7 @@
                       </Button>
                       <Button Grid.Column="3" Content="{Binding EdbButtonText}"
                               Foreground="White" FontSize="10" FontWeight="Bold"
-                              Padding="6,5" CornerRadius="5" Margin="0,0,3,0"
+                              Height="44" Padding="6,0" CornerRadius="6" Margin="0,0,3,0"
                               IsVisible="{Binding HasEDB}"
                               Command="{Binding $parent[UserControl].DataContext.ToggleEdbCommand}"
                               CommandParameter="{Binding}" Cursor="Hand">
@@ -744,20 +748,22 @@
                           <Binding Path="EdbButtonColor" Converter="{StaticResource HexColor}"/>
                         </Button.Background>
                       </Button>
-                      <StackPanel Grid.Column="4" Spacing="2" Margin="0,0,3,0">
+                      <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="3" Margin="0,0,3,0">
                         <Button Content="↑" Background="#252540" Foreground="#e8e8ff" BorderThickness="0"
-                                Width="22" Height="22" Padding="0" FontSize="11" CornerRadius="3"
+                                Width="44" Height="44" Padding="0" FontSize="18" CornerRadius="6"
                                 HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                                 Command="{Binding $parent[UserControl].DataContext.MoveUpCommand}"
                                 CommandParameter="{Binding}" Cursor="Hand"/>
                         <Button Content="↓" Background="#252540" Foreground="#e8e8ff" BorderThickness="0"
-                                Width="22" Height="22" Padding="0" FontSize="11" CornerRadius="3"
+                                Width="44" Height="44" Padding="0" FontSize="18" CornerRadius="6"
                                 HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                                 Command="{Binding $parent[UserControl].DataContext.MoveDownCommand}"
                                 CommandParameter="{Binding}" Cursor="Hand"/>
                       </StackPanel>
-                      <Button Grid.Column="5" Content="✕" Background="Transparent"
-                              Foreground="#ef4444" BorderThickness="0" FontSize="15" Padding="3,0" Opacity="0.7"
+                      <Button Grid.Column="5" Content="✕" Background="#ef4444"
+                              Foreground="White" BorderThickness="0" FontSize="20"
+                              Width="44" Height="44" Padding="0" CornerRadius="6"
+                              HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                               Command="{Binding $parent[UserControl].DataContext.RemoveEntryCommand}"
                               CommandParameter="{Binding}" Cursor="Hand"/>
                     </Grid>
@@ -785,7 +791,11 @@
                         <Binding Path="EntryBorderColor" Converter="{StaticResource HexColor}"/>
                       </Border.BorderBrush>
                       <StackPanel HorizontalAlignment="Center" Spacing="2">
-                        <TextBlock Text="🚂" FontSize="16" TextAlignment="Center" FontFamily="{StaticResource EmojiFont}" Margin="0,1,0,0"/>
+                        <Image Source="{Binding LocoImage}" Width="68" Height="40" Stretch="Uniform"
+                               IsVisible="{Binding LocoImage, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                        <TextBlock Text="🚂" FontSize="16" TextAlignment="Center"
+                                   FontFamily="{StaticResource EmojiFont}" Margin="0,1,0,0"
+                                   IsVisible="{Binding LocoImage, Converter={x:Static ObjectConverters.IsNull}}"/>
                         <TextBlock Text="{Binding Designation}" FontSize="10" Foreground="#8888aa"
                                    TextAlignment="Center" TextWrapping="Wrap"/>
                         <TextBlock Text="{Binding PositionDisplay}" FontSize="10" FontWeight="SemiBold"

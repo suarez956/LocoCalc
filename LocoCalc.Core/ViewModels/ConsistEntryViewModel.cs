@@ -1,3 +1,5 @@
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LocoCalcAvalonia.Models;
 using LocoCalcAvalonia.Services;
@@ -15,6 +17,7 @@ public partial class ConsistEntryViewModel : ObservableObject
     public int MaxSpeed { get; }
     public string FpClass { get; }
     public bool HasEDB => BrakingWeightWithEDB.HasValue;
+    public Bitmap? LocoImage { get; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(BrakesLocked))]
@@ -92,11 +95,37 @@ public partial class ConsistEntryViewModel : ObservableObject
         _brakesEnabled       = entry.BrakesEnabled;
         _edbActive           = entry.EdbActive;
 
+        LocoImage = LoadLocoImage(DefinitionId);
+
         LocalizationService.Instance.PropertyChanged += (_, _) =>
         {
             OnPropertyChanged(nameof(PositionDisplay));
             OnPropertyChanged(nameof(BrakesButtonText));
         };
+    }
+
+    private static Bitmap? LoadLocoImage(string id)
+    {
+        var filename = id.Replace('_', '.');
+        var uri = new Uri($"avares://LocoCalc.Core/Assets/LocoImages/{filename}.webp");
+        try
+        {
+            using var stream = AssetLoader.Open(uri);
+            return new Bitmap(stream);
+        }
+        catch
+        {
+            try
+            {
+                using var fallback = AssetLoader.Open(
+                    new Uri("avares://LocoCalc.Core/Assets/LocoImages/UFO.webp"));
+                return new Bitmap(fallback);
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 
     partial void OnPositionChanged(ConsistPosition value)
