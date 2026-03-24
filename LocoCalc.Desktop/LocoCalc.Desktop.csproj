@@ -7,6 +7,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>LocoCalcAvalonia</RootNamespace>
     <AssemblyName>LocoCalcAvalonia</AssemblyName>
+    <Version>1.1.0</Version>
+    <FileVersion>1.1.0</FileVersion>
 
     <!-- Explicitly exclude Android RIDs injected by the Android workload when in the same solution -->
     <_IsAndroidProject>false</_IsAndroidProject>
