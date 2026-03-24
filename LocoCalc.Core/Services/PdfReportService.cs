@@ -186,13 +186,13 @@ public class PdfReportService : IPdfGenerator
                                 var bwColor  = e.BrakesEnabled ? th.TxtCell : th.Red;
                                 var brakesTxt = e.BrakesEnabled ? (e.EdbActive ? "P+E" : "P") : "x";
 
-                                t.Cell().Background(bg).Padding(5).Text(e.Designation).FontSize(10);
+                                t.Cell().Background(bg).Padding(5).Text(e.Designation).FontColor(th.TxtCell).FontSize(10);
                                 t.Cell().Background(bg).Padding(5).AlignCenter()
-                                 .Text($"{e.TotalWeightTonnes:F1} t").FontSize(10);
+                                 .Text($"{e.TotalWeightTonnes:F1} t").FontColor(th.TxtCell).FontSize(10);
                                 t.Cell().Background(bg).Padding(5).AlignCenter()
                                  .Text($"{bw:F0} t{edbNote}").FontColor(bwColor).FontSize(10);
                                 t.Cell().Background(bg).Padding(5).AlignCenter()
-                                 .Text($"{e.LengthM:F0} m").FontSize(10);
+                                 .Text($"{e.LengthM:F0} m").FontColor(th.TxtCell).FontSize(10);
                                 t.Cell().Background(bg).Padding(5).AlignCenter()
                                  .Text(brakesTxt)
                                  .FontColor(e.BrakesEnabled ? th.Green : th.Red).FontSize(10);
@@ -200,7 +200,7 @@ public class PdfReportService : IPdfGenerator
 
                             void Tot(string txt) =>
                                 t.Cell().Background(th.BgTotals).Padding(5)
-                                 .Text(txt).Bold().FontColor(th.TxtMain).FontSize(10);
+                                 .Text(txt).Bold().FontColor(th.TxtCell).FontSize(10);
                             Tot(T("PdfTotal"));
                             Tot($"{total:F1} t");
                             Tot($"{ab:F0} t");
