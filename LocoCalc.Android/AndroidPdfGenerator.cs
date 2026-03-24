@@ -34,7 +34,7 @@ public class AndroidPdfGenerator : IPdfGenerator
         var date     = DateTime.Now.ToString(isCs ? "dd. MM. yyyy HH:mm" : "dd MMM yyyy HH:mm");
         var lowBrake = pct < 50;
 
-        string T(string cs, string en) => isCs ? cs : en;
+        string T(string key) => LocalizationService.GetString(key, isCs);
 
         // ── Paints ──────────────────────────────────────────────────────────
         Paint TextPaint(float size, Color color, bool bold = false)
@@ -53,21 +53,25 @@ public class AndroidPdfGenerator : IPdfGenerator
             return p;
         }
 
-        var orange     = Color.ParseColor("#f97316");
-        var dark       = Color.ParseColor("#1a1a2e");
-        var grey       = Color.ParseColor(darkMode ? "#8888aa" : "#666666");
-        var lightGrey  = Color.ParseColor(darkMode ? "#8888aa" : "#888888");
-        var white      = Color.White;
-        var black      = Color.ParseColor("#111111");
-        var green      = Color.ParseColor("#27ae60");
-        var red        = Color.ParseColor("#c0392b");
-        var bgPage     = Color.ParseColor(darkMode ? "#0f0f1a" : "#ffffff");
-        var bgCard     = Color.ParseColor(darkMode ? "#1e1e32" : "#f8f8f8");
-        var bgEtcs     = Color.ParseColor(darkMode ? "#161626" : "#1a1a2e");
-        var bgRow      = Color.ParseColor("#f9f9f9");
-        var txtMain    = Color.ParseColor(darkMode ? "#e8e8ff" : "#1a1a2e");
-        var warnBg     = Color.ParseColor(darkMode ? "#3f0f0f" : "#fdecea");
-        var warnText   = Color.ParseColor("#922b21");
+        // ── Theme colours ────────────────────────────────────────────────────
+        var th      = PdfThemeService.Get(darkMode);
+        var orange  = Color.ParseColor(th.Orange);
+        var dark    = Color.ParseColor(th.BgTableHdr);  // always-dark table header
+        var grey    = Color.ParseColor(th.TxtSub);
+        var white   = Color.White;
+        var black   = Color.ParseColor(th.TxtCell);
+        var green   = Color.ParseColor(th.Green);
+        var red     = Color.ParseColor(th.Red);
+        var bgPage  = Color.ParseColor(th.BgPage);
+        var bgCard  = Color.ParseColor(th.BgCard);
+        var bgEtcs  = Color.ParseColor(th.BgEtcs);
+        var bgRow   = Color.ParseColor(th.BgRowOdd);
+        var txtMain = Color.ParseColor(th.TxtMain);
+        var txtEtcs = Color.ParseColor(th.TxtEtcs);
+        var warnBg  = Color.ParseColor(th.BgWarn);
+        var warnTxt = Color.ParseColor(th.TxtWarn);
+        var footer  = Color.ParseColor(th.FooterText);
+        var ftrLine = Color.ParseColor(th.FooterLine);
 
         var doc = new PdfDocument();
         var pageInfo = new PdfDocument.PageInfo.Builder(PageW, PageH, 1).Create();
@@ -82,10 +86,9 @@ public class AndroidPdfGenerator : IPdfGenerator
         // ── Header ───────────────────────────────────────────────────────────
         cv.DrawText("LocoCalc", Margin, y + 20, TextPaint(22, orange, true));
         cv.DrawText(consistName, Margin, y + 40, TextPaint(14, txtMain, true));
-        cv.DrawText(T("Zpráva o brzdění", "Braking Report"), Margin, y + 55, TextPaint(10, grey));
-        cv.DrawText(date, PageW - Margin - 100, y + 40, TextPaint(10, lightGrey));
+        cv.DrawText(T("PdfBrakingReport"), Margin, y + 55, TextPaint(10, grey));
+        cv.DrawText(date, PageW - Margin - 100, y + 40, TextPaint(10, footer));
         y += 62;
-        // Orange line
         cv.DrawLine(Margin, y, PageW - Margin, y, FillPaint(orange));
         y += 12;
 
@@ -94,12 +97,9 @@ public class AndroidPdfGenerator : IPdfGenerator
         {
             var rect = new RectF(Margin, y, PageW - Margin, y + 44);
             cv.DrawRect(rect, FillPaint(warnBg));
-            cv.DrawText(T("⚠ VAROVÁNÍ — nedostatečná brzdící procenta",
-                          "⚠ WARNING — insufficient braking percent"),
-                Margin + 6, y + 16, TextPaint(9, warnText, true));
-            cv.DrawText(T($"Brzdící procenta {pct:F0}% jsou pod 50%. Vlak nesmí jet na úseky jen s ETCS.",
-                          $"Braking {pct:F0}% below 50%. Train must not use ETCS-only tracks."),
-                Margin + 6, y + 32, TextPaint(8, warnText));
+            cv.DrawText(T("PdfWarnTitle"), Margin + 6, y + 16, TextPaint(9, warnTxt, true));
+            cv.DrawText(string.Format(T("PdfWarnBody"), pct).Split('\n')[0],
+                Margin + 6, y + 32, TextPaint(8, warnTxt));
             y += 50;
         }
 
@@ -110,50 +110,46 @@ public class AndroidPdfGenerator : IPdfGenerator
             var r = new RectF(cx, cy, cx + cardW, cy + 48);
             cv.DrawRect(r, FillPaint(bgCard));
             cv.DrawRect(new RectF(cx, cy, cx + 3, cy + 48), FillPaint(orange));
-            cv.DrawText(label, cx + 8, cy + 14, TextPaint(7.5f, lightGrey));
+            cv.DrawText(label, cx + 8, cy + 14, TextPaint(7.5f, footer));
             cv.DrawText(value, cx + 8, cy + 38, TextPaint(18, valColor, true));
         }
 
         var pctColor = lowBrake ? red : pct < 65 ? orange : green;
-        DrawCard(Margin, y, T("BRZDÍCÍ %", "BRAKING %"), $"{pct:F0} %", pctColor);
-        DrawCard(Margin + cardW + 9, y, T("MAX. RYCHLOST", "MAX SPEED"), $"{maxSpeed} km/h", orange);
+        DrawCard(Margin,           y, T("PdfBrakingPctLabel"), $"{pct:F0} %",      pctColor);
+        DrawCard(Margin + cardW + 9, y, T("PdfMaxSpeedLabel"), $"{maxSpeed} km/h", orange);
         y += 54;
-        DrawCard(Margin, y, T("DÉLKA SOUPRAVY", "CONSIST LENGTH"), $"{len:F0} m", txtMain);
-        DrawCard(Margin + cardW + 9, y, T("CELK. HMOTNOST", "TOTAL WEIGHT"), $"{total:F1} t", txtMain);
+        DrawCard(Margin,           y, T("PdfLengthLabel"), $"{len:F0} m",    txtMain);
+        DrawCard(Margin + cardW + 9, y, T("PdfWeightLabel"), $"{total:F1} t", txtMain);
         y += 54;
 
         // ── ETCS box ─────────────────────────────────────────────────────────
         cv.DrawRect(new RectF(Margin, y, PageW - Margin, y + 90), FillPaint(bgEtcs));
-        cv.DrawText(T("ETCS PARAMETRY", "ETCS PARAMETERS"), Margin + 8, y + 14,
-            TextPaint(8, Color.ParseColor("#aaaaaa"), true));
+        cv.DrawText(T("PdfEtcsParams"), Margin + 8, y + 14, TextPaint(8, txtEtcs, true));
         var etcsRows = new[]
         {
-            (T("Průjezdný průřez", "Cross-section"), "GC", orange),
-            (T("Nedostatek převýšení", "Cant deficiency"), $"{fp} ({fpMm} mm)", white),
-            (T("Max. rychlost ETCS", "ETCS max speed"), $"{maxSpeed} km/h", orange),
-            (T("Brzdící procenta", "Braking pct"), $"{pct:F0} %", lowBrake ? red : green),
-            (T("Délka vlaku", "Train length"), $"{len:F0} m", white),
+            (T("CrossSection"),   T("PdfCrossSectionValue"),         orange),
+            (T("CantDeficiency"), $"{fp} ({fpMm} mm)",               white),
+            (T("EtcsMaxSpeed"),   $"{maxSpeed} km/h",                orange),
+            (T("BrakingPctLabel"),$"{pct:F0} %",                     lowBrake ? red : green),
+            (T("TrainLength"),    $"{len:F0} m",                     white),
         };
         float ey = y + 22;
         foreach (var (lbl, val, col) in etcsRows)
         {
-            cv.DrawText(lbl, Margin + 8, ey, TextPaint(8, Color.ParseColor("#aaaaaa")));
+            cv.DrawText(lbl, Margin + 8, ey, TextPaint(8, txtEtcs));
             cv.DrawText(val, Margin + ContentW / 2f, ey, TextPaint(8, col, true));
             ey += 13;
         }
         y += 96;
 
         // ── Consist table ─────────────────────────────────────────────────────
-        cv.DrawText(T("SLOŽENÍ SOUPRAVY", "CONSIST COMPOSITION"),
-            Margin, y + 10, TextPaint(8, grey, true));
+        cv.DrawText(T("PdfConsistComp"), Margin, y + 10, TextPaint(8, grey, true));
         y += 16;
 
-        // Column widths
         float[] cols = { 120, 70, 70, 60, 50 };
         string[] hdrs = {
-            T("Řada","Series"), T("Hmotnost","Weight"),
-            T("Brzd. váha","Brake wt"), T("Délka","Length"),
-            T("Brzdy","Brakes")
+            T("PdfColSeries"), T("PdfColWeight"),
+            T("PdfColBrakeWt"), T("PdfColLength"), T("PdfColBrakes")
         };
 
         // Header row
@@ -174,18 +170,18 @@ public class AndroidPdfGenerator : IPdfGenerator
             var bw      = e.BrakesEnabled ? BrakingCalculator.ActiveBrake(e) : 0;
             var edbNote = e.BrakesEnabled && e.EdbActive ? " (EDB)" : "";
             var bwColor = e.BrakesEnabled ? black : red;
-            var brakesTxt = isCs
-                ? (e.BrakesEnabled ? (e.Position == ConsistPosition.Rear ? "ZAP (zámek)" : "ZAP") : "VYP")
-                : (e.BrakesEnabled ? (e.Position == ConsistPosition.Rear ? "ON (locked)" : "ON") : "OFF");
+            var brakesTxt = e.BrakesEnabled
+                ? (e.Position == ConsistPosition.Rear ? T("PdfBrakesLocked") : T("PdfBrakesOn"))
+                : T("PdfBrakesOff");
 
             cv.DrawRect(new RectF(Margin, y, PageW - Margin, y + 16), FillPaint(bg));
             var rowData = new (string txt, Color col)[]
             {
-                (e.Designation, black),
-                ($"{e.TotalWeightTonnes:F1} t", black),
-                ($"{bw:F0} t{edbNote}", bwColor),
-                ($"{e.LengthM:F0} m", black),
-                (brakesTxt, e.BrakesEnabled ? green : red),
+                (e.Designation,                  black),
+                ($"{e.TotalWeightTonnes:F1} t",  black),
+                ($"{bw:F0} t{edbNote}",          bwColor),
+                ($"{e.LengthM:F0} m",            black),
+                (brakesTxt,                      e.BrakesEnabled ? green : red),
             };
             cx2 = Margin;
             foreach (var ((txt, col), w) in rowData.Zip(cols))
@@ -199,11 +195,10 @@ public class AndroidPdfGenerator : IPdfGenerator
         // Totals row
         var totData = new[]
         {
-            T("Celkem", "Total"), $"{total:F1} t",
-            $"{ab:F0} t", $"{len:F0} m", "—"
+            T("PdfTotal"), $"{total:F1} t", $"{ab:F0} t", $"{len:F0} m", "—"
         };
         cv.DrawRect(new RectF(Margin, y, PageW - Margin, y + 16),
-            FillPaint(Color.ParseColor("#f0f0f0")));
+            FillPaint(Color.ParseColor(th.BgTotals)));
         cx2 = Margin;
         foreach (var (txt, w) in totData.Zip(cols))
         {
@@ -213,12 +208,11 @@ public class AndroidPdfGenerator : IPdfGenerator
         y += 22;
 
         // FP legend
-        cv.DrawText("FP3 (130mm): 163,186,189,363,363.5,372,383,386,388,393  |  FP2: ostatní",
-            Margin, y + 10, TextPaint(7, lightGrey));
+        cv.DrawText(T("PdfFpLegend"), Margin, y + 10, TextPaint(7, footer));
 
         // Footer
-        cv.DrawLine(Margin, PageH - 30, PageW - Margin, PageH - 30, FillPaint(Color.ParseColor("#dddddd")));
-        cv.DrawText($"LocoCalc  ·  {date}", Margin, PageH - 18, TextPaint(8, lightGrey));
+        cv.DrawLine(Margin, PageH - 30, PageW - Margin, PageH - 30, FillPaint(ftrLine));
+        cv.DrawText($"LocoCalc  ·  {date}", Margin, PageH - 18, TextPaint(8, footer));
 
         doc.FinishPage(page);
 

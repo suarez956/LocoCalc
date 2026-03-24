@@ -17,7 +17,7 @@ public class DesktopLocoDataProvider : ILocoDataProvider
     {
         foreach (var name in _coreAsm.GetManifestResourceNames())
         {
-            if (!name.EndsWith(".json", StringComparison.OrdinalIgnoreCase)) continue;
+            if (!name.StartsWith("Locos", StringComparison.OrdinalIgnoreCase)) continue;
             using var stream = _coreAsm.GetManifestResourceStream(name)!;
             using var reader = new StreamReader(stream);
             yield return reader.ReadToEnd();

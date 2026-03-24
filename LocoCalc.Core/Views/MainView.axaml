@@ -362,7 +362,7 @@
             </Border>
             <Border Grid.Column="1" Background="#1e1e32" CornerRadius="6" Padding="8,7">
               <StackPanel>
-                <TextBlock Text="{Binding L.StatTotalWeight}" FontSize="9" FontWeight="Bold" Foreground="#8888aa" LetterSpacing="1"/>
+                <TextBlock Text="{Binding L.ConsistTotalWeight}" FontSize="9" FontWeight="Bold" Foreground="#8888aa" LetterSpacing="1"/>
                 <TextBlock Text="{Binding TotalWeightDisplay}" FontSize="16" FontWeight="Bold"
                            Foreground="#e8e8ff" FontFamily="Consolas,monospace"/>
               </StackPanel>
@@ -383,7 +383,7 @@
             </Border>
             <Border Grid.Column="4" Background="#1e1e32" CornerRadius="6" Padding="8,7">
               <StackPanel>
-                <TextBlock Text="{Binding L.StatBrakingPct}" FontSize="9" FontWeight="Bold" Foreground="#8888aa" LetterSpacing="1"/>
+                <TextBlock Text="{Binding L.ConsistBrakingPct}" FontSize="9" FontWeight="Bold" Foreground="#8888aa" LetterSpacing="1"/>
                 <TextBlock Text="{Binding BrakingPercentageDisplay}" FontSize="16" FontWeight="Bold"
                            FontFamily="Consolas,monospace">
                   <TextBlock.Foreground>
@@ -497,7 +497,7 @@
               <!-- Consist params -->
               <Border Background="#1e1e32" CornerRadius="8" Padding="11,9">
                 <StackPanel Spacing="2">
-                  <TextBlock Text="PARAMETRY" FontSize="9" FontWeight="Bold"
+                  <TextBlock Text="{Binding L.TrainParameters}" FontSize="9" FontWeight="Bold"
                              Foreground="#8888aa" LetterSpacing="1.5" Margin="0,0,0,5"/>
                   <Grid ColumnDefinitions="*,Auto" Margin="0,3">
                     <TextBlock Grid.Column="0" Text="{Binding L.StatBrakingPct}" FontSize="12" Foreground="#8888aa"/>

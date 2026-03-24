@@ -24,6 +24,8 @@
   <ItemGroup>
     <EmbeddedResource Include="Data\Locos\*.json"
                       LogicalName="Locos\%(Filename)%(Extension)"/>
+    <EmbeddedResource Include="Data\strings.json" LogicalName="strings.json"/>
+    <EmbeddedResource Include="Data\theme.json"   LogicalName="theme.json"/>
   </ItemGroup>
 
   <ItemGroup>

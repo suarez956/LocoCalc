@@ -4,8 +4,6 @@ using CommunityToolkit.Mvvm.Input;
 using LocoCalcAvalonia.Models;
 using LocoCalcAvalonia.Services;
 
-using LocoCalcAvalonia.Models;
-
 namespace LocoCalcAvalonia.ViewModels;
 
 public partial class MainViewModel : ObservableObject

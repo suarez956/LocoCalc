@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LocoCalcAvalonia")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+acbefe5f0866c580155ba19135c40bd8eca0021b")]
 [assembly: System.Reflection.AssemblyProductAttribute("LocoCalcAvalonia")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LocoCalcAvalonia")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
