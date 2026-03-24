@@ -220,13 +220,23 @@
                      Background="#1e1e32" BorderBrush="#2e2e50" Foreground="#e8e8ff"
                      FontSize="13" CornerRadius="6" Padding="10,7" Margin="0,0,8,0"
                      IsTabStop="False"/>
-            <Button Grid.Column="1" Content="{Binding L.SaveButton}" Background="#3b82f6" Foreground="White"
+            <Button Grid.Column="1" Background="#3b82f6" Foreground="White"
                     FontSize="13" FontWeight="Bold" Padding="14,7" CornerRadius="6"
-                    Margin="0,0,5,0" Command="{Binding SaveConsistCommand}" Cursor="Hand"/>
-            <Button Grid.Column="2" Content="{Binding L.NewButton}" Background="#1e1e32" Foreground="#8888aa"
+                    Margin="0,0,5,0" Command="{Binding SaveConsistCommand}" Cursor="Hand">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <TextBlock Text="&#xF0C7;" FontFamily="{StaticResource FaFont}"/>
+                <TextBlock Text="{Binding L.SaveButton}"/>
+              </StackPanel>
+            </Button>
+            <Button Grid.Column="2" Background="#1e1e32" Foreground="#8888aa"
                     FontSize="13" FontWeight="SemiBold" Padding="14,7" CornerRadius="6"
                     BorderBrush="#2e2e50" BorderThickness="1" Margin="0,0,5,0"
-                    Command="{Binding NewConsistCommand}" Cursor="Hand"/>
+                    Command="{Binding NewConsistCommand}" Cursor="Hand">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <TextBlock Text="＋"/>
+                <TextBlock Text="{Binding L.NewButton}"/>
+              </StackPanel>
+            </Button>
             <!-- StatusMessage moved to toast overlay -->
           </Grid>
         </Border>
@@ -1030,14 +1040,14 @@
                              Cursor="Hand">
                 <ToggleButton.Template>
                   <ControlTemplate TargetType="ToggleButton">
-                    <Border x:Name="Track" Width="52" Height="28" CornerRadius="14" Background="#3a3a60">
+                    <Border x:Name="Track" Width="64" Height="36" CornerRadius="18" Background="#3a3a60">
                       <Border.Transitions>
                         <Transitions>
                           <BrushTransition Property="Background" Duration="0:0:0.2"/>
                         </Transitions>
                       </Border.Transitions>
                       <Grid>
-                        <Border x:Name="Knob" Width="22" Height="22" CornerRadius="11"
+                        <Border x:Name="Knob" Width="30" Height="30" CornerRadius="15"
                                 Background="White" HorizontalAlignment="Left" VerticalAlignment="Center"
                                 Margin="3,0,0,0">
                           <Border.Transitions>
@@ -1046,7 +1056,7 @@
                             </Transitions>
                           </Border.Transitions>
                           <TextBlock x:Name="KnobIcon"
-                                     FontFamily="{StaticResource FaFont}" FontSize="12"
+                                     FontFamily="{StaticResource FaFont}" FontSize="16"
                                      HorizontalAlignment="Center" VerticalAlignment="Center"
                                      Text="&#xF185;" Foreground="#f97316"/>
                         </Border>
@@ -1059,7 +1069,7 @@
                     <Setter Property="Background" Value="#f97316"/>
                   </Style>
                   <Style Selector="ToggleButton:checked /template/ Border#Knob">
-                    <Setter Property="Margin" Value="27,0,0,0"/>
+                    <Setter Property="Margin" Value="31,0,0,0"/>
                   </Style>
                   <Style Selector="ToggleButton:checked /template/ TextBlock#KnobIcon">
                     <Setter Property="Text" Value="&#xF186;"/>
@@ -1098,15 +1108,25 @@
           <Border Background="#2e2e50" Height="1"/>
 
           <!-- Consist actions -->
-          <Button Content="{Binding L.SaveButton}" Background="#3b82f6" Foreground="White"
+          <Button Background="#3b82f6" Foreground="White"
                   FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch"
                   HorizontalContentAlignment="Center" Padding="0,12" CornerRadius="8"
-                  Command="{Binding SaveConsistCommand}" Cursor="Hand"/>
-          <Button Content="{Binding L.NewButton}" Background="#1e1e32" Foreground="#8888aa"
+                  Command="{Binding SaveConsistCommand}" Cursor="Hand">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <TextBlock Text="&#xF0C7;" FontFamily="{StaticResource FaFont}"/>
+              <TextBlock Text="{Binding L.SaveButton}"/>
+            </StackPanel>
+          </Button>
+          <Button Background="#1e1e32" Foreground="#8888aa"
                   FontSize="14" FontWeight="SemiBold" HorizontalAlignment="Stretch"
                   HorizontalContentAlignment="Center" Padding="0,12" CornerRadius="8"
                   BorderBrush="#2e2e50" BorderThickness="1"
-                  Command="{Binding NewConsistCommand}" Cursor="Hand"/>
+                  Command="{Binding NewConsistCommand}" Cursor="Hand">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <TextBlock Text="＋"/>
+              <TextBlock Text="{Binding L.NewButton}"/>
+            </StackPanel>
+          </Button>
 
           <Border Background="#2e2e50" Height="1"/>
 
