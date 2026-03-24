@@ -132,6 +132,15 @@ public partial class MainViewModel : ObservableObject
     private ConsistEntry? _pendingEntry;
     private double _pendingEdbWith, _pendingEdbWithout;
 
+    // ── Rename dialog ─────────────────────────────────────────────────────────
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(RenameDialogVisible))]
+    private ConsistEntryViewModel? _renameTarget;
+    public bool RenameDialogVisible => RenameTarget is not null;
+
+    [ObservableProperty]
+    private string _renameInput = string.Empty;
+
     // ── ETCS ─────────────────────────────────────────────────────────────────
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(EtcsMaxSpeedDisplay))]
@@ -223,6 +232,31 @@ public partial class MainViewModel : ObservableObject
         CommitEntry(_pendingEntry);
         _pendingEntry = null;
         EdbDialogLocoName = string.Empty;
+    }
+
+    [RelayCommand]
+    private void OpenRenameDialog(ConsistEntryViewModel? vm)
+    {
+        if (vm is null) return;
+        RenameTarget = vm;
+        RenameInput  = vm.CustomName ?? string.Empty;
+    }
+
+    [RelayCommand]
+    private void ConfirmRename()
+    {
+        if (RenameTarget is null) return;
+        var trimmed = RenameInput.Trim();
+        RenameTarget.CustomName = string.IsNullOrEmpty(trimmed) ? null : trimmed;
+        RenameTarget = null;
+        RenameInput  = string.Empty;
+    }
+
+    [RelayCommand]
+    private void CancelRename()
+    {
+        RenameTarget = null;
+        RenameInput  = string.Empty;
     }
 
     private void CommitEntry(ConsistEntry entry)

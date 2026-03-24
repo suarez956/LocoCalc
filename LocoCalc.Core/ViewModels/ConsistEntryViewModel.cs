@@ -30,6 +30,7 @@ public partial class ConsistEntryViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(BrakesOnColor))]
     [NotifyPropertyChangedFor(nameof(ActiveBrakeDisplay))]
     [NotifyPropertyChangedFor(nameof(EntryBorderColor))]
+    [NotifyPropertyChangedFor(nameof(EdbButtonEnabled))]
     private bool _brakesEnabled;
 
     [ObservableProperty]
@@ -38,6 +39,15 @@ public partial class ConsistEntryViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(EdbButtonColor))]
     [NotifyPropertyChangedFor(nameof(EdbButtonText))]
     private bool _edbActive;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(DisplayName))]
+    [NotifyPropertyChangedFor(nameof(HasCustomName))]
+    private string? _customName;
+
+    public string DisplayName     => CustomName ?? Designation;
+    public bool   HasCustomName   => !string.IsNullOrWhiteSpace(CustomName);
+    public bool   EdbButtonEnabled => HasEDB && BrakesEnabled;
 
     public bool BrakesLocked => Position == ConsistPosition.Rear;
 
@@ -94,6 +104,7 @@ public partial class ConsistEntryViewModel : ObservableObject
         _position            = entry.Position;
         _brakesEnabled       = entry.BrakesEnabled;
         _edbActive           = entry.EdbActive;
+        _customName          = entry.CustomName;
 
         LocoImage = LoadLocoImage(DefinitionId);
 
@@ -148,5 +159,6 @@ public partial class ConsistEntryViewModel : ObservableObject
         Position             = Position,
         BrakesEnabled        = BrakesEnabled,
         EdbActive            = EdbActive,
+        CustomName           = CustomName,
     };
 }

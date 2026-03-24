@@ -89,12 +89,18 @@
   "PdfWarnTitle":           { "cs": "⚠ VAROVÁNÍ — nedostatečná brzdící procenta", "en": "⚠ WARNING — insufficient braking percent" },
   "PdfWarnBody":            { "cs": "Brzdící procenta {0:F0}% jsou pod minimem 50%.\n🚫 Vlak nesmí jet na traťové úseky vybavené pouze ETCS!",
                               "en": "Braking percentage {0:F0}% is below the 50% minimum.\n🚫 Train must not proceed onto ETCS-only track sections!" },
-  "PdfColSeries":           { "cs": "Řada",                                "en": "Series" },
+  "PdfColSeries":           { "cs": "Lokomotivy",                          "en": "Locomotives" },
   "PdfColWeight":           { "cs": "Hmotnost",                            "en": "Weight" },
   "PdfColBrakeWt":          { "cs": "Brzd. váha",                          "en": "Brake wt" },
   "PdfColLength":           { "cs": "Délka",                               "en": "Length" },
   "PdfColBrakes":           { "cs": "Brzdy",                               "en": "Brakes" },
   "PdfTotal":               { "cs": "Celkem",                              "en": "Total" },
   "PdfFpLegend":            { "cs": "FP3 (130 mm): 163, 186, 189, 363, 363.5, 372, 383, 386, 388, 393  |  FP2 (100 mm): ostatní",
-                              "en": "FP3 (130 mm): 163, 186, 189, 363, 363.5, 372, 383, 386, 388, 393  |  FP2 (100 mm): others" }
+                              "en": "FP3 (130 mm): 163, 186, 189, 363, 363.5, 372, 383, 386, 388, 393  |  FP2 (100 mm): others" },
+
+  "RenameDialogTitle":      { "cs": "Identifikátor lokomotivy",             "en": "Locomotive Identifier" },
+  "RenameDialogBody":       { "cs": "Zadejte specifický identifikátor (např. číslo UIC).\nBude použit v PDF místo generického označení řady.\nNechte prázdné pro obnovení výchozího názvu.",
+                              "en": "Enter a specific identifier (e.g. UIC number).\nThis will replace the generic series name in PDF.\nLeave empty to restore the default name." },
+  "RenameConfirm":          { "cs": "Potvrdit",                             "en": "Confirm" },
+  "RenameCancel":           { "cs": "Zrušit",                               "en": "Cancel" }
 }

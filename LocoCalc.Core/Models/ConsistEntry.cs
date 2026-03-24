@@ -15,5 +15,6 @@ public class ConsistEntry
     public ConsistPosition Position { get; set; }
     public bool BrakesEnabled { get; set; }
     public bool EdbActive { get; set; }
+    public string? CustomName { get; set; }
     public bool HasEDB => BrakingWeightWithEDB.HasValue;
 }

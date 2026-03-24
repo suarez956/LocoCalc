@@ -93,4 +93,12 @@ public partial class MainView : UserControl
             vm.AddLocoToConsistCommand.Execute(null);
         }
     }
+
+    private void OnConsistEntryDoubleTapped(object? sender, TappedEventArgs e)
+    {
+        if (DataContext is not MainViewModel vm) return;
+        var entry = (sender as Avalonia.Controls.Control)?.DataContext as ConsistEntryViewModel;
+        if (entry is null) return;
+        vm.OpenRenameDialogCommand.Execute(entry);
+    }
 }

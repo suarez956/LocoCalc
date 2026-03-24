@@ -112,6 +112,11 @@ public partial class LocalizationService : ObservableObject
     public string EdbYes => T("EdbYes");
     public string EdbNo  => T("EdbNo");
 
+    public string RenameDialogTitle => T("RenameDialogTitle");
+    public string RenameDialogBody  => T("RenameDialogBody");
+    public string RenameConfirm     => T("RenameConfirm");
+    public string RenameCancel      => T("RenameCancel");
+
     public string WarnLowBrake(double pct)     => string.Format(T("WarnLowBrake"), pct);
     public string ErrorLastBrake(string name)  => string.Format(T("ErrorLastBrake"), name);
 

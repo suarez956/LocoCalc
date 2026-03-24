@@ -170,14 +170,12 @@ public class AndroidPdfGenerator : IPdfGenerator
             var bw      = e.BrakesEnabled ? BrakingCalculator.ActiveBrake(e) : 0;
             var edbNote = e.BrakesEnabled && e.EdbActive ? " (EDB)" : "";
             var bwColor = e.BrakesEnabled ? black : red;
-            var brakesTxt = e.BrakesEnabled
-                ? (e.Position == ConsistPosition.Rear ? T("PdfBrakesLocked") : T("PdfBrakesOn"))
-                : T("PdfBrakesOff");
+            var brakesTxt = e.BrakesEnabled ? (e.EdbActive ? "P+E" : "P") : "x";
 
             cv.DrawRect(new RectF(Margin, y, PageW - Margin, y + 16), FillPaint(bg));
             var rowData = new (string txt, Color col)[]
             {
-                (e.Designation,                  black),
+                (e.CustomName ?? e.Designation,  black),
                 ($"{e.TotalWeightTonnes:F1} t",  black),
                 ($"{bw:F0} t{edbNote}",          bwColor),
                 ($"{e.LengthM:F0} m",            black),

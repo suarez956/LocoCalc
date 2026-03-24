@@ -186,7 +186,7 @@ public class PdfReportService : IPdfGenerator
                                 var bwColor  = e.BrakesEnabled ? th.TxtCell : th.Red;
                                 var brakesTxt = e.BrakesEnabled ? (e.EdbActive ? "P+E" : "P") : "x";
 
-                                t.Cell().Background(bg).Padding(5).Text(e.Designation).FontColor(th.TxtCell).FontSize(10);
+                                t.Cell().Background(bg).Padding(5).Text(e.CustomName ?? e.Designation).FontColor(th.TxtCell).FontSize(10);
                                 t.Cell().Background(bg).Padding(5).AlignCenter()
                                  .Text($"{e.TotalWeightTonnes:F1} t").FontColor(th.TxtCell).FontSize(10);
                                 t.Cell().Background(bg).Padding(5).AlignCenter()
