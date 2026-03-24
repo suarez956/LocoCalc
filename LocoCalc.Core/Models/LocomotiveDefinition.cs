@@ -10,7 +10,7 @@ public class LocomotiveDefinition
     public double BrakingWeightTonnes { get; set; }
     public double? BrakingWeightWithEDB { get; set; }
     public double LengthM { get; set; }
-    public int MaxSpeed { get; set; } = 100;
+    public int MaxSpeed { get; set; } = 80;
 
     [JsonPropertyName("fp")]
     public string FpClass { get; set; } = "FP2";
