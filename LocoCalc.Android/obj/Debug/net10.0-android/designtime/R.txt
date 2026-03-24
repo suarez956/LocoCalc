@@ -1,4 +1,0 @@
-int mipmap ic_launcher 0x7f010000
-int style MyTheme 0x7f020000
-int style MyTheme.NoActionBar 0x7f020001
-int xml file_paths 0x7f030000

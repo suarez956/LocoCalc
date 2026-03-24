@@ -37,12 +37,7 @@ public partial class MainViewModel : ObservableObject
     public bool CanGeneratePdf  => ConsistEntries.Count > 0;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(PdfModeButtonLabel))]
-    [NotifyPropertyChangedFor(nameof(PdfModeButtonIconLabel))]
     private bool _pdfDarkMode = false;
-
-    public string PdfModeButtonLabel     => PdfDarkMode ? L.PdfLightMode     : L.PdfDarkMode;
-    public string PdfModeButtonIconLabel => PdfDarkMode ? L.PdfLightModeIcon : L.PdfDarkModeIcon;
 
     [ObservableProperty] private bool _autoOpenPdf = true;
 
@@ -409,9 +404,6 @@ public partial class MainViewModel : ObservableObject
         if (AutoOpenPdf)
             PdfSaveService.OpenFile(path);
     }
-
-    [RelayCommand]
-    private void TogglePdfDarkMode() => PdfDarkMode = !PdfDarkMode;
 
     [RelayCommand]
     private void ToggleGroup(TractionGroup? group)

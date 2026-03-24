@@ -577,15 +577,50 @@
                           Foreground="#8888aa" FontSize="11"
                           Content="{Binding L.AutoOpenPdf}"/>
                 <Grid ColumnDefinitions="Auto,*">
-                  <Button Grid.Column="0"
-                          Background="#252540" Foreground="#e8e8ff"
-                          Padding="10,11" CornerRadius="8" BorderThickness="1" BorderBrush="#3a3a60"
-                          Command="{Binding TogglePdfDarkModeCommand}" Cursor="Hand">
-                    <StackPanel Orientation="Horizontal" Spacing="5">
-                      <TextBlock Text="{Binding PdfModeButtonIconLabel}" FontFamily="{StaticResource FaFont}" FontSize="12"/>
-                      <TextBlock Text="{Binding PdfModeButtonLabel}" FontSize="12" FontWeight="SemiBold"/>
-                    </StackPanel>
-                  </Button>
+                  <ToggleButton Grid.Column="0"
+                               IsChecked="{Binding PdfDarkMode}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,6,0"
+                               Cursor="Hand">
+                    <ToggleButton.Template>
+                      <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="Track" Width="52" Height="28" CornerRadius="14" Background="#3a3a60">
+                          <Border.Transitions>
+                            <Transitions>
+                              <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                            </Transitions>
+                          </Border.Transitions>
+                          <Grid>
+                            <Border x:Name="Knob" Width="22" Height="22" CornerRadius="11"
+                                    Background="White" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                    Margin="3,0,0,0">
+                              <Border.Transitions>
+                                <Transitions>
+                                  <ThicknessTransition Property="Margin" Duration="0:0:0.2" Easing="CubicEaseInOut"/>
+                                </Transitions>
+                              </Border.Transitions>
+                              <TextBlock x:Name="KnobIcon"
+                                         FontFamily="{StaticResource FaFont}" FontSize="12"
+                                         HorizontalAlignment="Center" VerticalAlignment="Center"
+                                         Text="&#xF185;" Foreground="#f97316"/>
+                            </Border>
+                          </Grid>
+                        </Border>
+                      </ControlTemplate>
+                    </ToggleButton.Template>
+                    <ToggleButton.Styles>
+                      <Style Selector="ToggleButton:checked /template/ Border#Track">
+                        <Setter Property="Background" Value="#f97316"/>
+                      </Style>
+                      <Style Selector="ToggleButton:checked /template/ Border#Knob">
+                        <Setter Property="Margin" Value="27,0,0,0"/>
+                      </Style>
+                      <Style Selector="ToggleButton:checked /template/ TextBlock#KnobIcon">
+                        <Setter Property="Text" Value="&#xF186;"/>
+                        <Setter Property="Foreground" Value="#1a1a2e"/>
+                      </Style>
+                    </ToggleButton.Styles>
+                  </ToggleButton>
                   <Button Grid.Column="1"
                           Background="#3b82f6" Foreground="White"
                           HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
@@ -988,15 +1023,50 @@
             <CheckBox IsChecked="{Binding AutoOpenPdf}" Foreground="#8888aa" FontSize="11"
                       Content="{Binding L.AutoOpenPdf}"/>
             <Grid ColumnDefinitions="Auto,*">
-              <Button Grid.Column="0"
-                      Background="#252540" Foreground="#e8e8ff"
-                      Padding="10,11" CornerRadius="8" BorderThickness="1" BorderBrush="#3a3a60"
-                      Command="{Binding TogglePdfDarkModeCommand}" Cursor="Hand">
-                <StackPanel Orientation="Horizontal" Spacing="5">
-                  <TextBlock Text="{Binding PdfModeButtonIconLabel}" FontFamily="{StaticResource FaFont}" FontSize="12"/>
-                  <TextBlock Text="{Binding PdfModeButtonLabel}" FontSize="12" FontWeight="SemiBold"/>
-                </StackPanel>
-              </Button>
+              <ToggleButton Grid.Column="0"
+                             IsChecked="{Binding PdfDarkMode}"
+                             VerticalAlignment="Center"
+                             Margin="0,0,6,0"
+                             Cursor="Hand">
+                <ToggleButton.Template>
+                  <ControlTemplate TargetType="ToggleButton">
+                    <Border x:Name="Track" Width="52" Height="28" CornerRadius="14" Background="#3a3a60">
+                      <Border.Transitions>
+                        <Transitions>
+                          <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                        </Transitions>
+                      </Border.Transitions>
+                      <Grid>
+                        <Border x:Name="Knob" Width="22" Height="22" CornerRadius="11"
+                                Background="White" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                Margin="3,0,0,0">
+                          <Border.Transitions>
+                            <Transitions>
+                              <ThicknessTransition Property="Margin" Duration="0:0:0.2" Easing="CubicEaseInOut"/>
+                            </Transitions>
+                          </Border.Transitions>
+                          <TextBlock x:Name="KnobIcon"
+                                     FontFamily="{StaticResource FaFont}" FontSize="12"
+                                     HorizontalAlignment="Center" VerticalAlignment="Center"
+                                     Text="&#xF185;" Foreground="#f97316"/>
+                        </Border>
+                      </Grid>
+                    </Border>
+                  </ControlTemplate>
+                </ToggleButton.Template>
+                <ToggleButton.Styles>
+                  <Style Selector="ToggleButton:checked /template/ Border#Track">
+                    <Setter Property="Background" Value="#f97316"/>
+                  </Style>
+                  <Style Selector="ToggleButton:checked /template/ Border#Knob">
+                    <Setter Property="Margin" Value="27,0,0,0"/>
+                  </Style>
+                  <Style Selector="ToggleButton:checked /template/ TextBlock#KnobIcon">
+                    <Setter Property="Text" Value="&#xF186;"/>
+                    <Setter Property="Foreground" Value="#1a1a2e"/>
+                  </Style>
+                </ToggleButton.Styles>
+              </ToggleButton>
               <Button Grid.Column="1"
                       Background="#3b82f6" Foreground="White"
                       HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"

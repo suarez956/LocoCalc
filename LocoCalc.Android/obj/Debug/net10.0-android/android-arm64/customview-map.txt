@@ -1,5 +1,0 @@
-cache-path;obj/Debug/net10.0-android/android-arm64/res/xml/file_paths.xml
-item;obj/Debug/net10.0-android/android-arm64/res/values/styles.xml
-paths;obj/Debug/net10.0-android/android-arm64/res/xml/file_paths.xml
-resources;obj/Debug/net10.0-android/android-arm64/res/values/styles.xml
-style;obj/Debug/net10.0-android/android-arm64/res/values/styles.xml
