@@ -9,6 +9,7 @@
     <AssemblyName>LocoCalcAvalonia</AssemblyName>
     <Version>1.1.0</Version>
     <FileVersion>1.1.0</FileVersion>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
 
     <!-- Explicitly exclude Android RIDs injected by the Android workload when in the same solution -->
     <_IsAndroidProject>false</_IsAndroidProject>
@@ -34,6 +35,10 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia.Desktop" Version="11.2.3"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="icon.ico" CopyToOutputDirectory="PreserveNewest"/>
   </ItemGroup>
 
   <ItemGroup>

@@ -6,5 +6,6 @@
   "LengthM": 19,
   "traction": "ms",
   "maxSpeed": 160,
-  "fp": "FP3"
+  "fp": "FP3",
+  "uicFormat": "B"
 }

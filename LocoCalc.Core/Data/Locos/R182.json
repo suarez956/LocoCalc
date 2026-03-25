@@ -6,5 +6,6 @@
   "LengthM": 19,
   "traction": "dc",
   "maxSpeed": 90,
-  "fp": "FP2"
+  "fp": "FP2",
+  "uicFormat": "B"
 }

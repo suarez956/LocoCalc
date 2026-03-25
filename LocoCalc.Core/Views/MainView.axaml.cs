@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Input;
+using LocoCalcAvalonia.Services;
 using LocoCalcAvalonia.ViewModels;
 
 namespace LocoCalcAvalonia.Views;
@@ -8,6 +9,7 @@ public partial class MainView : UserControl
 {
     private const double MobileBreakpoint = 960;
     private CancellationTokenSource? _toastCts;
+    private bool _suppressRenameTextChange = false;
 
     public MainView()
     {
@@ -21,7 +23,6 @@ public partial class MainView : UserControl
 
         SizeChanged += (_, e) => ApplyLayout(e.NewSize.Width);
 
-        // Apply layout once attached (Bounds not valid before this)
         AttachedToVisualTree += (_, _) => ApplyLayout(Bounds.Width);
     }
 
@@ -36,11 +37,25 @@ public partial class MainView : UserControl
         mobile.IsVisible  = isMobile;
     }
 
-    // ── Toast ──────────────────────────────────────────────────────────────
+    // ── Toast / property-change dispatch ─────────────────────────────────────
     private async void OnVmPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        if (e.PropertyName != nameof(MainViewModel.StatusMessage)) return;
         if (DataContext is not MainViewModel vm) return;
+
+        if (e.PropertyName == nameof(MainViewModel.RenameDialogVisible))
+        {
+            if (vm.RenameDialogVisible)
+                SyncRenameTextBox(vm);
+            return;
+        }
+
+        if (e.PropertyName == nameof(MainViewModel.RenameInputFormatted))
+        {
+            SyncRenameTextBox(vm);
+            return;
+        }
+
+        if (e.PropertyName != nameof(MainViewModel.StatusMessage)) return;
         if (string.IsNullOrEmpty(vm.StatusMessage)) return;
 
         _toastCts?.Cancel();
@@ -74,7 +89,7 @@ public partial class MainView : UserControl
         target.Opacity = to;
     }
 
-    // ── Loco list handlers (desktop + mobile share the same) ───────────────
+    // ── Loco list handlers ─────────────────────────────────────────────────
     private void OnLocoListSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         if (sender is not ListBox lb || DataContext is not MainViewModel vm) return;
@@ -100,5 +115,45 @@ public partial class MainView : UserControl
         var entry = (sender as Avalonia.Controls.Control)?.DataContext as ConsistEntryViewModel;
         if (entry is null) return;
         vm.OpenRenameDialogCommand.Execute(entry);
+    }
+
+    // ── Rename dialog ─────────────────────────────────────────────────────────
+    private void SyncRenameTextBox(MainViewModel vm)
+    {
+        var tb = this.FindControl<TextBox>("RenameTextBox");
+        if (tb is null) return;
+
+        _suppressRenameTextChange = true;
+        tb.Text = vm.RenameInputFormatted;
+        tb.CaretIndex = tb.Text?.Length ?? 0;
+        _suppressRenameTextChange = false;
+    }
+
+    private void OnRenameTextChanged(object? sender, TextChangedEventArgs e)
+    {
+        if (_suppressRenameTextChange) return;
+        if (sender is not TextBox tb || DataContext is not MainViewModel vm) return;
+
+        var digits    = UicFormatter.StripToDigits(tb.Text);
+        var format    = vm.RenameTarget?.UicFormat ?? "A";
+        var formatted = UicFormatter.Format(digits, format);
+
+        _suppressRenameTextChange = true;
+        tb.Text = formatted;
+        tb.CaretIndex = formatted.Length;
+        _suppressRenameTextChange = false;
+
+        vm.RenameInput = digits;
+    }
+
+    private void OnRenameHistorySelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (sender is not ListBox lb || DataContext is not MainViewModel vm) return;
+        if (lb.SelectedItem is not string formatted) return;
+
+        lb.SelectedItem = null;
+
+        vm.RenameInput = UicFormatter.StripToDigits(formatted);
+        // SyncRenameTextBox is called via RenameInputFormatted property change
     }
 }

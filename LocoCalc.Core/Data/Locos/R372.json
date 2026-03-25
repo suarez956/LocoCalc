@@ -7,5 +7,6 @@
   "BrakingWeightWithEDB": 75,
   "traction": "ms",
   "maxSpeed": 120,
-  "fp": "FP3"
+  "fp": "FP3",
+  "uicFormat": "B"
 }

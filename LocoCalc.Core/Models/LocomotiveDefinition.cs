@@ -18,6 +18,10 @@ public class LocomotiveDefinition
     [JsonPropertyName("traction")]
     public string Traction { get; set; } = "diesel";
 
+    /// <summary>"A" = XX XX XXXX XXX-X · "B" = XX XX X XXX XXX-X</summary>
+    [JsonPropertyName("uicFormat")]
+    public string UicFormat { get; set; } = "A";
+
     public bool HasEDB => BrakingWeightWithEDB.HasValue;
     public bool IsFP3  => FpClass == "FP3";
 }

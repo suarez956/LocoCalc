@@ -60,8 +60,8 @@
   "TrMs":                 { "cs": "Vícesystémové",                         "en": "Multi-System" },
   "TrDiesel":             { "cs": "Motorové",                              "en": "Diesel" },
 
-  "EdbDialogTitle":       { "cs": "Elektromagnetická brzda (EDB)",         "en": "Electrodynamic Brake (EDB)" },
-  "EdbDialogBody":        { "cs": "Lokomotiva {0} má elektromagnetickou brzdu.\nJako vedoucí vozidlo použít zvýšenou brzdovou váhu?\n\nS EDB: {1} t  ·  Bez EDB: {2} t",
+  "EdbDialogTitle":       { "cs": "Elektrodynamická brzda (EDB)",         "en": "Electrodynamic Brake (EDB)" },
+  "EdbDialogBody":        { "cs": "Lokomotiva {0} má elektrodynamickou brzdu.\nJako vedoucí vozidlo použít zvýšenou brzdovou váhu?\n\nS EDB: {1} t  ·  Bez EDB: {2} t",
                             "en": "Locomotive {0} has an electrodynamic brake.\nUse the higher braking weight as lead loco?\n\nWith EDB: {1} t  ·  Without EDB: {2} t" },
   "EdbYes":               { "cs": "Ano — s EDB",                           "en": "Yes — with EDB" },
   "EdbNo":                { "cs": "Ne — bez EDB",                          "en": "No — without EDB" },
@@ -99,8 +99,8 @@
                               "en": "FP3 (130 mm): 163, 186, 189, 363, 363.5, 372, 383, 386, 388, 393  |  FP2 (100 mm): others" },
 
   "RenameDialogTitle":      { "cs": "Identifikátor lokomotivy",             "en": "Locomotive Identifier" },
-  "RenameDialogBody":       { "cs": "Zadejte specifický identifikátor (např. číslo UIC).\nBude použit v PDF místo generického označení řady.\nNechte prázdné pro obnovení výchozího názvu.",
-                              "en": "Enter a specific identifier (e.g. UIC number).\nThis will replace the generic series name in PDF.\nLeave empty to restore the default name." },
+  "RenameDialogBody":       { "cs": "Zadejte číslo UIC lokomotivy (12 číslic).\nBude použit v PDF místo generického označení řady.\nNechte prázdné pro obnovení výchozího názvu.",
+                              "en": "Enter the locomotive UIC number (12 digits).\nThis will replace the generic series name in PDF.\nLeave empty to restore the default name." },
   "RenameConfirm":          { "cs": "Potvrdit",                             "en": "Confirm" },
   "RenameCancel":           { "cs": "Zrušit",                               "en": "Cancel" }
 }

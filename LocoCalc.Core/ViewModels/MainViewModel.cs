@@ -10,6 +10,7 @@ public partial class MainViewModel : ObservableObject
 {
     private readonly LocoRepository _locoRepo;
     private readonly ConsistRepository _consistRepo;
+    private readonly UicNameHistory _uicHistory;
     public LocalizationService L => LocalizationService.Instance;
 
     // ── Language ─────────────────────────────────────────────────────────────
@@ -138,8 +139,17 @@ public partial class MainViewModel : ObservableObject
     private ConsistEntryViewModel? _renameTarget;
     public bool RenameDialogVisible => RenameTarget is not null;
 
+    /// <summary>Raw digits only (0–12), used to derive formatted display and history.</summary>
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(RenameInputFormatted))]
     private string _renameInput = string.Empty;
+
+    /// <summary>UIC-formatted version of the current raw-digit input.</summary>
+    public string RenameInputFormatted =>
+        UicFormatter.Format(RenameInput, RenameTarget?.UicFormat ?? "A");
+
+    public ObservableCollection<string> RenameHistorySuggestions { get; } = new();
+    public bool RenameHistoryVisible => RenameHistorySuggestions.Count > 0;
 
     // ── ETCS ─────────────────────────────────────────────────────────────────
     [ObservableProperty]
@@ -166,6 +176,8 @@ public partial class MainViewModel : ObservableObject
     {
         _locoRepo    = new LocoRepository(locoProvider);
         _consistRepo = new ConsistRepository(consistFolder);
+        _uicHistory  = new UicNameHistory(
+            Path.Combine(Path.GetDirectoryName(consistFolder) ?? consistFolder, "uic_history.json"));
         L.PropertyChanged += (_, _) =>
         {
             OnPropertyChanged(nameof(BrakingPercentageDisplay));
@@ -197,6 +209,7 @@ public partial class MainViewModel : ObservableObject
             LengthM              = SelectedLoco.LengthM,
             MaxSpeed             = SelectedLoco.MaxSpeed,
             FpClass              = SelectedLoco.FpClass,
+            UicFormat            = SelectedLoco.UicFormat,
             Position             = pos,
             BrakesEnabled        = BrakingCalculator.DefaultBrakesEnabled(pos),
             EdbActive            = false,
@@ -239,17 +252,30 @@ public partial class MainViewModel : ObservableObject
     {
         if (vm is null) return;
         RenameTarget = vm;
-        RenameInput  = vm.CustomName ?? string.Empty;
+        // Strip any existing custom name to raw digits for the input field
+        RenameInput  = UicFormatter.StripToDigits(vm.CustomName);
+        UpdateRenameHistorySuggestions();
     }
 
     [RelayCommand]
     private void ConfirmRename()
     {
         if (RenameTarget is null) return;
-        var trimmed = RenameInput.Trim();
-        RenameTarget.CustomName = string.IsNullOrEmpty(trimmed) ? null : trimmed;
+        if (string.IsNullOrEmpty(RenameInput))
+        {
+            RenameTarget.CustomName = null;
+        }
+        else
+        {
+            var formatted = UicFormatter.Format(RenameInput, RenameTarget.UicFormat);
+            RenameTarget.CustomName = formatted;
+            if (UicFormatter.IsComplete(RenameInput))
+                _uicHistory.Add(RenameTarget.DefinitionId, RenameInput);
+        }
         RenameTarget = null;
         RenameInput  = string.Empty;
+        RenameHistorySuggestions.Clear();
+        OnPropertyChanged(nameof(RenameHistoryVisible));
     }
 
     [RelayCommand]
@@ -257,6 +283,8 @@ public partial class MainViewModel : ObservableObject
     {
         RenameTarget = null;
         RenameInput  = string.Empty;
+        RenameHistorySuggestions.Clear();
+        OnPropertyChanged(nameof(RenameHistoryVisible));
     }
 
     private void CommitEntry(ConsistEntry entry)
@@ -319,11 +347,6 @@ public partial class MainViewModel : ObservableObject
     {
         if (vm is null || vm.BrakesLocked) return;
         ClearError();
-        if (vm.BrakesEnabled && ConsistEntries.Count(e => e.BrakesEnabled) <= 1)
-        {
-            ErrorMessage = L.ErrorLastBrake(vm.Designation);
-            return;
-        }
         vm.BrakesEnabled = !vm.BrakesEnabled;
         Recalculate();
     }
@@ -358,8 +381,12 @@ public partial class MainViewModel : ObservableObject
         ClearError();
         foreach (var vm in ConsistEntries) vm.PropertyChanged -= OnEntryChanged;
         ConsistEntries.Clear();
+        var defLookup = _locoRepo.GetAll().ToDictionary(l => l.Id);
         foreach (var entry in consist.Entries)
         {
+            // Always use the loco definition's UicFormat — handles old saves that predate this field
+            if (defLookup.TryGetValue(entry.DefinitionId, out var def))
+                entry.UicFormat = def.UicFormat;
             var vm = new ConsistEntryViewModel(entry);
             vm.PropertyChanged += OnEntryChanged;
             ConsistEntries.Add(vm);
@@ -510,6 +537,23 @@ public partial class MainViewModel : ObservableObject
     {
         SavedConsists.Clear();
         foreach (var c in _consistRepo.GetAll()) SavedConsists.Add(c);
+    }
+
+    partial void OnRenameInputChanged(string value) => UpdateRenameHistorySuggestions();
+
+    private void UpdateRenameHistorySuggestions()
+    {
+        RenameHistorySuggestions.Clear();
+        if (RenameTarget is null) return;
+
+        var format  = RenameTarget.UicFormat;
+        var history = _uicHistory.GetFor(RenameTarget.DefinitionId);
+        foreach (var digits in history)
+        {
+            if (string.IsNullOrEmpty(RenameInput) || digits.StartsWith(RenameInput))
+                RenameHistorySuggestions.Add(UicFormatter.Format(digits, format));
+        }
+        OnPropertyChanged(nameof(RenameHistoryVisible));
     }
 
     private static readonly (string key, string label, string dot)[] TractionOrder =

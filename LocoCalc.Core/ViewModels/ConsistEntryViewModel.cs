@@ -16,6 +16,7 @@ public partial class ConsistEntryViewModel : ObservableObject
     public double LengthM { get; }
     public int MaxSpeed { get; }
     public string FpClass { get; }
+    public string UicFormat { get; }
     public bool HasEDB => BrakingWeightWithEDB.HasValue;
     public Bitmap? LocoImage { get; }
 
@@ -49,7 +50,7 @@ public partial class ConsistEntryViewModel : ObservableObject
     public bool   HasCustomName   => !string.IsNullOrWhiteSpace(CustomName);
     public bool   EdbButtonEnabled => HasEDB && BrakesEnabled;
 
-    public bool BrakesLocked => Position == ConsistPosition.Rear;
+    public bool BrakesLocked => Position == ConsistPosition.Rear || Position == ConsistPosition.Front;
 
     public double ActiveBrake =>
         (EdbActive && BrakingWeightWithEDB.HasValue)
@@ -101,8 +102,10 @@ public partial class ConsistEntryViewModel : ObservableObject
         LengthM              = entry.LengthM;
         MaxSpeed             = entry.MaxSpeed;
         FpClass              = entry.FpClass;
+        UicFormat            = entry.UicFormat;
         _position            = entry.Position;
-        _brakesEnabled       = entry.BrakesEnabled;
+        // Front and Rear positions always have brakes enabled (locked)
+        _brakesEnabled       = _position != ConsistPosition.Middle || entry.BrakesEnabled;
         _edbActive           = entry.EdbActive;
         _customName          = entry.CustomName;
 
@@ -156,6 +159,7 @@ public partial class ConsistEntryViewModel : ObservableObject
         LengthM              = LengthM,
         MaxSpeed             = MaxSpeed,
         FpClass              = FpClass,
+        UicFormat            = UicFormat,
         Position             = Position,
         BrakesEnabled        = BrakesEnabled,
         EdbActive            = EdbActive,

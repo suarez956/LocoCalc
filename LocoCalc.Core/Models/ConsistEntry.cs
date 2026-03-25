@@ -16,5 +16,6 @@ public class ConsistEntry
     public bool BrakesEnabled { get; set; }
     public bool EdbActive { get; set; }
     public string? CustomName { get; set; }
+    public string UicFormat { get; set; } = "A";
     public bool HasEDB => BrakingWeightWithEDB.HasValue;
 }

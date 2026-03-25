@@ -1343,11 +1343,29 @@
         <TextBlock Text="{Binding L.RenameDialogTitle}" FontSize="17" FontWeight="Bold" Foreground="#3b82f6"/>
         <TextBlock Text="{Binding L.RenameDialogBody}" FontSize="13" Foreground="#e2e2f0"
                    TextWrapping="Wrap" LineHeight="22"/>
-        <TextBox Text="{Binding RenameInput}"
+        <TextBox x:Name="RenameTextBox"
                  Background="#1a1a2e" Foreground="#e8e8ff"
                  BorderBrush="#3b82f6" BorderThickness="1"
                  CaretBrush="#e8e8ff" SelectionBrush="#3b82f6"
-                 FontSize="13" Padding="10,8" CornerRadius="6"/>
+                 FontFamily="Consolas,monospace" FontSize="15" Padding="10,8" CornerRadius="6"
+                 TextChanged="OnRenameTextChanged"
+                 MaxLength="17"/>
+        <!-- History suggestions -->
+        <Border IsVisible="{Binding RenameHistoryVisible}"
+                Background="#1e1e32" CornerRadius="6"
+                BorderBrush="#3a3a55" BorderThickness="1" MaxHeight="130">
+          <ListBox x:Name="RenameHistoryList"
+                   Background="Transparent"
+                   ItemsSource="{Binding RenameHistorySuggestions}"
+                   SelectionChanged="OnRenameHistorySelectionChanged">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding}" FontFamily="Consolas,monospace"
+                           FontSize="13" Foreground="#a0c4ff" Padding="4,2"/>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </Border>
         <Grid ColumnDefinitions="*,*" Margin="0,4,0,0">
           <Button Grid.Column="0" Content="{Binding L.RenameConfirm}" Background="#3b82f6" Foreground="White"
                   FontSize="13" FontWeight="Bold" Padding="0,11" HorizontalAlignment="Stretch"

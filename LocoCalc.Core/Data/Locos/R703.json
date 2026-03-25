@@ -6,5 +6,6 @@
   "LengthM": 8,
   "traction": "diesel",
   "maxSpeed": 40,
-  "fp": "FP2"
+  "fp": "FP2",
+  "uicFormat": "B"
 }

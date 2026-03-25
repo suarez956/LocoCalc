@@ -117,8 +117,7 @@ public partial class LocalizationService : ObservableObject
     public string RenameConfirm     => T("RenameConfirm");
     public string RenameCancel      => T("RenameCancel");
 
-    public string WarnLowBrake(double pct)     => string.Format(T("WarnLowBrake"), pct);
-    public string ErrorLastBrake(string name)  => string.Format(T("ErrorLastBrake"), name);
+    public string WarnLowBrake(double pct) => string.Format(T("WarnLowBrake"), pct);
 
     public string StatusAdded(string name)   => string.Format(T("StatusAdded"), name);
     public string StatusRemoved(string name) => string.Format(T("StatusRemoved"), name);

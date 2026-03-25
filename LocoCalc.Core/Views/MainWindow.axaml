@@ -4,7 +4,8 @@
         x:Class="LocoCalcAvalonia.Views.MainWindow"
         Title="LocoCalc" Width="1220" Height="800"
         MinWidth="960" MinHeight="600"
-        Background="#0f0f1a">
+        Background="#0f0f1a"
+        Icon="avares://LocoCalc.Core/Assets/icon.png">
 
   <views:MainView x:Name="MainViewContent"/>
 
