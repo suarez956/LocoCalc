@@ -3,6 +3,7 @@
              xmlns:vm="using:LocoCalcAvalonia.ViewModels"
              xmlns:models="using:LocoCalcAvalonia.Models"
              xmlns:conv="using:LocoCalcAvalonia.Converters"
+             xmlns:ti="using:Avalonia.Input.TextInput"
              x:Class="LocoCalcAvalonia.Views.MainView"
              x:DataType="vm:MainViewModel"
              Background="#0f0f1a">
@@ -71,6 +72,11 @@
               </Button>
             </StackPanel>
           </Border>
+          <Button Content="{Binding L.HistoryButton}"
+                  Background="#252540" Foreground="#a0a0c0"
+                  BorderBrush="#3a3a55" BorderThickness="1"
+                  Padding="12,7" CornerRadius="8" FontSize="12" FontWeight="SemiBold" Cursor="Hand"
+                  Command="{Binding OpenHistoryDialogCommand}"/>
           <Border Background="#f97316" CornerRadius="8" Padding="14,7">
             <StackPanel Orientation="Horizontal" Spacing="8">
               <TextBlock Text="{Binding L.BrakingWeightLabel}" FontSize="11" Foreground="#ffffffcc" VerticalAlignment="Center"/>
@@ -1189,6 +1195,16 @@
 
           <Border Background="#2e2e50" Height="1"/>
 
+          <!-- UIC History -->
+          <Button Content="{Binding L.HistoryButton}"
+                  Background="#252540" Foreground="#a0a0c0"
+                  BorderBrush="#3a3a55" BorderThickness="1"
+                  FontSize="14" FontWeight="SemiBold" HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Center" Padding="0,12" CornerRadius="8" Cursor="Hand"
+                  Command="{Binding OpenHistoryDialogCommand}"/>
+
+          <Border Background="#2e2e50" Height="1"/>
+
           <!-- Language -->
           <StackPanel Orientation="Horizontal" Spacing="8">
             <Button Content="🇨🇿" Padding="14,10" BorderThickness="0" CornerRadius="8"
@@ -1333,6 +1349,61 @@
     </Border>
   </Border>
 
+  <!-- ═══ HISTORY DIALOG OVERLAY ══════════════════════════════════════ -->
+  <Border Background="#cc000010"
+          IsVisible="{Binding HistoryDialogVisible}" ZIndex="290">
+    <Border Background="#2a2a3e" CornerRadius="12" Padding="24,20"
+            HorizontalAlignment="Center" VerticalAlignment="Center"
+            MinWidth="320" MaxWidth="460" MaxHeight="560"
+            BorderBrush="#3a3a55" BorderThickness="1">
+      <Grid RowDefinitions="Auto,*,Auto">
+
+        <TextBlock Grid.Row="0" Text="{Binding L.HistoryDialogTitle}"
+                   FontSize="17" FontWeight="Bold" Foreground="#e8e8ff" Margin="0,0,0,14"/>
+
+        <!-- Empty state -->
+        <TextBlock Grid.Row="1" Text="{Binding L.HistoryEmpty}"
+                   IsVisible="{Binding HistoryIsEmpty}"
+                   Foreground="#8888aa" FontSize="13"
+                   VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+        <!-- History list -->
+        <ScrollViewer Grid.Row="1" IsVisible="{Binding !HistoryIsEmpty}"
+                      VerticalScrollBarVisibility="Auto">
+          <ItemsControl ItemsSource="{Binding UicHistoryItems}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:UicHistoryItemViewModel">
+                <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,6">
+                  <TextBlock Grid.Column="0" Text="{Binding Designation}"
+                             FontSize="11" Foreground="#8888aa"
+                             VerticalAlignment="Center" Margin="0,0,10,0" MinWidth="60"/>
+                  <TextBlock Grid.Column="1" Text="{Binding FormattedUic}"
+                             FontSize="13" FontFamily="Consolas,monospace"
+                             Foreground="#e8e8ff" VerticalAlignment="Center"/>
+                  <Button Grid.Column="2" Content="✕"
+                          Background="Transparent" Foreground="#ef4444"
+                          BorderBrush="#2e2e50" BorderThickness="1"
+                          Width="28" Height="28" Padding="0" FontSize="12" CornerRadius="5"
+                          HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                          Command="{Binding $parent[UserControl].DataContext.DeleteHistoryItemCommand}"
+                          CommandParameter="{Binding}" Cursor="Hand"/>
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+
+        <!-- Close button -->
+        <Button Grid.Row="2" Content="{Binding L.CloseButton}"
+                Background="#2a2a3e" Foreground="#a0a0c0"
+                FontSize="13" Padding="0,11" HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center" BorderBrush="#3a3a55" BorderThickness="1"
+                CornerRadius="7" Margin="0,16,0,0"
+                Command="{Binding CloseHistoryDialogCommand}" Cursor="Hand"/>
+      </Grid>
+    </Border>
+  </Border>
+
   <!-- ═══ RENAME DIALOG OVERLAY ═══════════════════════════════════════ -->
   <Border Background="#cc000010"
           IsVisible="{Binding RenameDialogVisible}" ZIndex="300">
@@ -1346,10 +1417,25 @@
         <TextBox x:Name="RenameTextBox"
                  Background="#1a1a2e" Foreground="#e8e8ff"
                  BorderBrush="#3b82f6" BorderThickness="1"
-                 CaretBrush="#e8e8ff" SelectionBrush="#3b82f6"
+                 CaretBrush="#e8e8ff"
                  FontFamily="Consolas,monospace" FontSize="15" Padding="10,8" CornerRadius="6"
+                 ti:TextInputOptions.ContentType="Digits"
                  TextChanged="OnRenameTextChanged"
                  MaxLength="17"/>
+        <!-- UIC prefix mismatch warning -->
+        <Border IsVisible="{Binding RenameUicMismatchVisible}"
+                Background="#2d1a00" CornerRadius="5" Padding="10,7"
+                BorderBrush="#f97316" BorderThickness="1">
+          <TextBlock Text="{Binding L.RenameUicMismatch}"
+                     FontSize="12" Foreground="#f97316" TextWrapping="Wrap"/>
+        </Border>
+        <!-- Check digit warning -->
+        <Border IsVisible="{Binding RenameCheckDigitInvalid}"
+                Background="#2d0a0a" CornerRadius="5" Padding="10,7"
+                BorderBrush="#ef4444" BorderThickness="1">
+          <TextBlock Text="{Binding RenameCheckDigitWarning}"
+                     FontSize="12" Foreground="#ef4444" TextWrapping="Wrap"/>
+        </Border>
         <!-- History suggestions -->
         <Border IsVisible="{Binding RenameHistoryVisible}"
                 Background="#1e1e32" CornerRadius="6"

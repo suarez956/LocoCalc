@@ -16,7 +16,7 @@
   "StatBrakingPct":       { "cs": "Brzdící %",                             "en": "Braking %" },
   "ConsistBrakingPct":    { "cs": "BRZDÍCÍ %",                             "en": "BRAKING %" },
   "SavedConsists":        { "cs": "ULOŽENÉ SOUPRAVY",                      "en": "SAVED CONSISTS" },
-  "EtcsData":             { "cs": "ETCS DATA",                             "en": "ETCS DATA" },
+  "EtcsData":             { "cs": "SOUPRAVA/PDF",                          "en": "CONSIST/PDF" },
   "LoadButton":           { "cs": "Načíst",                                "en": "Load" },
   "PosFront":             { "cs": "Čelo",                                  "en": "Front" },
   "PosMiddle":            { "cs": "Střed",                                 "en": "Middle" },
@@ -41,7 +41,7 @@
 
   "NavConsist":           { "cs": "Souprava",                              "en": "Consist" },
   "NavAddLoco":           { "cs": "Přidat",                                "en": "Add Loco" },
-  "NavEtcs":              { "cs": "ETCS",                                  "en": "ETCS" },
+  "NavEtcs":              { "cs": "ETCS/PDF",                              "en": "ETCS/PDF" },
   "NavMenu":              { "cs": "Menu",                                  "en": "Menu" },
   "NavConsistEmoji":      { "cs": "\uF238",                                "en": "\uF238" },
   "NavAddLocoEmoji":      { "cs": "\uF067\uF238",                          "en": "\uF067\uF238" },
@@ -102,5 +102,13 @@
   "RenameDialogBody":       { "cs": "Zadejte číslo UIC lokomotivy (12 číslic).\nBude použit v PDF místo generického označení řady.\nNechte prázdné pro obnovení výchozího názvu.",
                               "en": "Enter the locomotive UIC number (12 digits).\nThis will replace the generic series name in PDF.\nLeave empty to restore the default name." },
   "RenameConfirm":          { "cs": "Potvrdit",                             "en": "Confirm" },
-  "RenameCancel":           { "cs": "Zrušit",                               "en": "Cancel" }
+  "RenameCancel":           { "cs": "Zrušit",                               "en": "Cancel" },
+  "RenameUicMismatch":      { "cs": "Upozornění: Číslo UIC neodpovídá řadě lokomotivy.",
+                              "en": "Warning: UIC number does not match the locomotive class." },
+  "RenameCheckDigitWarn":   { "cs": "Upozornění: Nesprávné kontrolní číslo (správné: {0}).",
+                              "en": "Warning: Incorrect check digit (expected: {0})." },
+  "HistoryButton":          { "cs": "Známé lokomotivy",                 "en": "Last known locos" },
+  "HistoryDialogTitle":     { "cs": "Známé lokomotivy",                           "en": "Last known locos" },
+  "HistoryEmpty":           { "cs": "Žádná historie",                             "en": "No history" },
+  "CloseButton":            { "cs": "Zavřít",                                     "en": "Close" }
 }

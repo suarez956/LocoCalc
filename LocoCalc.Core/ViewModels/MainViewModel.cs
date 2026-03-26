@@ -136,17 +136,41 @@ public partial class MainViewModel : ObservableObject
     // ── Rename dialog ─────────────────────────────────────────────────────────
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(RenameDialogVisible))]
+    [NotifyPropertyChangedFor(nameof(RenameInputMatchesPrefixes))]
+    [NotifyPropertyChangedFor(nameof(RenameUicMismatchVisible))]
     private ConsistEntryViewModel? _renameTarget;
     public bool RenameDialogVisible => RenameTarget is not null;
 
     /// <summary>Raw digits only (0–12), used to derive formatted display and history.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(RenameInputFormatted))]
+    [NotifyPropertyChangedFor(nameof(RenameInputMatchesPrefixes))]
+    [NotifyPropertyChangedFor(nameof(RenameUicMismatchVisible))]
+    [NotifyPropertyChangedFor(nameof(RenameCheckDigitInvalid))]
+    [NotifyPropertyChangedFor(nameof(RenameCheckDigitWarning))]
     private string _renameInput = string.Empty;
 
     /// <summary>UIC-formatted version of the current raw-digit input.</summary>
     public string RenameInputFormatted =>
         UicFormatter.Format(RenameInput, RenameTarget?.UicFormat ?? "A");
+
+    /// <summary>null = no constraint or too few digits; true = prefix match; false = mismatch warning.</summary>
+    public bool? RenameInputMatchesPrefixes =>
+        UicFormatter.MatchesPrefixes(RenameInput, RenameTarget?.UicPrefixes, RenameTarget?.UicPrefixOffset ?? 4);
+
+    public bool RenameUicMismatchVisible => RenameInputMatchesPrefixes == false;
+
+    /// <summary>True when all 12 digits are entered, check validation is enabled, and the check digit is wrong.</summary>
+    public bool RenameCheckDigitInvalid =>
+        RenameTarget?.UicValidateCheck == true &&
+        UicFormatter.IsComplete(RenameInput) &&
+        !UicFormatter.IsCheckDigitValid(RenameInput);
+
+    /// <summary>Warning text showing the expected check digit.</summary>
+    public string RenameCheckDigitWarning =>
+        RenameCheckDigitInvalid
+            ? L.RenameCheckDigitWarning(UicFormatter.CalculateCheckDigit(RenameInput))
+            : string.Empty;
 
     public ObservableCollection<string> RenameHistorySuggestions { get; } = new();
     public bool RenameHistoryVisible => RenameHistorySuggestions.Count > 0;
@@ -171,6 +195,12 @@ public partial class MainViewModel : ObservableObject
     public string EtcsBrakingColor =>
         BrakingPercentage < 50 ? "#ef4444" : "#22c55e";
 
+    // ── UIC History dialog ────────────────────────────────────────────────────
+    [ObservableProperty] private bool _historyDialogVisible = false;
+
+    public ObservableCollection<UicHistoryItemViewModel> UicHistoryItems { get; } = new();
+    public bool HistoryIsEmpty => UicHistoryItems.Count == 0;
+
     // ── Constructor ───────────────────────────────────────────────────────────
     public MainViewModel(ILocoDataProvider locoProvider, string consistFolder)
     {
@@ -183,6 +213,7 @@ public partial class MainViewModel : ObservableObject
             OnPropertyChanged(nameof(BrakingPercentageDisplay));
             OnPropertyChanged(nameof(EtcsWarningText));
         };
+        UicHistoryItems.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HistoryIsEmpty));
         LoadLocos();
         RefreshSavedConsists();
     }
@@ -210,6 +241,10 @@ public partial class MainViewModel : ObservableObject
             MaxSpeed             = SelectedLoco.MaxSpeed,
             FpClass              = SelectedLoco.FpClass,
             UicFormat            = SelectedLoco.UicFormat,
+            UicPrefixes          = SelectedLoco.UicPrefixes,
+            UicPrefixOffset      = SelectedLoco.UicPrefixOffset,
+            UicValidateCheck     = SelectedLoco.UicValidateCheck,
+            UicTypePrefix        = SelectedLoco.UicTypePrefix,
             Position             = pos,
             BrakesEnabled        = BrakingCalculator.DefaultBrakesEnabled(pos),
             EdbActive            = false,
@@ -252,8 +287,9 @@ public partial class MainViewModel : ObservableObject
     {
         if (vm is null) return;
         RenameTarget = vm;
-        // Strip any existing custom name to raw digits for the input field
-        RenameInput  = UicFormatter.StripToDigits(vm.CustomName);
+        var existing = UicFormatter.StripToDigits(vm.CustomName);
+        // Pre-fill with type prefix (e.g. "91547" / "92542") when no name has been set yet
+        RenameInput = string.IsNullOrEmpty(existing) ? vm.UicTypePrefix : existing;
         UpdateRenameHistorySuggestions();
     }
 
@@ -285,6 +321,38 @@ public partial class MainViewModel : ObservableObject
         RenameInput  = string.Empty;
         RenameHistorySuggestions.Clear();
         OnPropertyChanged(nameof(RenameHistoryVisible));
+    }
+
+    [RelayCommand]
+    private void OpenHistoryDialog()
+    {
+        RefreshHistoryItems();
+        HistoryDialogVisible = true;
+    }
+
+    [RelayCommand]
+    private void CloseHistoryDialog() => HistoryDialogVisible = false;
+
+    [RelayCommand]
+    private void DeleteHistoryItem(UicHistoryItemViewModel? item)
+    {
+        if (item is null) return;
+        _uicHistory.Remove(item.DefinitionId, item.RawDigits);
+        UicHistoryItems.Remove(item);
+    }
+
+    private void RefreshHistoryItems()
+    {
+        UicHistoryItems.Clear();
+        var defLookup = _locoRepo.GetAll().ToDictionary(l => l.Id);
+        foreach (var kv in _uicHistory.GetAll())
+        {
+            defLookup.TryGetValue(kv.Key, out var def);
+            var designation = def?.Designation ?? kv.Key;
+            var format      = def?.UicFormat   ?? "A";
+            foreach (var digits in kv.Value)
+                UicHistoryItems.Add(new UicHistoryItemViewModel(kv.Key, designation, digits, format));
+        }
     }
 
     private void CommitEntry(ConsistEntry entry)
@@ -384,9 +452,15 @@ public partial class MainViewModel : ObservableObject
         var defLookup = _locoRepo.GetAll().ToDictionary(l => l.Id);
         foreach (var entry in consist.Entries)
         {
-            // Always use the loco definition's UicFormat — handles old saves that predate this field
+            // Always use the loco definition's UicFormat/prefixes — handles old saves that predate these fields
             if (defLookup.TryGetValue(entry.DefinitionId, out var def))
-                entry.UicFormat = def.UicFormat;
+            {
+                entry.UicFormat        = def.UicFormat;
+                entry.UicPrefixes      = def.UicPrefixes;
+                entry.UicPrefixOffset  = def.UicPrefixOffset;
+                entry.UicValidateCheck = def.UicValidateCheck;
+                entry.UicTypePrefix    = def.UicTypePrefix;
+            }
             var vm = new ConsistEntryViewModel(entry);
             vm.PropertyChanged += OnEntryChanged;
             ConsistEntries.Add(vm);
@@ -544,15 +618,22 @@ public partial class MainViewModel : ObservableObject
     private void UpdateRenameHistorySuggestions()
     {
         RenameHistorySuggestions.Clear();
-        if (RenameTarget is null) return;
+
+        if (RenameTarget is null)
+        {
+            OnPropertyChanged(nameof(RenameHistoryVisible));
+            return;
+        }
 
         var format  = RenameTarget.UicFormat;
         var history = _uicHistory.GetFor(RenameTarget.DefinitionId);
+
         foreach (var digits in history)
         {
             if (string.IsNullOrEmpty(RenameInput) || digits.StartsWith(RenameInput))
                 RenameHistorySuggestions.Add(UicFormatter.Format(digits, format));
         }
+
         OnPropertyChanged(nameof(RenameHistoryVisible));
     }
 

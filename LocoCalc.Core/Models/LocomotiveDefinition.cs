@@ -22,6 +22,37 @@ public class LocomotiveDefinition
     [JsonPropertyName("uicFormat")]
     public string UicFormat { get; set; } = "A";
 
+    /// <summary>
+    /// Allowed digit substrings for the UIC number, matched at <see cref="UicPrefixOffset"/>.
+    /// Empty/null means no restriction. Example: ["3630","3632"] for Řada 363.
+    /// </summary>
+    [JsonPropertyName("uicPrefixes")]
+    public List<string>? UicPrefixes { get; set; }
+
+    /// <summary>Zero-based index in the raw 12-digit string where <see cref="UicPrefixes"/> are checked. Default 4 (skips 2-digit type + 2-digit country).</summary>
+    [JsonPropertyName("uicPrefixOffset")]
+    public int UicPrefixOffset { get; set; } = 4;
+
+    /// <summary>
+    /// Explicit override for check-digit validation. When null, validation is enabled automatically
+    /// for Format B locos (Czech) and disabled for all others.
+    /// </summary>
+    [JsonPropertyName("uicValidateCheck")]
+    public bool? UicValidateCheckOverride { get; set; }
+
+    /// <summary>True when UIC check-digit should be validated for this class.</summary>
+    [JsonIgnore]
+    public bool UicValidateCheck => UicValidateCheckOverride ?? UicFormat == "B";
+
+    /// <summary>
+    /// Pre-fill prefix for the UIC input dialog (raw digits, no spaces).
+    /// Czech electric locos → "91547", diesel → "92542", non-Czech → empty.
+    /// </summary>
+    [JsonIgnore]
+    public string UicTypePrefix => UicFormat == "B"
+        ? (Traction == "diesel" ? "92542" : "91547")
+        : string.Empty;
+
     public bool HasEDB => BrakingWeightWithEDB.HasValue;
     public bool IsFP3  => FpClass == "FP3";
 }

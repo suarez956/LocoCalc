@@ -45,7 +45,11 @@ public partial class MainView : UserControl
         if (e.PropertyName == nameof(MainViewModel.RenameDialogVisible))
         {
             if (vm.RenameDialogVisible)
+            {
                 SyncRenameTextBox(vm);
+                Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                    this.FindControl<TextBox>("RenameTextBox")?.Focus());
+            }
             return;
         }
 
@@ -134,16 +138,7 @@ public partial class MainView : UserControl
         if (_suppressRenameTextChange) return;
         if (sender is not TextBox tb || DataContext is not MainViewModel vm) return;
 
-        var digits    = UicFormatter.StripToDigits(tb.Text);
-        var format    = vm.RenameTarget?.UicFormat ?? "A";
-        var formatted = UicFormatter.Format(digits, format);
-
-        _suppressRenameTextChange = true;
-        tb.Text = formatted;
-        tb.CaretIndex = formatted.Length;
-        _suppressRenameTextChange = false;
-
-        vm.RenameInput = digits;
+        vm.RenameInput = UicFormatter.StripToDigits(tb.Text ?? string.Empty);
     }
 
     private void OnRenameHistorySelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -154,6 +149,5 @@ public partial class MainView : UserControl
         lb.SelectedItem = null;
 
         vm.RenameInput = UicFormatter.StripToDigits(formatted);
-        // SyncRenameTextBox is called via RenameInputFormatted property change
     }
 }

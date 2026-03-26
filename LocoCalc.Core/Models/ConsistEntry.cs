@@ -17,5 +17,9 @@ public class ConsistEntry
     public bool EdbActive { get; set; }
     public string? CustomName { get; set; }
     public string UicFormat { get; set; } = "A";
+    public List<string>? UicPrefixes { get; set; }
+    public int UicPrefixOffset { get; set; } = 4;
+    public bool UicValidateCheck { get; set; }
+    public string UicTypePrefix { get; set; } = string.Empty;
     public bool HasEDB => BrakingWeightWithEDB.HasValue;
 }

@@ -2,6 +2,9 @@ using Avalonia;
 using LocoCalcAvalonia;
 using LocoCalcAvalonia.Services;
 using LocoCalcAvalonia.ViewModels;
+using LocoCalcAvalonia.Views;
+
+App.WindowFactory = () => new MainWindow();
 
 App.ViewModelFactory = () =>
 {

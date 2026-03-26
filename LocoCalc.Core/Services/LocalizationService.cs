@@ -116,6 +116,12 @@ public partial class LocalizationService : ObservableObject
     public string RenameDialogBody  => T("RenameDialogBody");
     public string RenameConfirm     => T("RenameConfirm");
     public string RenameCancel      => T("RenameCancel");
+    public string RenameUicMismatch => T("RenameUicMismatch");
+    public string RenameCheckDigitWarning(int expected) => string.Format(T("RenameCheckDigitWarn"), expected);
+    public string HistoryButton      => T("HistoryButton");
+    public string HistoryDialogTitle => T("HistoryDialogTitle");
+    public string HistoryEmpty       => T("HistoryEmpty");
+    public string CloseButton        => T("CloseButton");
 
     public string WarnLowBrake(double pct) => string.Format(T("WarnLowBrake"), pct);
 

@@ -25,6 +25,19 @@ public class UicNameHistory
         return Array.Empty<string>();
     }
 
+    /// <summary>Returns all history entries as a read-only snapshot.</summary>
+    public IReadOnlyDictionary<string, IReadOnlyList<string>> GetAll() =>
+        _data.ToDictionary(kv => kv.Key, kv => (IReadOnlyList<string>)kv.Value.AsReadOnly());
+
+    /// <summary>Removes a specific raw-digit entry for the given loco class and persists.</summary>
+    public void Remove(string definitionId, string digits)
+    {
+        if (!_data.TryGetValue(definitionId, out var list)) return;
+        list.Remove(digits);
+        if (list.Count == 0) _data.Remove(definitionId);
+        Save();
+    }
+
     /// <summary>Adds a raw-digit UIC number to history for the given loco class and persists.</summary>
     public void Add(string definitionId, string digits)
     {

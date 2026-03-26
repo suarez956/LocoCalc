@@ -13,7 +13,7 @@ public partial class TractionGroup : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ArrowText))]
-    private bool _isExpanded = true;
+    private bool _isExpanded = false;
 
     public string ArrowText => IsExpanded ? "▾" : "▸";
 

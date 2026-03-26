@@ -17,6 +17,10 @@ public partial class ConsistEntryViewModel : ObservableObject
     public int MaxSpeed { get; }
     public string FpClass { get; }
     public string UicFormat { get; }
+    public IReadOnlyList<string>? UicPrefixes { get; }
+    public int UicPrefixOffset { get; }
+    public bool UicValidateCheck { get; }
+    public string UicTypePrefix { get; }
     public bool HasEDB => BrakingWeightWithEDB.HasValue;
     public Bitmap? LocoImage { get; }
 
@@ -103,6 +107,10 @@ public partial class ConsistEntryViewModel : ObservableObject
         MaxSpeed             = entry.MaxSpeed;
         FpClass              = entry.FpClass;
         UicFormat            = entry.UicFormat;
+        UicPrefixes          = entry.UicPrefixes;
+        UicPrefixOffset      = entry.UicPrefixOffset;
+        UicValidateCheck     = entry.UicValidateCheck;
+        UicTypePrefix        = entry.UicTypePrefix;
         _position            = entry.Position;
         // Front and Rear positions always have brakes enabled (locked)
         _brakesEnabled       = _position != ConsistPosition.Middle || entry.BrakesEnabled;
@@ -160,6 +168,10 @@ public partial class ConsistEntryViewModel : ObservableObject
         MaxSpeed             = MaxSpeed,
         FpClass              = FpClass,
         UicFormat            = UicFormat,
+        UicPrefixes          = UicPrefixes?.ToList(),
+        UicPrefixOffset      = UicPrefixOffset,
+        UicValidateCheck     = UicValidateCheck,
+        UicTypePrefix        = UicTypePrefix,
         Position             = Position,
         BrakesEnabled        = BrakesEnabled,
         EdbActive            = EdbActive,
