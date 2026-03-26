@@ -58,8 +58,8 @@ if [[ -z "$APK" ]]; then
 fi
 
 cd "$DIST"
-zip "LocoCalc-android.zip" "android/$(basename "$APK")" > /dev/null
-ok "LocoCalc-android.zip  ($(basename "$APK"))"
+zip "LocoCalc-android-$VERSION.zip" "android/$(basename "$APK")" > /dev/null
+ok "LocoCalc-android-$VERSION.zip  ($(basename "$APK"))"
 
 # ── Summary ────────────────────────────────────────────────────────────────
 echo

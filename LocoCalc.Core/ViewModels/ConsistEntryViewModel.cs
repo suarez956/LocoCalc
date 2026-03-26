@@ -94,7 +94,7 @@ public partial class ConsistEntryViewModel : ObservableObject
         _                      => "#252540"
     };
     public string EdbButtonColor => EdbActive ? "#f97316" : "#252540";
-    public string EdbButtonText  => EdbActive ? "EDB ✓" : "EDB";
+    public string EdbButtonText  => EdbActive ? "EDB ✓" : "EDB ✗";
 
     public ConsistEntryViewModel(ConsistEntry entry)
     {
