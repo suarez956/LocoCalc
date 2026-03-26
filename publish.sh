@@ -8,6 +8,8 @@ DIST="$SCRIPT_DIR/dist"
 DESKTOP_PROJ="$SCRIPT_DIR/LocoCalc.Desktop/LocoCalc.Desktop.csproj"
 ANDROID_PROJ="$SCRIPT_DIR/LocoCalc.Android/LocoCalc.Android.csproj"
 
+VERSION=$(grep -m1 '<Version>' "$DESKTOP_PROJ" | sed 's/.*<Version>\(.*\)<\/Version>.*/\1/' | tr -d '[:space:]')
+
 rm -rf "$DIST"
 mkdir -p "$DIST"
 
@@ -26,8 +28,8 @@ step "Publishing Windows x64..."
     || fail "Windows x64 publish failed"
 
 cd "$DIST"
-zip -r "LocoCalc-win-x64.zip" "win-x64/" > /dev/null
-ok "LocoCalc-win-x64.zip"
+zip -r "LocoCalc-win-x64-$VERSION.zip" "win-x64/" > /dev/null
+ok "LocoCalc-win-x64-$VERSION.zip"
 
 # ── Linux x64 ──────────────────────────────────────────────────────────────
 step "Publishing Linux x64..."
@@ -40,8 +42,8 @@ step "Publishing Linux x64..."
     || fail "Linux x64 publish failed"
 
 cd "$DIST"
-zip -r "LocoCalc-linux-x64.zip" "linux-x64/" > /dev/null
-ok "LocoCalc-linux-x64.zip"
+zip -r "LocoCalc-linux-x64-$VERSION.zip" "linux-x64/" > /dev/null
+ok "LocoCalc-linux-x64-$VERSION.zip"
 
 # ── Android APK ────────────────────────────────────────────────────────────
 step "Publishing Android (APK)..."
