@@ -14,5 +14,7 @@ public interface IPdfGenerator
         string consistName,
         int maxSpeed,
         bool isCs,
-        bool darkMode = false);
+        bool darkMode = false,
+        string? startStation = null,
+        string? endStation = null);
 }

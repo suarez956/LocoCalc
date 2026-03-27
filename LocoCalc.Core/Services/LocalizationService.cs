@@ -123,6 +123,12 @@ public partial class LocalizationService : ObservableObject
     public string HistoryEmpty       => T("HistoryEmpty");
     public string CloseButton        => T("CloseButton");
 
+    public string StartStation   => T("StartStation");
+    public string EndStation     => T("EndStation");
+    public string StartStationPh => T("StartStationPh");
+    public string EndStationPh   => T("EndStationPh");
+    public string PdfRoute       => T("PdfRoute");
+
     public string WarnLowBrake(double pct) => string.Format(T("WarnLowBrake"), pct);
 
     public string StatusAdded(string name)   => string.Format(T("StatusAdded"), name);

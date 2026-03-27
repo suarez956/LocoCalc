@@ -33,6 +33,10 @@
     <Style Selector="TextBlock.emoji">
       <Setter Property="FontFamily" Value="{StaticResource EmojiFont}"/>
     </Style>
+    <!-- Numeric keyboard on Android for all NumericUpDown inputs -->
+    <Style Selector="NumericUpDown /template/ TextBox">
+      <Setter Property="(ti:TextInputOptions.ContentType)" Value="Digits"/>
+    </Style>
   </UserControl.Styles>
 
   <Panel>
@@ -592,6 +596,30 @@
                   </Grid>
                 </StackPanel>
               </Border>
+
+              <!-- Station pickers -->
+              <StackPanel Spacing="6">
+                <TextBlock Text="{Binding L.StartStation}" FontSize="10" FontWeight="Bold"
+                           Foreground="#8888aa" LetterSpacing="1"/>
+                <AutoCompleteBox x:Name="StartStationBox"
+                                 ItemsSource="{Binding AllStations}"
+                                 SelectedItem="{Binding StartStation, Mode=TwoWay}"
+                                 FilterMode="Custom"
+                                 MinimumPrefixLength="2"
+                                 Watermark="{Binding L.StartStationPh}"
+                                 Background="#1a1a2e" Foreground="#e8e8ff"
+                                 BorderBrush="#3a3a60" CornerRadius="5" FontSize="12"/>
+                <TextBlock Text="{Binding L.EndStation}" FontSize="10" FontWeight="Bold"
+                           Foreground="#8888aa" LetterSpacing="1"/>
+                <AutoCompleteBox x:Name="EndStationBox"
+                                 ItemsSource="{Binding AllStations}"
+                                 SelectedItem="{Binding EndStation, Mode=TwoWay}"
+                                 FilterMode="Custom"
+                                 MinimumPrefixLength="2"
+                                 Watermark="{Binding L.EndStationPh}"
+                                 Background="#1a1a2e" Foreground="#e8e8ff"
+                                 BorderBrush="#3a3a60" CornerRadius="5" FontSize="12"/>
+              </StackPanel>
 
               <!-- PDF controls (hidden when PdfSaveService not injected, e.g. Android) -->
               <StackPanel Spacing="6" IsVisible="{Binding IsPdfSupported}">
@@ -1153,6 +1181,30 @@
 
           <Border Background="#2e2e50" Height="1"/>
 
+          <!-- Station pickers -->
+          <TextBlock Text="{Binding L.StartStation}" FontSize="10" FontWeight="Bold"
+                     Foreground="#8888aa" LetterSpacing="1.5" Margin="0,0,0,2"/>
+          <AutoCompleteBox x:Name="StartStationBoxMobile"
+                           ItemsSource="{Binding AllStations}"
+                           SelectedItem="{Binding StartStation, Mode=TwoWay}"
+                           FilterMode="Custom"
+                           MinimumPrefixLength="2"
+                           Watermark="{Binding L.StartStationPh}"
+                           Background="#1e1e32" Foreground="#e8e8ff"
+                           BorderBrush="#2e2e50" CornerRadius="6" FontSize="13"/>
+          <TextBlock Text="{Binding L.EndStation}" FontSize="10" FontWeight="Bold"
+                     Foreground="#8888aa" LetterSpacing="1.5" Margin="0,0,0,2"/>
+          <AutoCompleteBox x:Name="EndStationBoxMobile"
+                           ItemsSource="{Binding AllStations}"
+                           SelectedItem="{Binding EndStation, Mode=TwoWay}"
+                           FilterMode="Custom"
+                           MinimumPrefixLength="2"
+                           Watermark="{Binding L.EndStationPh}"
+                           Background="#1e1e32" Foreground="#e8e8ff"
+                           BorderBrush="#2e2e50" CornerRadius="6" FontSize="13"/>
+
+          <Border Background="#2e2e50" Height="1"/>
+
           <!-- Saved consists -->
           <TextBlock Text="{Binding L.MenuSaved}" FontSize="10" FontWeight="Bold"
                      Foreground="#8888aa" LetterSpacing="1.5" Margin="0,0,0,4"/>
@@ -1421,7 +1473,13 @@
                  FontFamily="Consolas,monospace" FontSize="15" Padding="10,8" CornerRadius="6"
                  ti:TextInputOptions.ContentType="Digits"
                  TextChanged="OnRenameTextChanged"
-                 MaxLength="17"/>
+                 MaxLength="12"/>
+        <!-- Formatted UIC display -->
+        <TextBlock Text="{Binding RenameInputFormatted}"
+                   FontFamily="Consolas,monospace" FontSize="13"
+                   Foreground="#6688cc" LetterSpacing="1"
+                   IsVisible="{Binding RenameInput.Length}"
+                   Margin="2,-8,0,0"/>
         <!-- UIC prefix mismatch warning -->
         <Border IsVisible="{Binding RenameUicMismatchVisible}"
                 Background="#2d1a00" CornerRadius="5" Padding="10,7"

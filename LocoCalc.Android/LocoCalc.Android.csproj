@@ -9,7 +9,7 @@
     <AssemblyName>LocoCalcAvalonia.Android</AssemblyName>
     <ApplicationId>cz.lococalc.app</ApplicationId>
     <ApplicationVersion>1</ApplicationVersion>
-    <ApplicationDisplayVersion>1.1.1</ApplicationDisplayVersion>
+    <ApplicationDisplayVersion>$(AppVersion)</ApplicationDisplayVersion>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
   </PropertyGroup>
 
@@ -31,9 +31,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.2.3" />
     <PackageReference Include="Avalonia.Android"              Version="11.2.3"/>
-    <PackageReference Include="Xamarin.AndroidX.Core"         Version="1.13.1.4"/>
-  </ItemGroup>
+    <PackageReference Include="Xamarin.AndroidX.Core"         Version="1.13.1.4"/>  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\LocoCalc.Core\LocoCalc.Core.csproj"/>

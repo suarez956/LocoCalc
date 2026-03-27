@@ -13,6 +13,12 @@ public partial class MainViewModel : ObservableObject
     private readonly UicNameHistory _uicHistory;
     public LocalizationService L => LocalizationService.Instance;
 
+    // ── Stations ──────────────────────────────────────────────────────────────
+    public IReadOnlyList<Station> AllStations => StationRepository.Instance.All;
+
+    [ObservableProperty] private Station? _startStation;
+    [ObservableProperty] private Station? _endStation;
+
     // ── Language ─────────────────────────────────────────────────────────────
     public bool IsCzech
     {
@@ -529,7 +535,9 @@ public partial class MainViewModel : ObservableObject
             ConsistName.Length > 0 ? ConsistName : "Souprava",
             SpeedOverride ?? EtcsDefSpeed,
             L.Language == AppLanguage.Czech,
-            PdfDarkMode);
+            PdfDarkMode,
+            StartStation is null ? null : $"{StartStation.Id}  {StartStation.Name}",
+            EndStation   is null ? null : $"{EndStation.Id}  {EndStation.Name}");
 
         await File.WriteAllBytesAsync(path, bytes);
         ShowToast(L.Language == AppLanguage.Czech

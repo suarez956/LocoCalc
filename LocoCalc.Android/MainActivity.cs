@@ -4,6 +4,7 @@ using Android.OS;
 using Android.Views;
 using Avalonia;
 using Avalonia.Android;
+using LocoCalcAvalonia.Services;
 using LocoCalcAvalonia.ViewModels;
 
 namespace LocoCalcAvalonia.Android;
@@ -28,6 +29,17 @@ public class MainActivity : AvaloniaMainActivity<App>
     {
         AndroidPdfSaveService.CurrentActivity = this;
         base.OnCreate(savedInstanceState);
+
+        // Read the status bar height from Android resources and expose it to Avalonia views
+        int resId = Resources!.GetIdentifier("status_bar_height", "dimen", "android");
+        if (resId > 0)
+            PlatformInsets.StatusBarTop = Resources.GetDimensionPixelSize(resId) / Resources.DisplayMetrics!.Density;
+
+        // Tablets (sw >= 600dp) allow all orientations; phones are portrait-only
+        bool isTablet = Resources!.Configuration!.SmallestScreenWidthDp >= 600;
+        RequestedOrientation = isTablet
+            ? ScreenOrientation.FullSensor
+            : ScreenOrientation.Portrait;
 
         // Belt-and-suspenders: explicitly hide soft keyboard after window is ready
         Window?.SetSoftInputMode(SoftInput.StateAlwaysHidden | SoftInput.AdjustNothing);

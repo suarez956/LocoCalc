@@ -7,8 +7,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>LocoCalcAvalonia</RootNamespace>
     <AssemblyName>LocoCalcAvalonia</AssemblyName>
-    <Version>1.1.1</Version>
-    <FileVersion>1.1.1</FileVersion>
+    <Version>$(AppVersion)</Version>
+    <FileVersion>$(AppVersion)</FileVersion>
     <ApplicationIcon>icon.ico</ApplicationIcon>
 
     <!-- Explicitly exclude Android RIDs injected by the Android workload when in the same solution -->
@@ -34,8 +34,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.2.3" />
     <PackageReference Include="Avalonia.Desktop" Version="11.2.3"/>
-    <PackageReference Include="QuestPDF"          Version="2024.12.4"/>
+    <PackageReference Include="QuestPDF"          Version="2025.1.0"/>
   </ItemGroup>
 
   <ItemGroup>

@@ -1,5 +1,9 @@
+using System.Globalization;
+using System.Text;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using LocoCalcAvalonia.Models;
 using LocoCalcAvalonia.Services;
 using LocoCalcAvalonia.ViewModels;
 
@@ -23,7 +27,47 @@ public partial class MainView : UserControl
 
         SizeChanged += (_, e) => ApplyLayout(e.NewSize.Width);
 
-        AttachedToVisualTree += (_, _) => ApplyLayout(Bounds.Width);
+        AttachedToVisualTree += (_, _) =>
+        {
+            ApplyLayout(Bounds.Width);
+            ApplyStatusBarPadding();
+            PlatformInsets.Changed += ApplyStatusBarPadding;
+
+            foreach (var name in new[] { "StartStationBox", "EndStationBox",
+                                         "StartStationBoxMobile", "EndStationBoxMobile" })
+            {
+                if (this.FindControl<AutoCompleteBox>(name) is { } box)
+                    box.ItemFilter = StationFilter;
+            }
+        };
+
+        DetachedFromVisualTree += (_, _) =>
+        {
+            PlatformInsets.Changed -= ApplyStatusBarPadding;
+        };
+    }
+
+    // ── Station search ────────────────────────────────────────────────────────
+    private static bool StationFilter(string? search, object? item)
+    {
+        if (item is not Station station || search is null) return false;
+        var q = Normalize(search);
+        return Normalize(station.Name).Contains(q) || station.Id.Contains(q, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string Normalize(string text)
+    {
+        var d = text.Normalize(NormalizationForm.FormD);
+        var sb = new System.Text.StringBuilder(d.Length);
+        foreach (var c in d)
+            if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                sb.Append(c);
+        return sb.ToString().ToLowerInvariant();
+    }
+
+    private void ApplyStatusBarPadding()
+    {
+        Padding = new Thickness(0, PlatformInsets.StatusBarTop, 0, 0);
     }
 
     private void ApplyLayout(double width)
@@ -53,11 +97,6 @@ public partial class MainView : UserControl
             return;
         }
 
-        if (e.PropertyName == nameof(MainViewModel.RenameInputFormatted))
-        {
-            SyncRenameTextBox(vm);
-            return;
-        }
 
         if (e.PropertyName != nameof(MainViewModel.StatusMessage)) return;
         if (string.IsNullOrEmpty(vm.StatusMessage)) return;
@@ -128,7 +167,7 @@ public partial class MainView : UserControl
         if (tb is null) return;
 
         _suppressRenameTextChange = true;
-        tb.Text = vm.RenameInputFormatted;
+        tb.Text = vm.RenameInput;
         tb.CaretIndex = tb.Text?.Length ?? 0;
         _suppressRenameTextChange = false;
     }

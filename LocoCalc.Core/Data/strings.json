@@ -110,5 +110,11 @@
   "HistoryButton":          { "cs": "Známé lokomotivy",                 "en": "Last known locos" },
   "HistoryDialogTitle":     { "cs": "Známé lokomotivy",                           "en": "Last known locos" },
   "HistoryEmpty":           { "cs": "Žádná historie",                             "en": "No history" },
-  "CloseButton":            { "cs": "Zavřít",                                     "en": "Close" }
+  "CloseButton":            { "cs": "Zavřít",                                     "en": "Close" },
+
+  "StartStation":           { "cs": "Výchozí stanice",                            "en": "Start Station" },
+  "EndStation":             { "cs": "Cílová stanice",                             "en": "End Station" },
+  "StartStationPh":         { "cs": "Hledat výchozí stanici…",                   "en": "Search start station…" },
+  "EndStationPh":           { "cs": "Hledat cílovou stanici…",                   "en": "Search end station…" },
+  "PdfRoute":               { "cs": "Trasa",                                      "en": "Route" }
 }

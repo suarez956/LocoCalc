@@ -15,15 +15,18 @@ public class PdfReportService : IPdfGenerator
     // IPdfGenerator instance method
     byte[] IPdfGenerator.Generate(
         IReadOnlyList<ConsistEntry> entries, string consistName,
-        int maxSpeed, bool isCs, bool darkMode)
-        => Generate(entries, consistName, maxSpeed, isCs, darkMode);
+        int maxSpeed, bool isCs, bool darkMode,
+        string? startStation, string? endStation)
+        => Generate(entries, consistName, maxSpeed, isCs, darkMode, startStation, endStation);
 
     public static byte[] Generate(
         IReadOnlyList<ConsistEntry> entries,
         string consistName,
         int maxSpeed,
         bool isCs,
-        bool darkMode = false)
+        bool darkMode = false,
+        string? startStation = null,
+        string? endStation = null)
     {
         var total    = entries.Sum(e => e.TotalWeightTonnes);
         var len      = entries.Sum(e => e.LengthM);
@@ -59,7 +62,7 @@ public class PdfReportService : IPdfGenerator
             {
                 page.Size(PageSizes.A4);
                 page.Margin(15, Unit.Millimetre);
-                page.Background(th.BgPage);
+                page.PageColor(th.BgPage);
                 page.DefaultTextStyle(t => t.FontSize(10).FontFamily("Arial").FontColor(th.TxtMain));
 
                 // ── Header ─────────────────────────────────────────────────
@@ -73,6 +76,13 @@ public class PdfReportService : IPdfGenerator
                             c.Item().Text(consistName).FontSize(16).Bold().FontColor(th.TxtMain);
                             c.Item().Text(T("PdfBrakingReport"))
                              .FontSize(10).FontColor(th.TxtSub);
+                            if (startStation is not null || endStation is not null)
+                            {
+                                var route = $"{startStation ?? "?"} → {endStation ?? "?"}";
+                                c.Item().PaddingTop(3)
+                                 .Text($"{T("PdfRoute")}: {route}")
+                                 .FontSize(10).FontColor(th.TxtMeta);
+                            }
                         });
                         row.ConstantItem(160).AlignRight().Column(c =>
                         {

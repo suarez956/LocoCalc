@@ -23,7 +23,9 @@ public class AndroidPdfGenerator : IPdfGenerator
         string consistName,
         int maxSpeed,
         bool isCs,
-        bool darkMode = false)
+        bool darkMode = false,
+        string? startStation = null,
+        string? endStation = null)
     {
         var total    = entries.Sum(e => e.TotalWeightTonnes);
         var len      = entries.Sum(e => e.LengthM);
@@ -75,8 +77,8 @@ public class AndroidPdfGenerator : IPdfGenerator
 
         var doc = new PdfDocument();
         var pageInfo = new PdfDocument.PageInfo.Builder(PageW, PageH, 1).Create();
-        var page = doc.StartPage(pageInfo);
-        var cv = page.Canvas;
+        var page = doc.StartPage(pageInfo) ?? throw new InvalidOperationException("Failed to start PDF page.");
+        var cv = page.Canvas ?? throw new InvalidOperationException("PDF page canvas is null.");
 
         // Page background
         cv.DrawRect(new RectF(0, 0, PageW, PageH), FillPaint(bgPage));
@@ -87,6 +89,12 @@ public class AndroidPdfGenerator : IPdfGenerator
         cv.DrawText("LocoCalc", Margin, y + 20, TextPaint(22, orange, true));
         cv.DrawText(consistName, Margin, y + 40, TextPaint(14, txtMain, true));
         cv.DrawText(T("PdfBrakingReport"), Margin, y + 55, TextPaint(10, grey));
+        if (startStation is not null || endStation is not null)
+        {
+            var route = $"{T("PdfRoute")}: {startStation ?? "?"} → {endStation ?? "?"}";
+            cv.DrawText(route, Margin, y + 68, TextPaint(10, footer));
+            y += 13;
+        }
         cv.DrawText(date, PageW - Margin - 100, y + 40, TextPaint(10, footer));
         y += 62;
         cv.DrawLine(Margin, y, PageW - Margin, y, FillPaint(orange));
