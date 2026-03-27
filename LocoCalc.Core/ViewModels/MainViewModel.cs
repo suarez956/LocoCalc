@@ -292,10 +292,10 @@ public partial class MainViewModel : ObservableObject
     private void OpenRenameDialog(ConsistEntryViewModel? vm)
     {
         if (vm is null) return;
-        RenameTarget = vm;
         var existing = UicFormatter.StripToDigits(vm.CustomName);
         // Pre-fill with type prefix (e.g. "91547" / "92542") when no name has been set yet
         RenameInput = string.IsNullOrEmpty(existing) ? vm.UicTypePrefix : existing;
+        RenameTarget = vm;  // Set after RenameInput so SyncRenameTextBox sees the correct value
         UpdateRenameHistorySuggestions();
     }
 

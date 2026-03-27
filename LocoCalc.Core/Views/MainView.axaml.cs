@@ -167,8 +167,9 @@ public partial class MainView : UserControl
         if (tb is null) return;
 
         _suppressRenameTextChange = true;
-        tb.Text = vm.RenameInput;
-        tb.CaretIndex = tb.Text?.Length ?? 0;
+        var formatted = UicFormatter.Format(vm.RenameInput, vm.RenameTarget?.UicFormat ?? "A");
+        tb.Text = formatted;
+        tb.CaretIndex = formatted.Length;
         _suppressRenameTextChange = false;
     }
 
@@ -177,7 +178,17 @@ public partial class MainView : UserControl
         if (_suppressRenameTextChange) return;
         if (sender is not TextBox tb || DataContext is not MainViewModel vm) return;
 
-        vm.RenameInput = UicFormatter.StripToDigits(tb.Text ?? string.Empty);
+        var digits = UicFormatter.StripToDigits(tb.Text ?? string.Empty);
+        vm.RenameInput = digits;
+
+        var formatted = UicFormatter.Format(digits, vm.RenameTarget?.UicFormat ?? "A");
+        if (tb.Text != formatted)
+        {
+            _suppressRenameTextChange = true;
+            tb.Text = formatted;
+            tb.CaretIndex = formatted.Length;
+            _suppressRenameTextChange = false;
+        }
     }
 
     private void OnRenameHistorySelectionChanged(object? sender, SelectionChangedEventArgs e)

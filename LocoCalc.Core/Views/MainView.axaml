@@ -1471,15 +1471,8 @@
                  BorderBrush="#3b82f6" BorderThickness="1"
                  CaretBrush="#e8e8ff"
                  FontFamily="Consolas,monospace" FontSize="15" Padding="10,8" CornerRadius="6"
-                 ti:TextInputOptions.ContentType="Digits"
                  TextChanged="OnRenameTextChanged"
-                 MaxLength="12"/>
-        <!-- Formatted UIC display -->
-        <TextBlock Text="{Binding RenameInputFormatted}"
-                   FontFamily="Consolas,monospace" FontSize="13"
-                   Foreground="#6688cc" LetterSpacing="1"
-                   IsVisible="{Binding RenameInput.Length}"
-                   Margin="2,-8,0,0"/>
+                 MaxLength="17"/>
         <!-- UIC prefix mismatch warning -->
         <Border IsVisible="{Binding RenameUicMismatchVisible}"
                 Background="#2d1a00" CornerRadius="5" Padding="10,7"
