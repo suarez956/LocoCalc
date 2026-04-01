@@ -7,5 +7,6 @@
   "traction": "ac",
   "maxSpeed": 110,
   "fp": "FP2",
-  "uicFormat": "B"
+  "uicFormat": "B",
+  "axleLoad": "D2"
 }

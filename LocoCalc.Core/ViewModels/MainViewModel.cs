@@ -192,8 +192,9 @@ public partial class MainViewModel : ObservableObject
     public string EtcsMaxSpeedDisplay =>
         ConsistEntries.Count == 0 ? "—" : $"{SpeedOverride ?? EtcsDefSpeed} km/h";
 
-    public string EtcsFpClass => BrakingCalculator.ConsistFpClass(ConsistEntries.Select(e => e.ToModel()));
-    public int    EtcsFpMm    => EtcsFpClass == "FP3" ? 130 : 100;
+    public string EtcsFpClass    => BrakingCalculator.ConsistFpClass(ConsistEntries.Select(e => e.ToModel()));
+    public int    EtcsFpMm       => EtcsFpClass == "FP3" ? 130 : 100;
+    public string EtcsAxleLoad   => BrakingCalculator.ConsistAxleLoad(ConsistEntries.Select(e => e.ToModel())) ?? "—";
 
     public bool   EtcsWarningVisible => BrakingPercentage > 0 && BrakingPercentage < 50;
     public string EtcsWarningText    => L.WarnLowBrake(BrakingPercentage);
@@ -246,6 +247,7 @@ public partial class MainViewModel : ObservableObject
             LengthM              = SelectedLoco.LengthM,
             MaxSpeed             = SelectedLoco.MaxSpeed,
             FpClass              = SelectedLoco.FpClass,
+            AxleLoad             = SelectedLoco.AxleLoad,
             UicFormat            = SelectedLoco.UicFormat,
             UicPrefixes          = SelectedLoco.UicPrefixes,
             UicPrefixOffset      = SelectedLoco.UicPrefixOffset,
@@ -466,6 +468,7 @@ public partial class MainViewModel : ObservableObject
                 entry.UicPrefixOffset  = def.UicPrefixOffset;
                 entry.UicValidateCheck = def.UicValidateCheck;
                 entry.UicTypePrefix    = def.UicTypePrefix;
+                entry.AxleLoad         = def.AxleLoad;
             }
             var vm = new ConsistEntryViewModel(entry);
             vm.PropertyChanged += OnEntryChanged;
@@ -604,6 +607,7 @@ public partial class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(EtcsMaxSpeedDisplay));
         OnPropertyChanged(nameof(EtcsFpClass));
         OnPropertyChanged(nameof(EtcsFpMm));
+        OnPropertyChanged(nameof(EtcsAxleLoad));
         OnPropertyChanged(nameof(EtcsWarningVisible));
         OnPropertyChanged(nameof(EtcsWarningText));
         OnPropertyChanged(nameof(EtcsBrakingColor));

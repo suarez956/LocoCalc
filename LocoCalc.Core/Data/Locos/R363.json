@@ -8,6 +8,10 @@
   "maxSpeed": 120,
   "fp": "FP3",
   "uicFormat": "B",
-  "uicPrefixes": ["3630", "3632"],
-  "uicPrefixOffset": 5
+  "uicPrefixes": [
+    "3630",
+    "3632"
+  ],
+  "uicPrefixOffset": 5,
+  "axleLoad": "C2"
 }

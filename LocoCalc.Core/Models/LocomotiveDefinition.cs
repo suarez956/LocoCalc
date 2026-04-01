@@ -15,6 +15,10 @@ public class LocomotiveDefinition
     [JsonPropertyName("fp")]
     public string FpClass { get; set; } = "FP2";
 
+    /// <summary>Track line class (A, B1, B2, C2, C3, C4, D2, D3, D4). Null = not specified.</summary>
+    [JsonPropertyName("axleLoad")]
+    public string? AxleLoad { get; set; }
+
     [JsonPropertyName("traction")]
     public string Traction { get; set; } = "diesel";
 

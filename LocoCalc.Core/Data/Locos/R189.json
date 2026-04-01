@@ -7,5 +7,6 @@
   "BrakingWeightWithEDB": 146,
   "traction": "ms",
   "maxSpeed": 160,
-  "fp": "FP3"
+  "fp": "FP3",
+  "axleLoad": "D2"
 }

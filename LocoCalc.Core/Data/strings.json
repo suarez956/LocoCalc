@@ -33,6 +33,7 @@
   "EtcsMaxSpeed":         { "cs": "Max. rychlost ETCS",                    "en": "ETCS max speed" },
   "BrakingPctLabel":      { "cs": "Brzdící procenta",                      "en": "Braking percentage" },
   "TrainLength":          { "cs": "Délka vlaku",                           "en": "Train length" },
+  "AxleLoad":             { "cs": "Traťové zatížení",                      "en": "Axle load" },
   "EtcsParameters":       { "cs": "ETCS parametry",                        "en": "ETCS parameters" },
   "ConsistComposition":   { "cs": "Složení soupravy",                      "en": "Consist composition" },
   "TotalRow":             { "cs": "Celkem",                                "en": "Total" },

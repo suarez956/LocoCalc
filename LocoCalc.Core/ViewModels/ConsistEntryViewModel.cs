@@ -16,6 +16,7 @@ public partial class ConsistEntryViewModel : ObservableObject
     public double LengthM { get; }
     public int MaxSpeed { get; }
     public string FpClass { get; }
+    public string? AxleLoad { get; }
     public string UicFormat { get; }
     public IReadOnlyList<string>? UicPrefixes { get; }
     public int UicPrefixOffset { get; }
@@ -106,6 +107,7 @@ public partial class ConsistEntryViewModel : ObservableObject
         LengthM              = entry.LengthM;
         MaxSpeed             = entry.MaxSpeed;
         FpClass              = entry.FpClass;
+        AxleLoad             = entry.AxleLoad;
         UicFormat            = entry.UicFormat;
         UicPrefixes          = entry.UicPrefixes;
         UicPrefixOffset      = entry.UicPrefixOffset;
@@ -167,6 +169,7 @@ public partial class ConsistEntryViewModel : ObservableObject
         LengthM              = LengthM,
         MaxSpeed             = MaxSpeed,
         FpClass              = FpClass,
+        AxleLoad             = AxleLoad,
         UicFormat            = UicFormat,
         UicPrefixes          = UicPrefixes?.ToList(),
         UicPrefixOffset      = UicPrefixOffset,

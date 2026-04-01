@@ -77,6 +77,7 @@ public partial class LocalizationService : ObservableObject
     public string EtcsMaxSpeed       => T("EtcsMaxSpeed");
     public string BrakingPctLabel    => T("BrakingPctLabel");
     public string TrainLength        => T("TrainLength");
+    public string AxleLoad           => T("AxleLoad");
     public string EtcsParameters     => T("EtcsParameters");
     public string ConsistComposition => T("ConsistComposition");
     public string TotalRow           => T("TotalRow");

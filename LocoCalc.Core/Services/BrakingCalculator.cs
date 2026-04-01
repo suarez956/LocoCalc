@@ -45,4 +45,21 @@ public static class BrakingCalculator
         var list = entries.ToList();
         return list.Count > 0 && list.All(e => e.FpClass == "FP3") ? "FP3" : "FP2";
     }
+
+    // Order from lowest to highest track class per the line-class table
+    private static readonly string[] AxleLoadOrder = { "A", "B1", "B2", "C2", "C3", "C4", "D2", "D3", "D4" };
+
+    /// <summary>
+    /// Returns the minimum (most restrictive) track line class across all entries.
+    /// Returns null when no entry has an axle load set.
+    /// </summary>
+    public static string? ConsistAxleLoad(IEnumerable<ConsistEntry> entries)
+    {
+        var values = entries
+            .Select(e => e.AxleLoad)
+            .Where(a => a is not null && Array.IndexOf(AxleLoadOrder, a) >= 0)
+            .ToList();
+        if (values.Count == 0) return null;
+        return values.OrderBy(a => Array.IndexOf(AxleLoadOrder, a)).Last();
+    }
 }

@@ -32,8 +32,9 @@ public class PdfReportService : IPdfGenerator
         var len      = entries.Sum(e => e.LengthM);
         var ab       = entries.Where(e => e.BrakesEnabled).Sum(e => BrakingCalculator.ActiveBrake(e));
         var pct      = total > 0 ? Math.Floor(ab / total * 100.0) : 0;
-        var fp       = BrakingCalculator.ConsistFpClass(entries);
-        var fpMm     = fp == "FP3" ? 130 : 100;
+        var fp         = BrakingCalculator.ConsistFpClass(entries);
+        var fpMm       = fp == "FP3" ? 130 : 100;
+        var axleLoad   = BrakingCalculator.ConsistAxleLoad(entries) ?? "—";
         var date     = DateTime.Now.ToString(isCs ? "dd. MM. yyyy HH:mm" : "dd MMM yyyy HH:mm");
         var lowBrake = pct < 50;
 
@@ -158,6 +159,7 @@ public class PdfReportService : IPdfGenerator
                                ERow(T("BrakingPctLabel"), $"{pct:F0} %",
                                     lowBrake ? th.Red : th.Green);
                                ERow(T("TrainLength"), $"{len:F0} m");
+                               ERow(T("AxleLoad"), axleLoad, th.Orange);
                            });
                        });
                     col.Item().Height(12);

@@ -12,6 +12,7 @@ public class ConsistEntry
     public double LengthM { get; set; }
     public int MaxSpeed { get; set; }
     public string FpClass { get; set; } = "FP2";
+    public string? AxleLoad { get; set; }
     public ConsistPosition Position { get; set; }
     public bool BrakesEnabled { get; set; }
     public bool EdbActive { get; set; }
