@@ -37,6 +37,13 @@
     <Style Selector="NumericUpDown /template/ TextBox">
       <Setter Property="(ti:TextInputOptions.ContentType)" Value="Digits"/>
     </Style>
+    <Style Selector="AutoCompleteBox">
+      <Setter Property="ItemTemplate">
+        <DataTemplate>
+          <TextBlock Text="{Binding}" FontSize="16" Padding="4,8"/>
+        </DataTemplate>
+      </Setter>
+    </Style>
   </UserControl.Styles>
 
   <Panel>
@@ -81,13 +88,6 @@
                   BorderBrush="#3a3a55" BorderThickness="1"
                   Padding="12,7" CornerRadius="8" FontSize="12" FontWeight="SemiBold" Cursor="Hand"
                   Command="{Binding OpenHistoryDialogCommand}"/>
-          <Border Background="#f97316" CornerRadius="8" Padding="14,7">
-            <StackPanel Orientation="Horizontal" Spacing="8">
-              <TextBlock Text="{Binding L.BrakingWeightLabel}" FontSize="11" Foreground="#ffffffcc" VerticalAlignment="Center"/>
-              <TextBlock Text="{Binding BrakingPercentageDisplay}" FontSize="20" FontWeight="Bold"
-                         Foreground="White" FontFamily="Consolas,monospace" MinWidth="72" TextAlignment="Center"/>
-            </StackPanel>
-          </Border>
         </StackPanel>
       </Grid>
     </Border>
@@ -707,13 +707,6 @@
           <TextBlock Text="🚂" FontSize="22" VerticalAlignment="Center" FontFamily="{StaticResource EmojiFont}" Margin="0,1,0,0"/>
           <TextBlock Text="LocoCalc" FontSize="22" FontWeight="Bold" Foreground="#f97316"/>
         </StackPanel>
-        <Border Grid.Column="1" Background="#f97316" CornerRadius="8" Padding="12,8">
-          <StackPanel Orientation="Horizontal" Spacing="6">
-            <TextBlock Text="{Binding L.BrakingWeightLabel}" FontSize="12" Foreground="#ffffffcc" VerticalAlignment="Center"/>
-            <TextBlock Text="{Binding BrakingPercentageDisplay}" FontSize="22" FontWeight="Bold"
-                       Foreground="White" FontFamily="Consolas,monospace" MinWidth="68" TextAlignment="Center"/>
-          </StackPanel>
-        </Border>
       </Grid>
     </Border>
 

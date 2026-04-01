@@ -199,5 +199,6 @@ public partial class MainView : UserControl
         lb.SelectedItem = null;
 
         vm.RenameInput = UicFormatter.StripToDigits(formatted);
+        SyncRenameTextBox(vm);
     }
 }

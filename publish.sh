@@ -102,6 +102,13 @@ for TARGET in "${TARGETS[@]}"; do
     esac
 done
 
+# ── Source archive ───────────────────────────────────────────────────────────
+step "Packaging sources..."
+git -C "$SCRIPT_DIR" archive --format=zip HEAD \
+    -o "$DIST/LocoCalc-sources-$VERSION.zip" \
+    || fail "Source archive failed"
+ok "LocoCalc-sources-$VERSION.zip"
+
 # ── Summary ──────────────────────────────────────────────────────────────────
 echo
 echo "Done. Output in $DIST:"

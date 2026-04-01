@@ -4,6 +4,12 @@
              RequestedThemeVariant="Dark">
   <Application.Styles>
     <FluentTheme/>
+    <Style Selector="AutoCompleteBox /template/ ListBox ListBoxItem:selected /template/ ContentPresenter">
+      <Setter Property="Background" Value="#33558bcc"/>
+    </Style>
+    <Style Selector="AutoCompleteBox /template/ ListBox ListBoxItem:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#1a558bcc"/>
+    </Style>
   </Application.Styles>
   <Application.Resources>
     <!-- Embedded NotoColorEmoji guarantees emoji rendering on all Android versions -->
