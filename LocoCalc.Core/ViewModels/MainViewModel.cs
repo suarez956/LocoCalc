@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Runtime;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LocoCalcAvalonia.Models;
@@ -564,6 +565,10 @@ public partial class MainViewModel : ObservableObject
 
         if (AutoOpenPdf)
             PdfSaveService.OpenFile(path);
+
+        // Release the large PDF byte array and QuestPDF render allocations from the LOH
+        GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+        GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, blocking: true, compacting: true);
     }
 
     [RelayCommand]
