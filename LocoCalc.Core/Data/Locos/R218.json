@@ -2,11 +2,11 @@
   "Id": "218",
   "Designation": "Řada 218",
   "TotalWeightTonnes": 72.0,
-  "BrakingWeightTonnes": 52,
+  "BrakingWeightTonnes": 44,
   "LengthM": 15,
   "traction": "ac",
   "maxSpeed": 80,
   "fp": "FP2",
   "uicFormat": "B",
-  "axleLoad": "B1"
+  "axleLoad": "A"
 }

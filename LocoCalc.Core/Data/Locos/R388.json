@@ -2,11 +2,12 @@
   "Id": "388",
   "Designation": "Řada 388",
   "TotalWeightTonnes": 86.0,
-  "BrakingWeightTonnes": 131,
+  "BrakingWeightTonnes": 96,
+  "BrakingWeightTonnesR": 131,
   "LengthM": 19,
   "traction": "ms",
   "maxSpeed": 160,
   "fp": "FP3",
   "uicFormat": "B",
-  "axleLoad": "D2"
+  "axleLoad": "C2"
 }

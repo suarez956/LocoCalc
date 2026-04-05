@@ -2,11 +2,11 @@
   "Id": "731",
   "Designation": "Řada 731",
   "TotalWeightTonnes": 68.4,
-  "BrakingWeightTonnes": 50,
+  "BrakingWeightTonnes": 51,
   "LengthM": 16,
   "traction": "diesel",
   "maxSpeed": 80,
   "fp": "FP2",
   "uicFormat": "B",
-  "axleLoad": "B1"
+  "axleLoad": "A"
 }

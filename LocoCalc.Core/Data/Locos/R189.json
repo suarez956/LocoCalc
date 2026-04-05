@@ -8,5 +8,7 @@
   "traction": "ms",
   "maxSpeed": 160,
   "fp": "FP3",
-  "axleLoad": "D2"
+  "axleLoad": "D2",
+  "axleLoadDouble": "D2",
+  "axleLoadConvoy": "C2"
 }

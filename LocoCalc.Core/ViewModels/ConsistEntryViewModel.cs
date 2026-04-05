@@ -12,7 +12,9 @@ public partial class ConsistEntryViewModel : ObservableObject
     public string Designation { get; }
     public double TotalWeightTonnes { get; }
     public double BrakingWeightTonnes { get; }
+    public double? BrakingWeightTonnesR { get; }
     public double? BrakingWeightWithEDB { get; }
+    public double? BrakingWeightWithEDBR { get; }
     public double LengthM { get; }
     public int MaxSpeed { get; }
     public string FpClass { get; }
@@ -22,7 +24,8 @@ public partial class ConsistEntryViewModel : ObservableObject
     public int UicPrefixOffset { get; }
     public bool UicValidateCheck { get; }
     public string UicTypePrefix { get; }
-    public bool HasEDB => BrakingWeightWithEDB.HasValue;
+    public bool HasEDB   => BrakingWeightWithEDB.HasValue;
+    public bool HasRMode => BrakingWeightTonnesR.HasValue;
     public Bitmap? LocoImage { get; }
 
     [ObservableProperty]
@@ -47,20 +50,41 @@ public partial class ConsistEntryViewModel : ObservableObject
     private bool _edbActive;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ActiveBrake))]
+    [NotifyPropertyChangedFor(nameof(ActiveBrakeDisplay))]
+    [NotifyPropertyChangedFor(nameof(EdbButtonEnabled))]
+    [NotifyPropertyChangedFor(nameof(RModeButtonText))]
+    [NotifyPropertyChangedFor(nameof(RModeButtonColor))]
+    private bool _rModeActive;
+
+    [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(DisplayName))]
     [NotifyPropertyChangedFor(nameof(HasCustomName))]
     private string? _customName;
 
     public string DisplayName     => CustomName ?? Designation;
     public bool   HasCustomName   => !string.IsNullOrWhiteSpace(CustomName);
-    public bool   EdbButtonEnabled => HasEDB && BrakesEnabled;
+    public bool EdbButtonEnabled => BrakesEnabled &&
+        (RModeActive ? BrakingWeightWithEDBR.HasValue : BrakingWeightWithEDB.HasValue);
 
     public bool BrakesLocked => Position == ConsistPosition.Rear || Position == ConsistPosition.Front;
 
-    public double ActiveBrake =>
-        (EdbActive && BrakingWeightWithEDB.HasValue)
-            ? BrakingWeightWithEDB!.Value
-            : BrakingWeightTonnes;
+    public double ActiveBrake
+    {
+        get
+        {
+            if (RModeActive && BrakingWeightTonnesR.HasValue)
+                return (EdbActive && BrakingWeightWithEDBR.HasValue)
+                    ? BrakingWeightWithEDBR!.Value
+                    : BrakingWeightTonnesR!.Value;
+            return (EdbActive && BrakingWeightWithEDB.HasValue)
+                ? BrakingWeightWithEDB!.Value
+                : BrakingWeightTonnes;
+        }
+    }
+
+    public string RModeButtonText  => RModeActive ? "R" : "P";
+    public string RModeButtonColor => RModeActive ? "#3b82f6" : "#252540";
 
     public string ActiveBrakeDisplay =>
         BrakesEnabled ? $"{ActiveBrake:F0} t" : "0 t";
@@ -99,25 +123,28 @@ public partial class ConsistEntryViewModel : ObservableObject
 
     public ConsistEntryViewModel(ConsistEntry entry)
     {
-        DefinitionId         = entry.DefinitionId;
-        Designation          = entry.Designation;
-        TotalWeightTonnes    = entry.TotalWeightTonnes;
-        BrakingWeightTonnes  = entry.BrakingWeightTonnes;
-        BrakingWeightWithEDB = entry.BrakingWeightWithEDB;
-        LengthM              = entry.LengthM;
-        MaxSpeed             = entry.MaxSpeed;
-        FpClass              = entry.FpClass;
-        AxleLoad             = entry.AxleLoad;
-        UicFormat            = entry.UicFormat;
-        UicPrefixes          = entry.UicPrefixes;
-        UicPrefixOffset      = entry.UicPrefixOffset;
-        UicValidateCheck     = entry.UicValidateCheck;
-        UicTypePrefix        = entry.UicTypePrefix;
-        _position            = entry.Position;
+        DefinitionId          = entry.DefinitionId;
+        Designation           = entry.Designation;
+        TotalWeightTonnes     = entry.TotalWeightTonnes;
+        BrakingWeightTonnes   = entry.BrakingWeightTonnes;
+        BrakingWeightTonnesR  = entry.BrakingWeightTonnesR;
+        BrakingWeightWithEDB  = entry.BrakingWeightWithEDB;
+        BrakingWeightWithEDBR = entry.BrakingWeightWithEDBR;
+        LengthM               = entry.LengthM;
+        MaxSpeed              = entry.MaxSpeed;
+        FpClass               = entry.FpClass;
+        AxleLoad              = entry.AxleLoad;
+        UicFormat             = entry.UicFormat;
+        UicPrefixes           = entry.UicPrefixes;
+        UicPrefixOffset       = entry.UicPrefixOffset;
+        UicValidateCheck      = entry.UicValidateCheck;
+        UicTypePrefix         = entry.UicTypePrefix;
+        _position             = entry.Position;
         // Front and Rear positions always have brakes enabled (locked)
-        _brakesEnabled       = _position != ConsistPosition.Middle || entry.BrakesEnabled;
-        _edbActive           = entry.EdbActive;
-        _customName          = entry.CustomName;
+        _brakesEnabled        = _position != ConsistPosition.Middle || entry.BrakesEnabled;
+        _edbActive            = entry.EdbActive;
+        _rModeActive          = entry.RModeActive;
+        _customName           = entry.CustomName;
 
         LocoImage = LoadLocoImage(DefinitionId);
 
@@ -159,25 +186,37 @@ public partial class ConsistEntryViewModel : ObservableObject
             EdbActive = false;
     }
 
+    partial void OnRModeActiveChanged(bool value)
+    {
+        // Disable EDB if the new mode has no EDB value
+        if (value && !BrakingWeightWithEDBR.HasValue)
+            EdbActive = false;
+        else if (!value && !BrakingWeightWithEDB.HasValue)
+            EdbActive = false;
+    }
+
     public ConsistEntry ToModel() => new()
     {
-        DefinitionId         = DefinitionId,
-        Designation          = Designation,
-        TotalWeightTonnes    = TotalWeightTonnes,
-        BrakingWeightTonnes  = BrakingWeightTonnes,
-        BrakingWeightWithEDB = BrakingWeightWithEDB,
-        LengthM              = LengthM,
-        MaxSpeed             = MaxSpeed,
-        FpClass              = FpClass,
-        AxleLoad             = AxleLoad,
-        UicFormat            = UicFormat,
-        UicPrefixes          = UicPrefixes?.ToList(),
-        UicPrefixOffset      = UicPrefixOffset,
-        UicValidateCheck     = UicValidateCheck,
-        UicTypePrefix        = UicTypePrefix,
-        Position             = Position,
-        BrakesEnabled        = BrakesEnabled,
-        EdbActive            = EdbActive,
-        CustomName           = CustomName,
+        DefinitionId          = DefinitionId,
+        Designation           = Designation,
+        TotalWeightTonnes     = TotalWeightTonnes,
+        BrakingWeightTonnes   = BrakingWeightTonnes,
+        BrakingWeightTonnesR  = BrakingWeightTonnesR,
+        BrakingWeightWithEDB  = BrakingWeightWithEDB,
+        BrakingWeightWithEDBR = BrakingWeightWithEDBR,
+        LengthM               = LengthM,
+        MaxSpeed              = MaxSpeed,
+        FpClass               = FpClass,
+        AxleLoad              = AxleLoad,
+        UicFormat             = UicFormat,
+        UicPrefixes           = UicPrefixes?.ToList(),
+        UicPrefixOffset       = UicPrefixOffset,
+        UicValidateCheck      = UicValidateCheck,
+        UicTypePrefix         = UicTypePrefix,
+        Position              = Position,
+        BrakesEnabled         = BrakesEnabled,
+        EdbActive             = EdbActive,
+        RModeActive           = RModeActive,
+        CustomName            = CustomName,
     };
 }

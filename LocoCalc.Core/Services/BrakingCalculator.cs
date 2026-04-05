@@ -17,10 +17,16 @@ public static class BrakingCalculator
         return Math.Floor(active / total * 100.0);
     }
 
-    public static double ActiveBrake(ConsistEntry e) =>
-        (e.EdbActive && e.BrakingWeightWithEDB.HasValue)
+    public static double ActiveBrake(ConsistEntry e)
+    {
+        if (e.RModeActive && e.BrakingWeightTonnesR.HasValue)
+            return (e.EdbActive && e.BrakingWeightWithEDBR.HasValue)
+                ? e.BrakingWeightWithEDBR!.Value
+                : e.BrakingWeightTonnesR!.Value;
+        return (e.EdbActive && e.BrakingWeightWithEDB.HasValue)
             ? e.BrakingWeightWithEDB!.Value
             : e.BrakingWeightTonnes;
+    }
 
     public static ConsistPosition DerivePosition(int index, int total)
     {

@@ -2,6 +2,7 @@
 set -euo pipefail
 
 DOTNET="$HOME/.dotnet/dotnet"
+ANDROIDSDK="$HOME/.android-sdk"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DESKTOP_PROJ="$SCRIPT_DIR/LocoCalc.Desktop/LocoCalc.Desktop.csproj"
@@ -90,7 +91,8 @@ for TARGET in "${TARGETS[@]}"; do
         android)
             step "Publishing Android (APK)..."
             "$DOTNET" publish "$ANDROID_PROJ" \
-                -c Release \
+                -p:AndroidSdkDirectory="$ANDROIDSDK" \
+		-c Release \
                 -o "$DIST/android" \
                 || fail "Android publish failed"
             APK=$(find "$DIST/android" -name "*.apk" | head -1)

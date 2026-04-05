@@ -8,7 +8,9 @@ public class LocomotiveDefinition
     public string Designation { get; set; } = string.Empty;
     public double TotalWeightTonnes { get; set; }
     public double BrakingWeightTonnes { get; set; }
+    public double? BrakingWeightTonnesR { get; set; }
     public double? BrakingWeightWithEDB { get; set; }
+    public double? BrakingWeightWithEDBR { get; set; }
     public double LengthM { get; set; }
     public int MaxSpeed { get; set; } = 80;
 
@@ -57,6 +59,7 @@ public class LocomotiveDefinition
         ? (Traction == "diesel" ? "92542" : "91547")
         : string.Empty;
 
-    public bool HasEDB => BrakingWeightWithEDB.HasValue;
-    public bool IsFP3  => FpClass == "FP3";
+    public bool HasEDB   => BrakingWeightWithEDB.HasValue;
+    public bool HasRMode => BrakingWeightTonnesR.HasValue;
+    public bool IsFP3    => FpClass == "FP3";
 }

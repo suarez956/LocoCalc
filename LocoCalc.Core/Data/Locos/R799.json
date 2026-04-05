@@ -1,0 +1,12 @@
+{
+  "Id": "799",
+  "Designation": "Řada 799",
+  "TotalWeightTonnes": 22.0,
+  "BrakingWeightTonnes": 0,
+  "LengthM": 8,
+  "traction": "diesel",
+  "maxSpeed": 10,
+  "fp": "FP2",
+  "uicFormat": "B",
+  "axleLoad": "A"
+}

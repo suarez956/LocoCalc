@@ -1,0 +1,15 @@
+{
+  "Id": "1116",
+  "Designation": "Řada ÖBB 1116",
+  "TotalWeightTonnes": 88.0,
+  "BrakingWeightTonnes": 67,
+  "BrakingWeightWithEDB": 100,
+  "BrakingWeightTonnesR": 140,
+  "BrakingWeightWithEDBR": 180,
+  "LengthM": 20,
+  "traction": "ms",
+  "maxSpeed": 230,
+  "fp": "FP3",
+  "uicFormat": "A",
+  "axleLoad": "C2"
+}

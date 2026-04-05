@@ -239,15 +239,17 @@ public partial class MainViewModel : ObservableObject
 
         var entry = new ConsistEntry
         {
-            DefinitionId         = SelectedLoco.Id,
-            Designation          = SelectedLoco.Designation,
-            TotalWeightTonnes    = SelectedLoco.TotalWeightTonnes,
-            BrakingWeightTonnes  = SelectedLoco.BrakingWeightTonnes,
-            BrakingWeightWithEDB = SelectedLoco.BrakingWeightWithEDB,
-            LengthM              = SelectedLoco.LengthM,
-            MaxSpeed             = SelectedLoco.MaxSpeed,
-            FpClass              = SelectedLoco.FpClass,
-            AxleLoad             = SelectedLoco.AxleLoad,
+            DefinitionId          = SelectedLoco.Id,
+            Designation           = SelectedLoco.Designation,
+            TotalWeightTonnes     = SelectedLoco.TotalWeightTonnes,
+            BrakingWeightTonnes   = SelectedLoco.BrakingWeightTonnes,
+            BrakingWeightTonnesR  = SelectedLoco.BrakingWeightTonnesR,
+            BrakingWeightWithEDB  = SelectedLoco.BrakingWeightWithEDB,
+            BrakingWeightWithEDBR = SelectedLoco.BrakingWeightWithEDBR,
+            LengthM               = SelectedLoco.LengthM,
+            MaxSpeed              = SelectedLoco.MaxSpeed,
+            FpClass               = SelectedLoco.FpClass,
+            AxleLoad              = SelectedLoco.AxleLoad,
             UicFormat            = SelectedLoco.UicFormat,
             UicPrefixes          = SelectedLoco.UicPrefixes,
             UicPrefixOffset      = SelectedLoco.UicPrefixOffset,
@@ -430,8 +432,16 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     private void ToggleEdb(ConsistEntryViewModel? vm)
     {
-        if (vm is null || !vm.HasEDB) return;
+        if (vm is null || !vm.EdbButtonEnabled) return;
         vm.EdbActive = !vm.EdbActive;
+        Recalculate();
+    }
+
+    [RelayCommand]
+    private void ToggleRMode(ConsistEntryViewModel? vm)
+    {
+        if (vm is null || !vm.HasRMode) return;
+        vm.RModeActive = !vm.RModeActive;
         Recalculate();
     }
 
@@ -463,12 +473,14 @@ public partial class MainViewModel : ObservableObject
             // Always use the loco definition's UicFormat/prefixes — handles old saves that predate these fields
             if (defLookup.TryGetValue(entry.DefinitionId, out var def))
             {
-                entry.UicFormat        = def.UicFormat;
-                entry.UicPrefixes      = def.UicPrefixes;
-                entry.UicPrefixOffset  = def.UicPrefixOffset;
-                entry.UicValidateCheck = def.UicValidateCheck;
-                entry.UicTypePrefix    = def.UicTypePrefix;
-                entry.AxleLoad         = def.AxleLoad;
+                entry.UicFormat             = def.UicFormat;
+                entry.UicPrefixes           = def.UicPrefixes;
+                entry.UicPrefixOffset       = def.UicPrefixOffset;
+                entry.UicValidateCheck      = def.UicValidateCheck;
+                entry.UicTypePrefix         = def.UicTypePrefix;
+                entry.AxleLoad              = def.AxleLoad;
+                entry.BrakingWeightTonnesR  = def.BrakingWeightTonnesR;
+                entry.BrakingWeightWithEDBR = def.BrakingWeightWithEDBR;
             }
             var vm = new ConsistEntryViewModel(entry);
             vm.PropertyChanged += OnEntryChanged;
