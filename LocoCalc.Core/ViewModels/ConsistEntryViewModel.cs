@@ -24,8 +24,11 @@ public partial class ConsistEntryViewModel : ObservableObject
     public int UicPrefixOffset { get; }
     public bool UicValidateCheck { get; }
     public string UicTypePrefix { get; }
-    public bool HasEDB   => BrakingWeightWithEDB.HasValue;
-    public bool HasRMode => BrakingWeightTonnesR.HasValue;
+    public int? PomerCislo30 { get; }
+    public int? PomerCislo50 { get; }
+    public bool HasEDB        => BrakingWeightWithEDB.HasValue;
+    public bool HasRMode      => BrakingWeightTonnesR.HasValue;
+    public bool HasPomerCislo => PomerCislo30.HasValue;
     public Bitmap? LocoImage { get; }
 
     [ObservableProperty]
@@ -139,6 +142,8 @@ public partial class ConsistEntryViewModel : ObservableObject
         UicPrefixOffset       = entry.UicPrefixOffset;
         UicValidateCheck      = entry.UicValidateCheck;
         UicTypePrefix         = entry.UicTypePrefix;
+        PomerCislo30          = entry.PomerCislo30;
+        PomerCislo50          = entry.PomerCislo50;
         _position             = entry.Position;
         // Front and Rear positions always have brakes enabled (locked)
         _brakesEnabled        = _position != ConsistPosition.Middle || entry.BrakesEnabled;
@@ -218,5 +223,7 @@ public partial class ConsistEntryViewModel : ObservableObject
         EdbActive             = EdbActive,
         RModeActive           = RModeActive,
         CustomName            = CustomName,
+        PomerCislo30          = PomerCislo30,
+        PomerCislo50          = PomerCislo50,
     };
 }

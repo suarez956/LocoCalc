@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LocoCalcAvalonia.Models;
 using LocoCalcAvalonia.Services;
+using TractionResult = LocoCalcAvalonia.Services.TractionCalculator.TractionResult;
 
 namespace LocoCalcAvalonia.ViewModels;
 
@@ -205,6 +206,82 @@ public partial class MainViewModel : ObservableObject
     public string EtcsBrakingColor =>
         BrakingPercentage < 50 ? "#ef4444" : "#22c55e";
 
+    // ── Traction dialog ───────────────────────────────────────────────────────
+    public ObservableCollection<TractionShareViewModel> TractionShares { get; } = new();
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TractionDialogVisible))]
+    [NotifyPropertyChangedFor(nameof(TractionHasResult))]
+    [NotifyPropertyChangedFor(nameof(TractionTableLabel))]
+    [NotifyPropertyChangedFor(nameof(TractionSumLabel))]
+    [NotifyPropertyChangedFor(nameof(TractionNoLocos))]
+    private TractionResult? _tractionResult;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TractionInputValid))]
+    private string _tractionWeightInput = string.Empty;
+
+    public bool   TractionDialogVisible => _tractionDialogOpen;
+    public bool   TractionHasResult    => TractionResult is not null;
+    public bool   TractionNoLocos      => !CanOpenTraction;
+    public string TractionTableLabel   => TractionResult?.UseElectricTable == true ? "PČ 50" : "PČ 30";
+    public string TractionSumLabel     => TractionResult is not null
+        ? $"ΣPČ = {TractionResult.SumPomerCislo}"
+        : string.Empty;
+
+    public bool TractionInputValid    =>
+        double.TryParse(TractionWeightInput.Replace(',', '.'),
+            System.Globalization.NumberStyles.Any,
+            System.Globalization.CultureInfo.InvariantCulture,
+            out var v) && v > 0;
+
+    public bool CanOpenTraction =>
+        ConsistEntries.Any(e => e.HasPomerCislo);
+
+    private bool _tractionDialogOpen;
+
+    [RelayCommand]
+    private void OpenTractionDialog()
+    {
+        var locoTotal = ConsistEntries.Sum(e => e.TotalWeightTonnes);
+        TractionWeightInput = locoTotal > 0
+            ? locoTotal.ToString("F0", System.Globalization.CultureInfo.InvariantCulture)
+            : string.Empty;
+        TractionResult = null;
+        _tractionDialogOpen = true;
+        OnPropertyChanged(nameof(TractionDialogVisible));
+        OnPropertyChanged(nameof(TractionWeightInput));
+        OnPropertyChanged(nameof(TractionInputValid));
+    }
+
+    [RelayCommand]
+    private void CloseTractionDialog()
+    {
+        _tractionDialogOpen = false;
+        TractionResult = null;
+        TractionShares.Clear();
+        OnPropertyChanged(nameof(TractionDialogVisible));
+    }
+
+    [RelayCommand]
+    private void CalculateTraction()
+    {
+        if (!double.TryParse(TractionWeightInput.Replace(',', '.'),
+                System.Globalization.NumberStyles.Any,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out var weight) || weight <= 0)
+            return;
+
+        TractionResult = TractionCalculator.Calculate(
+            ConsistEntries.Select(e => e.ToModel()).ToList(),
+            weight);
+
+        TractionShares.Clear();
+        if (TractionResult is not null)
+            foreach (var s in TractionResult.Shares)
+                TractionShares.Add(new TractionShareViewModel(s.Designation, s.PomerCislo, s.AssignedWeightTonnes));
+    }
+
     // ── UIC History dialog ────────────────────────────────────────────────────
     [ObservableProperty] private bool _historyDialogVisible = false;
 
@@ -262,6 +339,8 @@ public partial class MainViewModel : ObservableObject
             Position             = pos,
             BrakesEnabled        = BrakingCalculator.DefaultBrakesEnabled(pos),
             EdbActive            = false,
+            PomerCislo30         = SelectedLoco.PomerCislo30,
+            PomerCislo50         = SelectedLoco.PomerCislo50,
         };
 
         if (SelectedLoco.HasEDB && pos == ConsistPosition.Front)
@@ -485,6 +564,8 @@ public partial class MainViewModel : ObservableObject
                 entry.AxleLoad              = def.AxleLoad;
                 entry.BrakingWeightTonnesR  = def.BrakingWeightTonnesR;
                 entry.BrakingWeightWithEDBR = def.BrakingWeightWithEDBR;
+                entry.PomerCislo30          = def.PomerCislo30;
+                entry.PomerCislo50          = def.PomerCislo50;
             }
             var vm = new ConsistEntryViewModel(entry);
             vm.PropertyChanged += OnEntryChanged;
@@ -620,6 +701,7 @@ public partial class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(TotalLengthDisplay));
         OnPropertyChanged(nameof(ActiveBrakeWeightDisplay));
         OnPropertyChanged(nameof(CanGeneratePdf));
+        OnPropertyChanged(nameof(CanOpenTraction));
     }
 
     private void NotifyEtcsChanged()

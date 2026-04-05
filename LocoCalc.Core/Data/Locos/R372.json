@@ -9,5 +9,7 @@
   "maxSpeed": 120,
   "fp": "FP3",
   "uicFormat": "B",
-  "axleLoad": "C2"
+  "axleLoad": "C2",
+  "pomerCislo30": 33,
+  "pomerCislo50": 34
 }

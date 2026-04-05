@@ -59,6 +59,25 @@ public class LocomotiveDefinition
         ? (Traction == "diesel" ? "92542" : "91547")
         : string.Empty;
 
+    /// <summary>
+    /// Poměrové číslo "30" — used when consist contains any diesel/historical loco.
+    /// Null means this class is not listed in the ČD Cargo KP Doplněk and cannot
+    /// participate in weight-distribution calculations.
+    /// </summary>
+    [JsonPropertyName("pomerCislo30")]
+    public int? PomerCislo30 { get; set; }
+
+    /// <summary>
+    /// Poměrové číslo "50" — used for all-electric consists only.
+    /// Null for diesel-only classes (they only have one PČ value).
+    /// </summary>
+    [JsonPropertyName("pomerCislo50")]
+    public int? PomerCislo50 { get; set; }
+
+    /// <summary>True when this loco can participate in traction calculations.</summary>
+    [JsonIgnore]
+    public bool HasPomerCislo => PomerCislo30.HasValue;
+
     public bool HasEDB   => BrakingWeightWithEDB.HasValue;
     public bool HasRMode => BrakingWeightTonnesR.HasValue;
     public bool IsFP3    => FpClass == "FP3";

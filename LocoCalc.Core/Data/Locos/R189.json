@@ -10,5 +10,7 @@
   "fp": "FP3",
   "axleLoad": "D2",
   "axleLoadDouble": "D2",
-  "axleLoadConvoy": "C2"
+  "axleLoadConvoy": "C2",
+  "pomerCislo30": 43,
+  "pomerCislo50": 37
 }

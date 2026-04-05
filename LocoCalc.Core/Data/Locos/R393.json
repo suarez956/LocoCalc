@@ -1,7 +1,7 @@
 {
   "Id": "393",
   "Designation": "Řada 393",
-  "TotalWeightTonnes": 89.0,
+  "TotalWeightTonnes": 90.0,
   "LengthM": 19,
   "BrakingWeightTonnes": 95,
   "BrakingWeightTonnesR": 135,
@@ -11,5 +11,7 @@
   "maxSpeed": 160,
   "fp": "FP3",
   "uicFormat": "B",
-  "axleLoad": "C2"
+  "axleLoad": "C2",
+  "pomerCislo30": 43,
+  "pomerCislo50": 37
 }

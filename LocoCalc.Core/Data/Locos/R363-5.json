@@ -13,5 +13,7 @@
     "3635"
   ],
   "uicPrefixOffset": 5,
-  "axleLoad": "C2"
+  "axleLoad": "C2",
+  "pomerCislo30": 42,
+  "pomerCislo50": 37
 }
