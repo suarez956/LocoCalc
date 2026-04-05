@@ -24,8 +24,26 @@ public partial class LocoListItem : ObservableObject
     // ── Loco field ─────────────────────────────────────────────────────────
     public LocomotiveDefinition? Loco { get; }
 
-    // ── Visibility (loco rows hide when group is collapsed) ───────────────
-    public bool RowVisible => IsHeader || (Group?.IsExpanded ?? true);
+    // ── Search filter ─────────────────────────────────────────────────────
+    private bool _isFiltered;
+
+    public void UpdateFilter(string q)
+    {
+        bool filtered;
+        if (IsHeader)
+            filtered = !string.IsNullOrEmpty(q) &&
+                       !Group!.Locos.Any(l => l.Designation.Contains(q, StringComparison.OrdinalIgnoreCase));
+        else
+            filtered = !string.IsNullOrEmpty(q) &&
+                       !(Loco!.Designation.Contains(q, StringComparison.OrdinalIgnoreCase));
+
+        if (_isFiltered == filtered) return;
+        _isFiltered = filtered;
+        OnPropertyChanged(nameof(RowVisible));
+    }
+
+    // ── Visibility (loco rows hide when group is collapsed or filtered) ───
+    public bool RowVisible => !_isFiltered && (IsHeader || (Group?.IsExpanded ?? true));
 
     // ── Constructors ───────────────────────────────────────────────────────
     public LocoListItem(TractionGroup group)

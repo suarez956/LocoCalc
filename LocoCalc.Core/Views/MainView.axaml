@@ -496,8 +496,20 @@
               <!-- Warning -->
               <Border Background="#3f1a0a" BorderBrush="#f97316" BorderThickness="1"
                       CornerRadius="6" Padding="10,9" IsVisible="{Binding EtcsWarningVisible}">
-                <TextBlock Text="{Binding EtcsWarningText}" FontSize="11"
-                           Foreground="#fdba74" TextWrapping="Wrap" LineHeight="17"/>
+                <StackPanel Spacing="4">
+                  <Grid ColumnDefinitions="18,*">
+                    <TextBlock Grid.Column="0" Text="&#xF071;" FontFamily="{StaticResource FaFont}"
+                               FontSize="11" Foreground="#fdba74"/>
+                    <TextBlock Grid.Column="1" Text="{Binding EtcsWarningText}" FontSize="11"
+                               Foreground="#fdba74" TextWrapping="Wrap" LineHeight="17"/>
+                  </Grid>
+                  <Grid ColumnDefinitions="18,*">
+                    <TextBlock Grid.Column="0" Text="&#xF05E;" FontFamily="{StaticResource FaFont}"
+                               FontSize="11" Foreground="#fdba74"/>
+                    <TextBlock Grid.Column="1" Text="{Binding EtcsWarningSubText}" FontSize="11"
+                               Foreground="#fdba74" TextWrapping="Wrap"/>
+                  </Grid>
+                </StackPanel>
               </Border>
 
               <!-- Speed -->
@@ -1022,8 +1034,20 @@
         <StackPanel Margin="10,10" Spacing="7">
           <Border Background="#3f1a0a" BorderBrush="#f97316" BorderThickness="1"
                   CornerRadius="6" Padding="10,9" IsVisible="{Binding EtcsWarningVisible}">
-            <TextBlock Text="{Binding EtcsWarningText}" FontSize="11"
-                       Foreground="#fdba74" TextWrapping="Wrap" LineHeight="17"/>
+            <StackPanel Spacing="4">
+              <Grid ColumnDefinitions="18,*">
+                <TextBlock Grid.Column="0" Text="&#xF071;" FontFamily="{StaticResource FaFont}"
+                           FontSize="11" Foreground="#fdba74"/>
+                <TextBlock Grid.Column="1" Text="{Binding EtcsWarningText}" FontSize="11"
+                           Foreground="#fdba74" TextWrapping="Wrap" LineHeight="17"/>
+              </Grid>
+              <Grid ColumnDefinitions="18,*">
+                <TextBlock Grid.Column="0" Text="&#xF05E;" FontFamily="{StaticResource FaFont}"
+                           FontSize="11" Foreground="#fdba74"/>
+                <TextBlock Grid.Column="1" Text="{Binding EtcsWarningSubText}" FontSize="11"
+                           Foreground="#fdba74" TextWrapping="Wrap"/>
+              </Grid>
+            </StackPanel>
           </Border>
           <Border Background="#1e1e32" CornerRadius="8" Padding="11,9">
             <StackPanel Spacing="7">

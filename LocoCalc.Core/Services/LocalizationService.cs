@@ -131,6 +131,7 @@ public partial class LocalizationService : ObservableObject
     public string PdfRoute       => T("PdfRoute");
 
     public string WarnLowBrake(double pct) => string.Format(T("WarnLowBrake"), pct);
+    public string WarnLowBrakeSub          => T("WarnLowBrakeSub");
 
     public string StatusAdded(string name)   => string.Format(T("StatusAdded"), name);
     public string StatusRemoved(string name) => string.Format(T("StatusRemoved"), name);

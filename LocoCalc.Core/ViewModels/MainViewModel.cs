@@ -11,6 +11,7 @@ public partial class MainViewModel : ObservableObject
     private readonly LocoRepository _locoRepo;
     private readonly ConsistRepository _consistRepo;
     private readonly UicNameHistory _uicHistory;
+    private readonly Dictionary<string, bool> _groupExpanded = new();
     public LocalizationService L => LocalizationService.Instance;
 
     // ── Stations ──────────────────────────────────────────────────────────────
@@ -85,7 +86,7 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private string _searchText = string.Empty;
 
-    partial void OnSearchTextChanged(string value) => RefreshLocos();
+    partial void OnSearchTextChanged(string value) => ApplySearchFilter();
 
     // ── Consist ──────────────────────────────────────────────────────────────
     public ObservableCollection<ConsistEntryViewModel> ConsistEntries { get; } = new();
@@ -196,8 +197,9 @@ public partial class MainViewModel : ObservableObject
     public int    EtcsFpMm       => EtcsFpClass == "FP3" ? 130 : 100;
     public string EtcsAxleLoad   => BrakingCalculator.ConsistAxleLoad(ConsistEntries.Select(e => e.ToModel())) ?? "—";
 
-    public bool   EtcsWarningVisible => BrakingPercentage > 0 && BrakingPercentage < 50;
-    public string EtcsWarningText    => L.WarnLowBrake(BrakingPercentage);
+    public bool   EtcsWarningVisible   => BrakingPercentage > 0 && BrakingPercentage < 50;
+    public string EtcsWarningText      => L.WarnLowBrake(BrakingPercentage);
+    public string EtcsWarningSubText   => L.WarnLowBrakeSub;
 
     public string EtcsBrakingColor =>
         BrakingPercentage < 50 ? "#ef4444" : "#22c55e";
@@ -219,6 +221,7 @@ public partial class MainViewModel : ObservableObject
         {
             OnPropertyChanged(nameof(BrakingPercentageDisplay));
             OnPropertyChanged(nameof(EtcsWarningText));
+            OnPropertyChanged(nameof(EtcsWarningSubText));
         };
         UicHistoryItems.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HistoryIsEmpty));
         LoadLocos();
@@ -568,6 +571,7 @@ public partial class MainViewModel : ObservableObject
     {
         if (group is null) return;
         group.IsExpanded = !group.IsExpanded;
+        _groupExpanded[group.Key] = group.IsExpanded;
     }
 
     [RelayCommand]
@@ -672,15 +676,12 @@ public partial class MainViewModel : ObservableObject
     private void LoadLocos()
     {
         _locoRepo.Invalidate();
+
         AvailableLocos.Clear();
         TractionGroups.Clear();
         LocoFlatList.Clear();
 
-        var q = SearchText?.Trim().ToLower() ?? string.Empty;
-        var all = _locoRepo.GetAll()
-            .Where(l => string.IsNullOrEmpty(q) || l.Designation.ToLower().Contains(q))
-            .ToList();
-
+        var all = _locoRepo.GetAll().ToList();
         foreach (var l in all) AvailableLocos.Add(l);
 
         foreach (var (key, label, dot) in TractionOrder)
@@ -689,18 +690,30 @@ public partial class MainViewModel : ObservableObject
             if (locos.Count == 0) continue;
             var fullLabel = L.TractionLabel(key);
 
-            // TractionGroups (kept for backwards compat)
             var group = new TractionGroup(key, fullLabel, dot);
+            if (_groupExpanded.TryGetValue(key, out var wasExpanded))
+                group.IsExpanded = wasExpanded;
             foreach (var l in locos) group.Locos.Add(l);
             TractionGroups.Add(group);
 
-            // Flat list: header item then loco items — both reference the same TractionGroup
             LocoFlatList.Add(new LocoListItem(group));
             foreach (var l in locos) LocoFlatList.Add(new LocoListItem(group, l));
         }
+
+        ApplySearchFilter();
     }
 
-    private void RefreshLocos() => LoadLocos();
+    private void ApplySearchFilter()
+    {
+        var q = SearchText?.Trim() ?? string.Empty;
+        foreach (var item in LocoFlatList)
+            item.UpdateFilter(q);
+    }
+
+    private void RefreshLocos()
+    {
+        LoadLocos();  // full rebuild only on language change / init
+    }
 
     private void RefreshAll()
     {

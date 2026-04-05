@@ -1,3 +1,4 @@
+using Avalonia.Platform;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -7,9 +8,17 @@ namespace LocoCalcAvalonia.Services;
 
 public class PdfReportService : IPdfGenerator
 {
+    private const string FaFont = "FaSolid";
+
     static PdfReportService()
     {
         QuestPDF.Settings.License = LicenseType.Community;
+        try
+        {
+            using var stream = AssetLoader.Open(new Uri("avares://LocoCalc.Core/Assets/fa-solid-900.ttf"));
+            QuestPDF.Drawing.FontManager.RegisterFontWithCustomName(FaFont, stream);
+        }
+        catch { /* icon chars fall back to boxes if FA unavailable */ }
     }
 
     // IPdfGenerator instance method
@@ -31,6 +40,8 @@ public class PdfReportService : IPdfGenerator
         var total    = entries.Sum(e => e.TotalWeightTonnes);
         var len      = entries.Sum(e => e.LengthM);
         var ab       = entries.Where(e => e.BrakesEnabled).Sum(e => BrakingCalculator.ActiveBrake(e));
+        var abBase   = entries.Where(e => e.BrakesEnabled).Sum(e =>
+            e.RModeActive && e.BrakingWeightTonnesR.HasValue ? e.BrakingWeightTonnesR!.Value : e.BrakingWeightTonnes);
         var pct      = total > 0 ? Math.Floor(ab / total * 100.0) : 0;
         var fp         = BrakingCalculator.ConsistFpClass(entries);
         var fpMm       = fp == "FP3" ? 130 : 100;
@@ -105,11 +116,19 @@ public class PdfReportService : IPdfGenerator
                            .Padding(10)
                            .Column(w =>
                            {
-                               w.Item().Text(T("PdfWarnTitle"))
-                                .Bold().FontColor(th.TxtWarn);
+                               w.Item().Row(row =>
+                               {
+                                   row.ConstantItem(16).Text("\uF071").FontFamily(FaFont).Bold().FontSize(9).FontColor(th.TxtWarn);
+                                   row.RelativeItem().Text(T("PdfWarnTitle")).Bold().FontColor(th.TxtWarn);
+                               });
                                w.Item().PaddingTop(4)
                                 .Text(string.Format(T("PdfWarnBody"), pct))
                                 .FontSize(10).FontColor(th.TxtWarn);
+                               w.Item().PaddingTop(2).Row(row =>
+                               {
+                                   row.ConstantItem(16).Text("\uF05E").FontFamily(FaFont).FontSize(10).FontColor(th.TxtWarn);
+                                   row.RelativeItem().Text(LocalizationService.GetString("WarnLowBrakeSub", isCs)).FontSize(10).FontColor(th.TxtWarn);
+                               });
                            });
                         col.Item().Height(8);
                     }
@@ -178,6 +197,7 @@ public class PdfReportService : IPdfGenerator
                                 c.RelativeColumn(2);
                                 c.RelativeColumn(2);
                                 c.RelativeColumn(2);
+                                c.RelativeColumn(2);
                             });
 
                             void Hdr(string txt) =>
@@ -186,6 +206,7 @@ public class PdfReportService : IPdfGenerator
                             Hdr(T("PdfColSeries"));
                             Hdr(T("PdfColWeight"));
                             Hdr(T("PdfColBrakeWt"));
+                            Hdr(T("PdfColBrakeWtEDB"));
                             Hdr(T("PdfColLength"));
                             Hdr(T("PdfColBrakes"));
 
@@ -193,16 +214,23 @@ public class PdfReportService : IPdfGenerator
                             {
                                 var e        = entries[i];
                                 var bg       = i % 2 == 0 ? th.BgRowEven : th.BgRowOdd;
-                                var bw       = e.BrakesEnabled ? BrakingCalculator.ActiveBrake(e) : 0;
-                                var edbNote  = e.BrakesEnabled && e.EdbActive ? " (EDB)" : "";
+                                var bwBase   = e.BrakesEnabled
+                                    ? (e.RModeActive && e.BrakingWeightTonnesR.HasValue ? e.BrakingWeightTonnesR!.Value : e.BrakingWeightTonnes)
+                                    : 0;
+                                var bwEdbStr = !e.BrakesEnabled ? "—"
+                                    : e.RModeActive && e.BrakingWeightWithEDBR.HasValue ? $"{e.BrakingWeightWithEDBR!.Value:F0} t"
+                                    : !e.RModeActive && e.BrakingWeightWithEDB.HasValue ? $"{e.BrakingWeightWithEDB!.Value:F0} t"
+                                    : "—";
                                 var bwColor  = e.BrakesEnabled ? th.TxtCell : th.Red;
-                                var brakesTxt = e.BrakesEnabled ? (e.EdbActive ? "P+E" : "P") : "x";
+                                var brakesTxt = e.BrakesEnabled ? (e.EdbActive ? (e.RModeActive ? "R+E" : "P+E") : (e.RModeActive ? "R" : "P")) : "x";
 
                                 t.Cell().Background(bg).Padding(5).Text(e.CustomName ?? e.Designation).FontColor(th.TxtCell).FontSize(10);
                                 t.Cell().Background(bg).Padding(5).AlignCenter()
                                  .Text($"{e.TotalWeightTonnes:F1} t").FontColor(th.TxtCell).FontSize(10);
                                 t.Cell().Background(bg).Padding(5).AlignCenter()
-                                 .Text($"{bw:F0} t{edbNote}").FontColor(bwColor).FontSize(10);
+                                 .Text($"{bwBase:F0} t").FontColor(bwColor).FontSize(10);
+                                t.Cell().Background(bg).Padding(5).AlignCenter()
+                                 .Text(bwEdbStr).FontColor(bwEdbStr == "—" ? th.TxtMeta : th.TxtCell).FontSize(10);
                                 t.Cell().Background(bg).Padding(5).AlignCenter()
                                  .Text($"{e.LengthM:F0} m").FontColor(th.TxtCell).FontSize(10);
                                 t.Cell().Background(bg).Padding(5).AlignCenter()
@@ -215,6 +243,7 @@ public class PdfReportService : IPdfGenerator
                                  .Text(txt).Bold().FontColor(th.TxtCell).FontSize(10);
                             Tot(T("PdfTotal"));
                             Tot($"{total:F1} t");
+                            Tot($"{abBase:F0} t");
                             Tot($"{ab:F0} t");
                             Tot($"{len:F0} m");
                             Tot("—");

@@ -16,5 +16,6 @@ public interface IPdfGenerator
         bool isCs,
         bool darkMode = false,
         string? startStation = null,
-        string? endStation = null);
+        string? endStation = null
+    );
 }
