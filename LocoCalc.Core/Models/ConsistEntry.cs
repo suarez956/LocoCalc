@@ -25,10 +25,10 @@ public class ConsistEntry
     public int UicPrefixOffset { get; set; } = 4;
     public bool UicValidateCheck { get; set; }
     public string UicTypePrefix { get; set; } = string.Empty;
-    public int? PomerCislo30 { get; set; }
-    public int? PomerCislo50 { get; set; }
+    public int? Twr30 { get; set; }
+    public int? Twr50 { get; set; }
 
-    public bool HasEDB        => BrakingWeightWithEDB.HasValue;
-    public bool HasRMode      => BrakingWeightTonnesR.HasValue;
-    public bool HasPomerCislo => PomerCislo30.HasValue;
+    public bool HasEDB  => BrakingWeightWithEDB.HasValue;
+    public bool HasRMode => BrakingWeightTonnesR.HasValue;
+    public bool HasTwr  => Twr30.HasValue;
 }

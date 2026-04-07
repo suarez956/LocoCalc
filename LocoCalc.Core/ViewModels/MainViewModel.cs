@@ -224,9 +224,9 @@ public partial class MainViewModel : ObservableObject
     public bool   TractionDialogVisible => _tractionDialogOpen;
     public bool   TractionHasResult    => TractionResult is not null;
     public bool   TractionNoLocos      => !CanOpenTraction;
-    public string TractionTableLabel   => TractionResult?.UseElectricTable == true ? "PČ 50" : "PČ 30";
+    public string TractionTableLabel   => TractionResult?.UseElectricTable == true ? L.TwrTable50 : L.TwrTable30;
     public string TractionSumLabel     => TractionResult is not null
-        ? $"ΣPČ = {TractionResult.SumPomerCislo}"
+        ? L.TwrSumValue(TractionResult.SumTwr)
         : string.Empty;
 
     public bool TractionInputValid    =>
@@ -236,17 +236,14 @@ public partial class MainViewModel : ObservableObject
             out var v) && v > 0;
 
     public bool CanOpenTraction =>
-        ConsistEntries.Any(e => e.HasPomerCislo);
+        ConsistEntries.Any(e => e.HasTwr);
 
     private bool _tractionDialogOpen;
 
     [RelayCommand]
     private void OpenTractionDialog()
     {
-        var locoTotal = ConsistEntries.Sum(e => e.TotalWeightTonnes);
-        TractionWeightInput = locoTotal > 0
-            ? locoTotal.ToString("F0", System.Globalization.CultureInfo.InvariantCulture)
-            : string.Empty;
+        TractionWeightInput = string.Empty;
         TractionResult = null;
         _tractionDialogOpen = true;
         OnPropertyChanged(nameof(TractionDialogVisible));
@@ -279,7 +276,7 @@ public partial class MainViewModel : ObservableObject
         TractionShares.Clear();
         if (TractionResult is not null)
             foreach (var s in TractionResult.Shares)
-                TractionShares.Add(new TractionShareViewModel(s.Designation, s.PomerCislo, s.AssignedWeightTonnes));
+                TractionShares.Add(new TractionShareViewModel(s.Designation, s.Twr, s.AssignedWeightTonnes));
     }
 
     // ── UIC History dialog ────────────────────────────────────────────────────
@@ -339,8 +336,8 @@ public partial class MainViewModel : ObservableObject
             Position             = pos,
             BrakesEnabled        = BrakingCalculator.DefaultBrakesEnabled(pos),
             EdbActive            = false,
-            PomerCislo30         = SelectedLoco.PomerCislo30,
-            PomerCislo50         = SelectedLoco.PomerCislo50,
+            Twr30                = SelectedLoco.Twr30,
+            Twr50                = SelectedLoco.Twr50,
         };
 
         if (SelectedLoco.HasEDB && pos == ConsistPosition.Front)
@@ -564,8 +561,8 @@ public partial class MainViewModel : ObservableObject
                 entry.AxleLoad              = def.AxleLoad;
                 entry.BrakingWeightTonnesR  = def.BrakingWeightTonnesR;
                 entry.BrakingWeightWithEDBR = def.BrakingWeightWithEDBR;
-                entry.PomerCislo30          = def.PomerCislo30;
-                entry.PomerCislo50          = def.PomerCislo50;
+                entry.Twr30                 = def.Twr30;
+                entry.Twr50                 = def.Twr50;
             }
             var vm = new ConsistEntryViewModel(entry);
             vm.PropertyChanged += OnEntryChanged;
@@ -648,8 +645,12 @@ public partial class MainViewModel : ObservableObject
             PdfSaveService.OpenFile(path);
 
         // Release the large PDF byte array and QuestPDF render allocations from the LOH
-        GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
-        GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, blocking: true, compacting: true);
+        // LOH compaction is not supported on Android/iOS — guard to desktop only
+        if (OperatingSystem.IsWindows() || OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
+        {
+            GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+            GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, blocking: true, compacting: true);
+        }
     }
 
     [RelayCommand]

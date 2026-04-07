@@ -120,5 +120,16 @@
   "EndStation":             { "cs": "Cílová stanice",                             "en": "End Station" },
   "StartStationPh":         { "cs": "Hledat výchozí stanici…",                   "en": "Search start station…" },
   "EndStationPh":           { "cs": "Hledat cílovou stanici…",                   "en": "Search end station…" },
-  "PdfRoute":               { "cs": "Trasa",                                      "en": "Route" }
+  "PdfRoute":               { "cs": "Trasa",                                      "en": "Route" },
+
+  "TwrButton":              { "cs": "Poměrové číslo",                             "en": "Traction Weight Ratio" },
+  "TwrWeightLabel":         { "cs": "Dopravní hmotnost vlaku [t]:",               "en": "Gross train weight [t]:" },
+  "TwrWeightPh":            { "cs": "Dopravní hmotnost vlaku v t",                "en": "Gross train weight in t" },
+  "TwrNoLocos":             { "cs": "Žádná lokomotiva v soupravě nemá poměrové číslo.", "en": "No locomotive in the consist has a traction weight ratio." },
+  "TwrCalculate":           { "cs": "Vypočítat",                                  "en": "Calculate" },
+  "TwrSumTitle":            { "cs": "Součet PČ",                                  "en": "TWR sum" },
+  "TwrSumValue":            { "cs": "ΣPČ = {0}",                                  "en": "ΣTWR = {0}" },
+  "TwrRowFormat":           { "cs": "PČ {0}",                                     "en": "TWR {0}" },
+  "TwrTable30":             { "cs": "PČ 30",                                      "en": "TWR 30" },
+  "TwrTable50":             { "cs": "PČ 50",                                      "en": "TWR 50" }
 }

@@ -9,6 +9,6 @@
   "fp": "FP2",
   "uicFormat": "B",
   "axleLoad": "A",
-  "pomerCislo30": 22,
-  "pomerCislo50": 10
+  "twr30": 22,
+  "twr50": 10
 }

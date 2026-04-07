@@ -130,6 +130,17 @@ public partial class LocalizationService : ObservableObject
     public string EndStationPh   => T("EndStationPh");
     public string PdfRoute       => T("PdfRoute");
 
+    public string TwrButton      => T("TwrButton");
+    public string TwrWeightLabel => T("TwrWeightLabel");
+    public string TwrWeightPh    => T("TwrWeightPh");
+    public string TwrNoLocos     => T("TwrNoLocos");
+    public string TwrCalculate   => T("TwrCalculate");
+    public string TwrSumTitle    => T("TwrSumTitle");
+    public string TwrSumValue(int sum) => string.Format(T("TwrSumValue"), sum);
+    public string TwrRowFormat(int twr) => string.Format(T("TwrRowFormat"), twr);
+    public string TwrTable30     => T("TwrTable30");
+    public string TwrTable50     => T("TwrTable50");
+
     public string WarnLowBrake(double pct) => string.Format(T("WarnLowBrake"), pct);
     public string WarnLowBrakeSub          => T("WarnLowBrakeSub");
 

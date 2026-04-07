@@ -14,6 +14,6 @@
   ],
   "uicPrefixOffset": 5,
   "axleLoad": "C2",
-  "pomerCislo30": 42,
-  "pomerCislo50": 37
+  "twr30": 42,
+  "twr50": 37
 }
