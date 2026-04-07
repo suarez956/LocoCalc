@@ -13,5 +13,7 @@
     "3632"
   ],
   "uicPrefixOffset": 5,
-  "axleLoad": "C2"
+  "axleLoad": "C2",
+  "twr30": 33,
+  "twr50": 34
 }

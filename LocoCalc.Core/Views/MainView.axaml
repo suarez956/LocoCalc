@@ -88,6 +88,16 @@
                   BorderBrush="#3a3a55" BorderThickness="1"
                   Padding="12,7" CornerRadius="8" FontSize="12" FontWeight="SemiBold" Cursor="Hand"
                   Command="{Binding OpenHistoryDialogCommand}"/>
+          <Button Background="#1e3a2e" Foreground="#22c55e"
+                  BorderBrush="#22c55e" BorderThickness="1"
+                  Padding="12,7" CornerRadius="8" FontSize="12" FontWeight="SemiBold" Cursor="Hand"
+                  IsEnabled="{Binding CanOpenTraction}"
+                  Command="{Binding OpenTractionDialogCommand}">
+            <StackPanel Orientation="Horizontal" Spacing="5">
+              <TextBlock Text="&#xF0D1;" FontFamily="{StaticResource FaFont}" FontSize="11" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding L.TwrButton}" FontSize="12" FontWeight="SemiBold"/>
+            </StackPanel>
+          </Button>
         </StackPanel>
       </Grid>
     </Border>
@@ -1300,6 +1310,19 @@
                   HorizontalContentAlignment="Center" Padding="0,12" CornerRadius="8" Cursor="Hand"
                   Command="{Binding OpenHistoryDialogCommand}"/>
 
+          <!-- Traction weight ratio -->
+          <Button Background="#1e3a2e" Foreground="#22c55e"
+                  BorderBrush="#22c55e" BorderThickness="1"
+                  FontSize="14" FontWeight="SemiBold" HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Center" Padding="0,12" CornerRadius="8" Cursor="Hand"
+                  IsEnabled="{Binding CanOpenTraction}"
+                  Command="{Binding OpenTractionDialogCommand}">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="&#xF0D1;" FontFamily="{StaticResource FaFont}" FontSize="14" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding L.TwrButton}" FontSize="14" FontWeight="SemiBold"/>
+            </StackPanel>
+          </Button>
+
           <Border Background="#2e2e50" Height="1"/>
 
           <!-- Language -->
@@ -1421,6 +1444,93 @@
     </Border>
 
   </Grid><!-- /mobile root grid -->
+
+  <!-- ═══ TRACTION DIALOG OVERLAY ════════════════════════════════════════ -->
+  <Border Background="#cc000010"
+          IsVisible="{Binding TractionDialogVisible}" ZIndex="310">
+    <Border Background="#2a2a3e" CornerRadius="12" Padding="26,22"
+            HorizontalAlignment="Center" VerticalAlignment="Center"
+            MinWidth="340" MaxWidth="480"
+            BorderBrush="#22c55e" BorderThickness="2">
+      <StackPanel Spacing="14">
+
+        <!-- Title -->
+        <TextBlock Text="{Binding L.TwrButton}" FontSize="17" FontWeight="Bold" Foreground="#22c55e"/>
+
+        <!-- Weight input -->
+        <StackPanel Spacing="6">
+          <TextBlock Text="{Binding L.TwrWeightLabel}" FontSize="12" Foreground="#a0a0c0"/>
+          <TextBox Background="#1a1a2e" Foreground="#e8e8ff"
+                   BorderBrush="#22c55e" BorderThickness="1"
+                   CaretBrush="#e8e8ff" FontSize="15" Padding="10,8" CornerRadius="6"
+                   Text="{Binding TractionWeightInput, Mode=TwoWay}"
+                   Watermark="{Binding L.TwrWeightPh}"/>
+        </StackPanel>
+
+        <!-- No locos warning -->
+        <Border IsVisible="{Binding TractionNoLocos}"
+                Background="#1a2a1a" CornerRadius="5" Padding="10,7"
+                BorderBrush="#22c55e" BorderThickness="1">
+          <TextBlock Text="{Binding L.TwrNoLocos}"
+                     FontSize="12" Foreground="#22c55e" TextWrapping="Wrap"/>
+        </Border>
+
+        <!-- Calculate button -->
+        <Button Background="#22c55e" Foreground="#0f1a0f"
+                FontSize="13" FontWeight="Bold" Padding="0,11"
+                HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                CornerRadius="7" BorderThickness="0"
+                IsEnabled="{Binding TractionInputValid}"
+                Command="{Binding CalculateTractionCommand}" Cursor="Hand"
+                Content="{Binding L.TwrCalculate}"/>
+
+        <!-- Result -->
+        <StackPanel Spacing="8" IsVisible="{Binding TractionHasResult}">
+
+          <!-- Table used + ΣTWR -->
+          <Grid ColumnDefinitions="*">
+            <Border Grid.Column="1" Background="#1a2a1a" CornerRadius="5" Padding="8,6"
+                    BorderBrush="#3a3a55" BorderThickness="1" Margin="4,0,0,0">
+              <StackPanel Spacing="2">
+                <TextBlock Text="{Binding L.TwrSumTitle}" FontSize="10" Foreground="#a0a0c0"/>
+                <TextBlock Text="{Binding TractionSumLabel}" FontSize="15" FontWeight="Bold" Foreground="#e8e8ff"/>
+              </StackPanel>
+            </Border>
+          </Grid>
+
+          <!-- Per-loco shares -->
+          <Border Background="#1e1e32" CornerRadius="6"
+                  BorderBrush="#3a3a55" BorderThickness="1" Padding="0">
+            <ItemsControl ItemsSource="{Binding TractionShares}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:TractionShareViewModel">
+                  <Grid ColumnDefinitions="*,Auto,Auto" Margin="10,7,10,7">
+                    <TextBlock Grid.Column="0" Text="{Binding Designation}"
+                               FontSize="13" Foreground="#e8e8ff" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="1" Text="{Binding TwrLabel}"
+                               FontSize="11" Foreground="#8888aa"
+                               VerticalAlignment="Center" Margin="8,0"/>
+                    <TextBlock Grid.Column="2" Text="{Binding AssignedWeightTx}"
+                               FontSize="13" FontWeight="Bold" Foreground="#22c55e"
+                               VerticalAlignment="Center" FontFamily="Consolas,monospace"/>
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </Border>
+
+        </StackPanel>
+
+        <!-- Close button -->
+        <Button Content="{Binding L.CloseButton}"
+                Background="#2a2a3e" Foreground="#a0a0c0"
+                FontSize="13" Padding="0,11" HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center" BorderBrush="#3a3a55" BorderThickness="1"
+                CornerRadius="7" Command="{Binding CloseTractionDialogCommand}" Cursor="Hand"/>
+
+      </StackPanel>
+    </Border>
+  </Border>
 
     <!-- ═══ EDB DIALOG OVERLAY — Panel level: works on desktop and mobile ═══ -->
   <Border Background="#cc000010"

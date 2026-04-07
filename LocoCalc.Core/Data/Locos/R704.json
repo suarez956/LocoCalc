@@ -5,8 +5,9 @@
   "BrakingWeightTonnes": 23,
   "LengthM": 8,
   "traction": "diesel",
-  "maxSpeed": 60,
+  "maxSpeed": 65,
   "fp": "FP2",
   "uicFormat": "B",
-  "axleLoad": "A"
+  "axleLoad": "A",
+  "twr30": 4
 }

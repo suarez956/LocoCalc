@@ -8,5 +8,6 @@
   "maxSpeed": 100,
   "fp": "FP2",
   "uicFormat": "B",
-  "axleLoad": "A"
+  "axleLoad": "A",
+  "twr30": 16
 }

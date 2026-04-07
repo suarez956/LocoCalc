@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LocoCalcAvalonia.Models;
 using LocoCalcAvalonia.Services;
+using TractionResult = LocoCalcAvalonia.Services.TractionCalculator.TractionResult;
 
 namespace LocoCalcAvalonia.ViewModels;
 
@@ -205,6 +206,79 @@ public partial class MainViewModel : ObservableObject
     public string EtcsBrakingColor =>
         BrakingPercentage < 50 ? "#ef4444" : "#22c55e";
 
+    // ── Traction dialog ───────────────────────────────────────────────────────
+    public ObservableCollection<TractionShareViewModel> TractionShares { get; } = new();
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TractionDialogVisible))]
+    [NotifyPropertyChangedFor(nameof(TractionHasResult))]
+    [NotifyPropertyChangedFor(nameof(TractionTableLabel))]
+    [NotifyPropertyChangedFor(nameof(TractionSumLabel))]
+    [NotifyPropertyChangedFor(nameof(TractionNoLocos))]
+    private TractionResult? _tractionResult;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TractionInputValid))]
+    private string _tractionWeightInput = string.Empty;
+
+    public bool   TractionDialogVisible => _tractionDialogOpen;
+    public bool   TractionHasResult    => TractionResult is not null;
+    public bool   TractionNoLocos      => !CanOpenTraction;
+    public string TractionTableLabel   => TractionResult?.UseElectricTable == true ? L.TwrTable50 : L.TwrTable30;
+    public string TractionSumLabel     => TractionResult is not null
+        ? L.TwrSumValue(TractionResult.SumTwr)
+        : string.Empty;
+
+    public bool TractionInputValid    =>
+        double.TryParse(TractionWeightInput.Replace(',', '.'),
+            System.Globalization.NumberStyles.Any,
+            System.Globalization.CultureInfo.InvariantCulture,
+            out var v) && v > 0;
+
+    public bool CanOpenTraction =>
+        ConsistEntries.Any(e => e.HasTwr);
+
+    private bool _tractionDialogOpen;
+
+    [RelayCommand]
+    private void OpenTractionDialog()
+    {
+        TractionWeightInput = string.Empty;
+        TractionResult = null;
+        _tractionDialogOpen = true;
+        OnPropertyChanged(nameof(TractionDialogVisible));
+        OnPropertyChanged(nameof(TractionWeightInput));
+        OnPropertyChanged(nameof(TractionInputValid));
+    }
+
+    [RelayCommand]
+    private void CloseTractionDialog()
+    {
+        _tractionDialogOpen = false;
+        TractionResult = null;
+        TractionShares.Clear();
+        OnPropertyChanged(nameof(TractionDialogVisible));
+    }
+
+    [RelayCommand]
+    private void CalculateTraction()
+    {
+        if (!double.TryParse(TractionWeightInput.Replace(',', '.'),
+                System.Globalization.NumberStyles.Any,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out var weight) || weight <= 0)
+            return;
+
+        TractionResult = TractionCalculator.Calculate(
+            ConsistEntries.Select(e => e.ToModel()).ToList(),
+            weight);
+
+        TractionShares.Clear();
+        if (TractionResult is not null)
+            foreach (var s in TractionResult.Shares)
+                TractionShares.Add(new TractionShareViewModel(s.Designation, s.Twr, s.AssignedWeightTonnes));
+    }
+
     // ── UIC History dialog ────────────────────────────────────────────────────
     [ObservableProperty] private bool _historyDialogVisible = false;
 
@@ -262,6 +336,8 @@ public partial class MainViewModel : ObservableObject
             Position             = pos,
             BrakesEnabled        = BrakingCalculator.DefaultBrakesEnabled(pos),
             EdbActive            = false,
+            Twr30                = SelectedLoco.Twr30,
+            Twr50                = SelectedLoco.Twr50,
         };
 
         if (SelectedLoco.HasEDB && pos == ConsistPosition.Front)
@@ -485,6 +561,8 @@ public partial class MainViewModel : ObservableObject
                 entry.AxleLoad              = def.AxleLoad;
                 entry.BrakingWeightTonnesR  = def.BrakingWeightTonnesR;
                 entry.BrakingWeightWithEDBR = def.BrakingWeightWithEDBR;
+                entry.Twr30                 = def.Twr30;
+                entry.Twr50                 = def.Twr50;
             }
             var vm = new ConsistEntryViewModel(entry);
             vm.PropertyChanged += OnEntryChanged;
@@ -567,8 +645,12 @@ public partial class MainViewModel : ObservableObject
             PdfSaveService.OpenFile(path);
 
         // Release the large PDF byte array and QuestPDF render allocations from the LOH
-        GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
-        GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, blocking: true, compacting: true);
+        // LOH compaction is not supported on Android/iOS — guard to desktop only
+        if (OperatingSystem.IsWindows() || OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
+        {
+            GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+            GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, blocking: true, compacting: true);
+        }
     }
 
     [RelayCommand]
@@ -620,6 +702,7 @@ public partial class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(TotalLengthDisplay));
         OnPropertyChanged(nameof(ActiveBrakeWeightDisplay));
         OnPropertyChanged(nameof(CanGeneratePdf));
+        OnPropertyChanged(nameof(CanOpenTraction));
     }
 
     private void NotifyEtcsChanged()

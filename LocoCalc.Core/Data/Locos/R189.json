@@ -10,5 +10,7 @@
   "fp": "FP3",
   "axleLoad": "D2",
   "axleLoadDouble": "D2",
-  "axleLoadConvoy": "C2"
+  "axleLoadConvoy": "C2",
+  "twr30": 43,
+  "twr50": 37
 }
