@@ -181,7 +181,7 @@ public partial class MainViewModel : ObservableObject
             ? L.RenameCheckDigitWarning(UicFormatter.CalculateCheckDigit(RenameInput))
             : string.Empty;
 
-    public ObservableCollection<string> RenameHistorySuggestions { get; } = new();
+    public ObservableCollection<RenameHistorySuggestion> RenameHistorySuggestions { get; } = new();
     public bool RenameHistoryVisible => RenameHistorySuggestions.Count > 0;
 
     // ── ETCS ─────────────────────────────────────────────────────────────────
@@ -298,7 +298,8 @@ public partial class MainViewModel : ObservableObject
             OnPropertyChanged(nameof(EtcsWarningText));
             OnPropertyChanged(nameof(EtcsWarningSubText));
         };
-        UicHistoryItems.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HistoryIsEmpty));
+        UicHistoryItems.CollectionChanged          += (_, _) => OnPropertyChanged(nameof(HistoryIsEmpty));
+        RenameHistorySuggestions.CollectionChanged += (_, _) => OnPropertyChanged(nameof(RenameHistoryVisible));
         LoadLocos();
         RefreshSavedConsists();
     }
@@ -746,8 +747,10 @@ public partial class MainViewModel : ObservableObject
 
         foreach (var digits in history)
         {
+            if (digits == RenameInput) continue;
             if (string.IsNullOrEmpty(RenameInput) || digits.StartsWith(RenameInput))
-                RenameHistorySuggestions.Add(UicFormatter.Format(digits, format));
+                RenameHistorySuggestions.Add(new RenameHistorySuggestion(
+                    UicFormatter.Format(digits, format), digits));
         }
 
         OnPropertyChanged(nameof(RenameHistoryVisible));

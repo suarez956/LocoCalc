@@ -773,21 +773,30 @@
                       <Binding Path="EntryBorderColor" Converter="{StaticResource HexColor}"/>
                     </Border.BorderBrush>
                     <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto">
-                      <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center"
-                                  DoubleTapped="OnConsistEntryDoubleTapped" Cursor="Hand">
-                        <TextBlock Text="{Binding DisplayName}" FontSize="13" FontWeight="Medium" Foreground="#e8e8ff"/>
-                        <TextBlock Text="{Binding Designation}" FontSize="10" Foreground="#5555aa" FontStyle="Italic"
-                                   IsVisible="{Binding HasCustomName}"/>
-                        <TextBlock FontSize="10" Foreground="#8888aa" FontFamily="Consolas,monospace">
-                          <TextBlock.Text>
-                            <MultiBinding StringFormat="{}{0} t · {1} · {2} m">
-                              <Binding Path="TotalWeightTonnes"/>
-                              <Binding Path="ActiveBrakeDisplay"/>
-                              <Binding Path="LengthM"/>
-                            </MultiBinding>
-                          </TextBlock.Text>
-                        </TextBlock>
-                      </StackPanel>
+                      <Grid Grid.Column="0" ColumnDefinitions="*,Auto" Margin="0,0,4,0">
+                        <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center"
+                                    DoubleTapped="OnConsistEntryDoubleTapped" Cursor="Hand">
+                          <TextBlock Text="{Binding DisplayName}" FontSize="13" FontWeight="Medium" Foreground="#e8e8ff"/>
+                          <TextBlock Text="{Binding Designation}" FontSize="10" Foreground="#5555aa" FontStyle="Italic"
+                                     IsVisible="{Binding HasCustomName}"/>
+                          <TextBlock FontSize="10" Foreground="#8888aa" FontFamily="Consolas,monospace">
+                            <TextBlock.Text>
+                              <MultiBinding StringFormat="{}{0} t · {1} · {2} m">
+                                <Binding Path="TotalWeightTonnes"/>
+                                <Binding Path="ActiveBrakeDisplay"/>
+                                <Binding Path="LengthM"/>
+                              </MultiBinding>
+                            </TextBlock.Text>
+                          </TextBlock>
+                        </StackPanel>
+                        <Button Grid.Column="1" Content="ℹ" Background="#1a2a40" Foreground="#3b82f6"
+                                BorderBrush="#3b82f6" BorderThickness="1"
+                                Width="32" Height="32" Padding="0" FontSize="15" CornerRadius="6"
+                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                                VerticalAlignment="Center"
+                                Command="{Binding $parent[UserControl].DataContext.OpenRenameDialogCommand}"
+                                CommandParameter="{Binding}" Cursor="Hand"/>
+                      </Grid>
                       <!-- P/R mode toggle -->
                       <Button Grid.Column="1" Content="{Binding RModeButtonText}"
                               Foreground="White" FontSize="10" FontWeight="Bold"
@@ -1489,8 +1498,8 @@
 
           <!-- Table used + ΣTWR -->
           <Grid ColumnDefinitions="*">
-            <Border Grid.Column="1" Background="#1a2a1a" CornerRadius="5" Padding="8,6"
-                    BorderBrush="#3a3a55" BorderThickness="1" Margin="4,0,0,0">
+            <Border Grid.Column="1" Background="#1a2a1a" CornerRadius="5" Padding="12,6"
+                    BorderBrush="#3a3a55" BorderThickness="1" Margin="0">
               <StackPanel Spacing="2">
                 <TextBlock Text="{Binding L.TwrSumTitle}" FontSize="10" Foreground="#a0a0c0"/>
                 <TextBlock Text="{Binding TractionSumLabel}" FontSize="15" FontWeight="Bold" Foreground="#e8e8ff"/>
@@ -1651,9 +1660,9 @@
                    ItemsSource="{Binding RenameHistorySuggestions}"
                    SelectionChanged="OnRenameHistorySelectionChanged">
             <ListBox.ItemTemplate>
-              <DataTemplate>
-                <TextBlock Text="{Binding}" FontFamily="Consolas,monospace"
-                           FontSize="13" Foreground="#a0c4ff" Padding="4,2"/>
+              <DataTemplate x:DataType="vm:RenameHistorySuggestion">
+                <TextBlock Text="{Binding Formatted}" FontFamily="Consolas,monospace"
+                           FontSize="13" Foreground="#a0c4ff" Padding="6,8"/>
               </DataTemplate>
             </ListBox.ItemTemplate>
           </ListBox>

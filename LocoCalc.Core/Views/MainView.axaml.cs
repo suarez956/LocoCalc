@@ -194,11 +194,18 @@ public partial class MainView : UserControl
     private void OnRenameHistorySelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         if (sender is not ListBox lb || DataContext is not MainViewModel vm) return;
-        if (lb.SelectedItem is not string formatted) return;
+        if (lb.SelectedItem is not RenameHistorySuggestion item) return;
 
-        lb.SelectedItem = null;
+        // Capture before the post — lb state may change
+        var digits = item.RawDigits;
 
-        vm.RenameInput = UicFormatter.StripToDigits(formatted);
-        SyncRenameTextBox(vm);
+        // Defer entirely: setting RenameInput triggers UpdateRenameHistorySuggestions → Clear()
+        // synchronously inside the selection event, which crashes Avalonia's selection model.
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+        {
+            vm.RenameInput = digits;       // rebuilds suggestions based on new input
+            SyncRenameTextBox(vm);
+            vm.RenameHistorySuggestions.Clear();  // dismiss the list after pick
+        });
     }
 }
