@@ -1,6 +1,7 @@
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using LocoCalcAvalonia.Models;
 using LocoCalcAvalonia.Services;
 
@@ -26,6 +27,9 @@ public partial class ConsistEntryViewModel : ObservableObject
     public string UicTypePrefix { get; }
     public int? Twr30 { get; }
     public int? Twr50 { get; }
+    public int AxleCount { get; }
+    public double? SecuringForceKn { get; }
+    public bool MultipleUnit { get; }
     public bool HasEDB   => BrakingWeightWithEDB.HasValue;
     public bool HasRMode => BrakingWeightTonnesR.HasValue;
     public bool HasTwr   => Twr30.HasValue;
@@ -64,6 +68,16 @@ public partial class ConsistEntryViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(DisplayName))]
     [NotifyPropertyChangedFor(nameof(HasCustomName))]
     private string? _customName;
+
+    [ObservableProperty]
+    private bool _isTransported;
+
+    /// <summary>Toggles the per-row mobile menu between loco controls and position/delete controls.</summary>
+    [ObservableProperty]
+    private bool _showPositionControls;
+
+    [RelayCommand]
+    private void ToggleMenuMode() => ShowPositionControls = !ShowPositionControls;
 
     public string DisplayName     => CustomName ?? Designation;
     public bool   HasCustomName   => !string.IsNullOrWhiteSpace(CustomName);
@@ -144,12 +158,16 @@ public partial class ConsistEntryViewModel : ObservableObject
         UicTypePrefix         = entry.UicTypePrefix;
         Twr30                 = entry.Twr30;
         Twr50                 = entry.Twr50;
+        AxleCount             = entry.AxleCount;
+        SecuringForceKn       = entry.SecuringForceKn;
+        MultipleUnit          = entry.MultipleUnit;
         _position             = entry.Position;
         // Front and Rear positions always have brakes enabled (locked)
         _brakesEnabled        = _position != ConsistPosition.Middle || entry.BrakesEnabled;
         _edbActive            = entry.EdbActive;
         _rModeActive          = entry.RModeActive;
         _customName           = entry.CustomName;
+        _isTransported        = entry.IsTransported;
 
         LocoImage = LoadLocoImage(DefinitionId);
 
@@ -225,5 +243,9 @@ public partial class ConsistEntryViewModel : ObservableObject
         CustomName            = CustomName,
         Twr30                 = Twr30,
         Twr50                 = Twr50,
+        AxleCount             = AxleCount,
+        SecuringForceKn       = SecuringForceKn,
+        MultipleUnit          = MultipleUnit,
+        IsTransported         = IsTransported,
     };
 }

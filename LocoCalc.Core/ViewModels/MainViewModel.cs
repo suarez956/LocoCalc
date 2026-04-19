@@ -54,12 +54,23 @@ public partial class MainViewModel : ObservableObject
     // Injected by platform project
     public Services.IPdfSaveService? PdfSaveService  { get; set; }
     public Services.IPdfGenerator?   PdfGenerator    { get; set; }
+    public Services.IZoBGenerator?   ZoBGenerator    { get; set; }
 
     /// <summary>True when both PDF services are injected.</summary>
     public bool IsPdfSupported => PdfSaveService is not null && PdfGenerator is not null;
 
+    /// <summary>True when ZoB generator is available.</summary>
+    public bool IsZoBSupported => ZoBGenerator is not null;
+
+    /// <summary>Required braking percentage input for the ZoB form (field 12-P).</summary>
+    [ObservableProperty] private string _requiredBrakingPct = string.Empty;
+
     /// <summary>Call after injecting PdfSaveService/PdfGenerator to refresh UI binding.</summary>
-    public void NotifyPdfSupportChanged() => OnPropertyChanged(nameof(IsPdfSupported));
+    public void NotifyPdfSupportChanged()
+    {
+        OnPropertyChanged(nameof(IsPdfSupported));
+        OnPropertyChanged(nameof(IsZoBSupported));
+    }
 
     // ── Mobile navigation ────────────────────────────────────────────────
     public enum MobileTab { Consist, AddLoco, Etcs, Menu }
@@ -339,6 +350,9 @@ public partial class MainViewModel : ObservableObject
             EdbActive            = false,
             Twr30                = SelectedLoco.Twr30,
             Twr50                = SelectedLoco.Twr50,
+            AxleCount            = SelectedLoco.AxleCount,
+            SecuringForceKn      = SelectedLoco.SecuringForceKn,
+            MultipleUnit         = SelectedLoco.MultipleUnit,
         };
 
         if (SelectedLoco.HasEDB && pos == ConsistPosition.Front)
@@ -527,6 +541,13 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void ToggleIsTransported(ConsistEntryViewModel? vm)
+    {
+        if (vm is null) return;
+        vm.IsTransported = !vm.IsTransported;
+    }
+
+    [RelayCommand]
     private void SaveConsist()
     {
         ClearError();
@@ -534,7 +555,12 @@ public partial class MainViewModel : ObservableObject
         {
             Id      = _currentConsistId,
             Name    = ConsistName,
-            Entries = ConsistEntries.Select(e => e.ToModel()).ToList()
+            Entries = ConsistEntries.Select(e => e.ToModel()).ToList(),
+            StartStationId     = StartStation?.Id,
+            StartStationName   = StartStation?.Name,
+            EndStationId       = EndStation?.Id,
+            EndStationName     = EndStation?.Name,
+            RequiredBrakingPct = RequiredBrakingPct,
         };
         _consistRepo.Save(consist);
         RefreshSavedConsists();
@@ -564,6 +590,9 @@ public partial class MainViewModel : ObservableObject
                 entry.BrakingWeightWithEDBR = def.BrakingWeightWithEDBR;
                 entry.Twr30                 = def.Twr30;
                 entry.Twr50                 = def.Twr50;
+                entry.AxleCount             = def.AxleCount;
+                entry.SecuringForceKn       = def.SecuringForceKn;
+                entry.MultipleUnit          = def.MultipleUnit;
             }
             var vm = new ConsistEntryViewModel(entry);
             vm.PropertyChanged += OnEntryChanged;
@@ -572,6 +601,26 @@ public partial class MainViewModel : ObservableObject
         SpeedOverride     = null;
         ConsistName       = consist.Name;
         _currentConsistId = consist.Id;
+
+        // Restore stations: look up by Id first (handles name changes), fall back to saved name
+        if (consist.StartStationId is not null)
+            StartStation = AllStations.FirstOrDefault(s => s.Id == consist.StartStationId)
+                        ?? (consist.StartStationName is not null
+                                ? new Station { Id = consist.StartStationId, Name = consist.StartStationName }
+                                : null);
+        else
+            StartStation = null;
+
+        if (consist.EndStationId is not null)
+            EndStation = AllStations.FirstOrDefault(s => s.Id == consist.EndStationId)
+                      ?? (consist.EndStationName is not null
+                              ? new Station { Id = consist.EndStationId, Name = consist.EndStationName }
+                              : null);
+        else
+            EndStation = null;
+
+        RequiredBrakingPct = consist.RequiredBrakingPct ?? string.Empty;
+
         ReassignPositions();
         Recalculate();
         ShowToast(L.StatusLoaded(consist.Name));
@@ -652,6 +701,39 @@ public partial class MainViewModel : ObservableObject
             GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
             GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, blocking: true, compacting: true);
         }
+    }
+
+    [RelayCommand]
+    private async Task GenerateZoBAsync()
+    {
+        if (ConsistEntries.Count == 0)
+        {
+            ErrorMessage = "Souprava je prázdná.";
+            return;
+        }
+        if (PdfSaveService is null || ZoBGenerator is null)
+        {
+            ErrorMessage = "ZoB PDF není na tomto zařízení podporováno.";
+            return;
+        }
+
+        var suggested = $"ZoB_{(ConsistName.Length > 0 ? ConsistName : "Souprava")}_{DateTime.Now:yyyyMMdd_HHmmss}.pdf";
+        var path = await PdfSaveService.PickSavePathAsync(suggested);
+        if (path is null) return;
+
+        var bytes = ZoBGenerator.Generate(
+            ConsistEntries.Select(e => e.ToModel()).ToList(),
+            ConsistName.Length > 0 ? ConsistName : "Souprava",
+            SpeedOverride ?? EtcsDefSpeed,
+            RequiredBrakingPct,
+            StartStation is null ? null : $"{StartStation.Id}  {StartStation.Name}",
+            EndStation   is null ? null : $"{EndStation.Id}  {EndStation.Name}");
+
+        await File.WriteAllBytesAsync(path, bytes);
+        ShowToast($"ZoB uloženo: {path}");
+
+        if (AutoOpenPdf)
+            PdfSaveService.OpenFile(path);
     }
 
     [RelayCommand]

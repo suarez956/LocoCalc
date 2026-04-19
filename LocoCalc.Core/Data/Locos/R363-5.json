@@ -15,5 +15,8 @@
   "uicPrefixOffset": 5,
   "axleLoad": "C2",
   "twr30": 42,
-  "twr50": 37
+  "twr50": 37,
+  "axleCount": 4,
+  "securingForceKn": 7.4,
+  "multipleUnit": true
 }

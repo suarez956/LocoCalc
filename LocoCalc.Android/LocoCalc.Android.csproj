@@ -33,7 +33,9 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.2.3" />
     <PackageReference Include="Avalonia.Android"              Version="11.2.3"/>
-    <PackageReference Include="Xamarin.AndroidX.Core"         Version="1.13.1.4"/>  </ItemGroup>
+    <PackageReference Include="Xamarin.AndroidX.Core"         Version="1.13.1.4"/>
+    <PackageReference Include="SkiaSharp"                     Version="2.88.9"/>
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\LocoCalc.Core\LocoCalc.Core.csproj"/>

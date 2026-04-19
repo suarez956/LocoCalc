@@ -27,6 +27,10 @@ public class ConsistEntry
     public string UicTypePrefix { get; set; } = string.Empty;
     public int? Twr30 { get; set; }
     public int? Twr50 { get; set; }
+    public int AxleCount { get; set; } = 4;
+    public double? SecuringForceKn { get; set; }
+    public bool MultipleUnit { get; set; } = false;
+    public bool IsTransported { get; set; } = false;
 
     public bool HasEDB  => BrakingWeightWithEDB.HasValue;
     public bool HasRMode => BrakingWeightTonnesR.HasValue;

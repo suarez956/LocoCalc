@@ -5,7 +5,7 @@
   "BrakingWeightTonnes": 100,
   "BrakingWeightWithEDB": 111,
   "BrakingWeightTonnesR": 124,
-  "BrakingWeightWithEDBR": 168 ,
+  "BrakingWeightWithEDBR": 168,
   "LengthM": 20,
   "traction": "ms",
   "maxSpeed": 230,
@@ -13,5 +13,7 @@
   "uicFormat": "A",
   "axleLoad": "C2",
   "twr30": 43,
-  "twr50": 37
+  "twr50": 37,
+  "axleCount": 4,
+  "multipleUnit": false
 }

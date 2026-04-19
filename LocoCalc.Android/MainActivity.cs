@@ -62,6 +62,7 @@ public class MainActivity : AvaloniaMainActivity<App>
 
             vm.PdfGenerator   = new AndroidPdfGenerator();
             vm.PdfSaveService = new AndroidPdfSaveService(ctx);
+            vm.ZoBGenerator   = new AndroidZoBGenerator();
 
             return vm;
         };
