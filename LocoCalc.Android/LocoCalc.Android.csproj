@@ -5,8 +5,8 @@
     <TargetFramework>net10.0-android</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>LocoCalcAvalonia</RootNamespace>
-    <AssemblyName>LocoCalcAvalonia.Android</AssemblyName>
+    <RootNamespace>LocoCalc</RootNamespace>
+    <AssemblyName>LocoCalc.Android</AssemblyName>
     <ApplicationId>cz.lococalc.app</ApplicationId>
     <ApplicationVersion>1</ApplicationVersion>
     <ApplicationDisplayVersion>$(AppVersion)</ApplicationDisplayVersion>

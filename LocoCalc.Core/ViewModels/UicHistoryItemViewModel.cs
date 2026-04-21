@@ -1,6 +1,6 @@
-using LocoCalcAvalonia.Services;
+using LocoCalc.Services;
 
-namespace LocoCalcAvalonia.ViewModels;
+namespace LocoCalc.ViewModels;
 
 public class UicHistoryItemViewModel
 {

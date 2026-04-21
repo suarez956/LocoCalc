@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace LocoCalcAvalonia.Services;
+namespace LocoCalc.Services;
 
 public enum AppLanguage { Czech, English }
 

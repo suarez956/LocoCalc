@@ -1,4 +1,4 @@
-namespace LocoCalcAvalonia.Models;
+namespace LocoCalc.Models;
 
 public class Consist
 {

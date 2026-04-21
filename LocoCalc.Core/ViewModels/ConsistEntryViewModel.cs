@@ -2,10 +2,10 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using LocoCalcAvalonia.Models;
-using LocoCalcAvalonia.Services;
+using LocoCalc.Models;
+using LocoCalc.Services;
 
-namespace LocoCalcAvalonia.ViewModels;
+namespace LocoCalc.ViewModels;
 
 public partial class ConsistEntryViewModel : ObservableObject
 {

@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LocoCalcAvalonia.Models;
+using LocoCalc.Models;
 
-namespace LocoCalcAvalonia.ViewModels;
+namespace LocoCalc.ViewModels;
 
 public partial class TractionGroup : ObservableObject
 {

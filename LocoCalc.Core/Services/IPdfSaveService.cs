@@ -1,4 +1,4 @@
-namespace LocoCalcAvalonia.Services;
+namespace LocoCalc.Services;
 
 /// <summary>
 /// Platform-specific save dialog + file open.

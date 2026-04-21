@@ -1,6 +1,6 @@
 using SkiaSharp;
 
-namespace LocoCalcAvalonia.Services;
+namespace LocoCalc.Services;
 
 /// <summary>
 /// Stateless drawing helpers for SkiaSharp-based PDF generation.

@@ -1,10 +1,10 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:LocoCalcAvalonia.ViewModels"
-             xmlns:models="using:LocoCalcAvalonia.Models"
-             xmlns:conv="using:LocoCalcAvalonia.Converters"
+             xmlns:vm="using:LocoCalc.ViewModels"
+             xmlns:models="using:LocoCalc.Models"
+             xmlns:conv="using:LocoCalc.Converters"
              xmlns:ti="using:Avalonia.Input.TextInput"
-             x:Class="LocoCalcAvalonia.Views.MainView"
+             x:Class="LocoCalc.Views.MainView"
              x:DataType="vm:MainViewModel"
              Background="#0f0f1a">
 
@@ -680,78 +680,16 @@
                        Background="#1a1a2e" Foreground="#e8e8ff"
                        BorderBrush="#3a3a60" CornerRadius="5" FontSize="12"/>
 
-              <!-- PDF controls (hidden when PdfSaveService not injected, e.g. Android) -->
-              <StackPanel Spacing="6" IsVisible="{Binding IsPdfSupported}">
-                <CheckBox IsChecked="{Binding AutoOpenPdf}"
-                          Foreground="#8888aa" FontSize="11"
-                          Content="{Binding L.AutoOpenPdf}"/>
-                <Grid ColumnDefinitions="Auto,*">
-                  <ToggleButton Grid.Column="0"
-                               IsChecked="{Binding PdfDarkMode}"
-                               VerticalAlignment="Center"
-                               Margin="0,0,6,0"
-                               Cursor="Hand">
-                    <ToggleButton.Template>
-                      <ControlTemplate TargetType="ToggleButton">
-                        <Border x:Name="Track" Width="52" Height="28" CornerRadius="14" Background="#3a3a60">
-                          <Border.Transitions>
-                            <Transitions>
-                              <BrushTransition Property="Background" Duration="0:0:0.2"/>
-                            </Transitions>
-                          </Border.Transitions>
-                          <Grid>
-                            <Border x:Name="Knob" Width="22" Height="22" CornerRadius="11"
-                                    Background="White" HorizontalAlignment="Left" VerticalAlignment="Center"
-                                    Margin="3,0,0,0">
-                              <Border.Transitions>
-                                <Transitions>
-                                  <ThicknessTransition Property="Margin" Duration="0:0:0.2" Easing="CubicEaseInOut"/>
-                                </Transitions>
-                              </Border.Transitions>
-                              <TextBlock x:Name="KnobIcon"
-                                         FontFamily="{StaticResource FaFont}" FontSize="12"
-                                         HorizontalAlignment="Center" VerticalAlignment="Center"
-                                         Text="&#xF185;" Foreground="#f97316"/>
-                            </Border>
-                          </Grid>
-                        </Border>
-                      </ControlTemplate>
-                    </ToggleButton.Template>
-                    <ToggleButton.Styles>
-                      <Style Selector="ToggleButton:checked /template/ Border#Track">
-                        <Setter Property="Background" Value="#f97316"/>
-                      </Style>
-                      <Style Selector="ToggleButton:checked /template/ Border#Knob">
-                        <Setter Property="Margin" Value="27,0,0,0"/>
-                      </Style>
-                      <Style Selector="ToggleButton:checked /template/ TextBlock#KnobIcon">
-                        <Setter Property="Text" Value="&#xF186;"/>
-                        <Setter Property="Foreground" Value="#1a1a2e"/>
-                      </Style>
-                    </ToggleButton.Styles>
-                  </ToggleButton>
-                  <Button Grid.Column="1"
-                          Background="#3b82f6" Foreground="White"
-                          HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                          Padding="0,11" CornerRadius="8" IsEnabled="True"
-                          Command="{Binding GeneratePdfCommand}" Cursor="Hand">
-                    <StackPanel Orientation="Horizontal" Spacing="5">
-                      <TextBlock Text="{Binding L.PrintReportIcon}" FontFamily="{StaticResource FaFont}" FontSize="13"/>
-                      <TextBlock Text="{Binding L.PrintReport}" FontSize="13" FontWeight="Bold"/>
-                    </StackPanel>
-                  </Button>
-                </Grid>
-                <!-- ZoB button -->
-                <Button Background="#059669" Foreground="White"
-                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                        Padding="0,11" CornerRadius="8"
-                        Command="{Binding GenerateZoBCommand}" Cursor="Hand">
-                  <StackPanel Orientation="Horizontal" Spacing="5">
-                    <TextBlock Text="&#xF1C1;" FontFamily="{StaticResource FaFont}" FontSize="13"/>
-                    <TextBlock Text="ZoB" FontSize="13" FontWeight="Bold"/>
-                  </StackPanel>
-                </Button>
-              </StackPanel>
+              <!-- ZoB button -->
+              <Button Background="#059669" Foreground="White"
+                      HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                      Padding="0,11" CornerRadius="8"
+                      Command="{Binding GenerateZoBCommand}" Cursor="Hand">
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                  <TextBlock Text="&#xF1C1;" FontFamily="{StaticResource FaFont}" FontSize="13"/>
+                  <TextBlock Text="Generovat ZoB" FontSize="13" FontWeight="Bold"/>
+                </StackPanel>
+              </Button>
 
               <!-- FP legend -->
               <TextBlock FontSize="10" Foreground="#8888aa" TextWrapping="Wrap" Margin="1,0" LineHeight="17">FP3 (130 mm): 163, 186, 189, 363, 363.5, 372, 383, 386, 388, 393<LineBreak/>FP2 (100 mm): ostatní řady</TextBlock>
@@ -1232,76 +1170,16 @@
                      BorderBrush="#2e2e50" CornerRadius="6" FontSize="13"/>
           </StackPanel>
 
-          <StackPanel Spacing="6" IsVisible="{Binding IsPdfSupported}">
-            <CheckBox IsChecked="{Binding AutoOpenPdf}" Foreground="#8888aa" FontSize="11"
-                      Content="{Binding L.AutoOpenPdf}"/>
-            <Grid ColumnDefinitions="Auto,*">
-              <ToggleButton Grid.Column="0"
-                             IsChecked="{Binding PdfDarkMode}"
-                             VerticalAlignment="Center"
-                             Margin="0,0,6,0"
-                             Cursor="Hand">
-                <ToggleButton.Template>
-                  <ControlTemplate TargetType="ToggleButton">
-                    <Border x:Name="Track" Width="64" Height="36" CornerRadius="18" Background="#3a3a60">
-                      <Border.Transitions>
-                        <Transitions>
-                          <BrushTransition Property="Background" Duration="0:0:0.2"/>
-                        </Transitions>
-                      </Border.Transitions>
-                      <Grid>
-                        <Border x:Name="Knob" Width="30" Height="30" CornerRadius="15"
-                                Background="White" HorizontalAlignment="Left" VerticalAlignment="Center"
-                                Margin="3,0,0,0">
-                          <Border.Transitions>
-                            <Transitions>
-                              <ThicknessTransition Property="Margin" Duration="0:0:0.2" Easing="CubicEaseInOut"/>
-                            </Transitions>
-                          </Border.Transitions>
-                          <TextBlock x:Name="KnobIcon"
-                                     FontFamily="{StaticResource FaFont}" FontSize="16"
-                                     HorizontalAlignment="Center" VerticalAlignment="Center"
-                                     Text="&#xF185;" Foreground="#f97316"/>
-                        </Border>
-                      </Grid>
-                    </Border>
-                  </ControlTemplate>
-                </ToggleButton.Template>
-                <ToggleButton.Styles>
-                  <Style Selector="ToggleButton:checked /template/ Border#Track">
-                    <Setter Property="Background" Value="#f97316"/>
-                  </Style>
-                  <Style Selector="ToggleButton:checked /template/ Border#Knob">
-                    <Setter Property="Margin" Value="31,0,0,0"/>
-                  </Style>
-                  <Style Selector="ToggleButton:checked /template/ TextBlock#KnobIcon">
-                    <Setter Property="Text" Value="&#xF186;"/>
-                    <Setter Property="Foreground" Value="#1a1a2e"/>
-                  </Style>
-                </ToggleButton.Styles>
-              </ToggleButton>
-              <Button Grid.Column="1"
-                      Background="#3b82f6" Foreground="White"
-                      HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                      Padding="0,11" CornerRadius="8" IsEnabled="True"
-                      Command="{Binding GeneratePdfCommand}" Cursor="Hand">
-                <StackPanel Orientation="Horizontal" Spacing="5">
-                  <TextBlock Text="{Binding L.PrintReportIcon}" FontFamily="{StaticResource FaFont}" FontSize="13"/>
-                  <TextBlock Text="{Binding L.PrintReport}" FontSize="13" FontWeight="Bold"/>
-                </StackPanel>
-              </Button>
-            </Grid>
-            <!-- ZoB button (mobile) -->
-            <Button Background="#059669" Foreground="White"
-                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                    Padding="0,13" CornerRadius="8"
-                    Command="{Binding GenerateZoBCommand}" Cursor="Hand">
-              <StackPanel Orientation="Horizontal" Spacing="5">
-                <TextBlock Text="&#xF1C1;" FontFamily="{StaticResource FaFont}" FontSize="14"/>
-                <TextBlock Text="ZoB" FontSize="14" FontWeight="Bold"/>
-              </StackPanel>
-            </Button>
-          </StackPanel>
+          <!-- ZoB button (mobile) -->
+          <Button Background="#059669" Foreground="White"
+                  HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                  Padding="0,13" CornerRadius="8"
+                  Command="{Binding GenerateZoBCommand}" Cursor="Hand">
+            <StackPanel Orientation="Horizontal" Spacing="5">
+              <TextBlock Text="&#xF1C1;" FontFamily="{StaticResource FaFont}" FontSize="14"/>
+              <TextBlock Text="Generovat ZoB" FontSize="14" FontWeight="Bold"/>
+            </StackPanel>
+          </Button>
           <TextBlock FontSize="10" Foreground="#8888aa" TextWrapping="Wrap" Margin="1,0" LineHeight="17">FP3 (130 mm): 163, 186, 189, 363, 363.5, 372, 383, 386, 388, 393<LineBreak/>FP2 (100 mm): ostatní řady</TextBlock>
         </StackPanel>
       </ScrollViewer>

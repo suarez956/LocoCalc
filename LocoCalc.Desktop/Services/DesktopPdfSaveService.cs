@@ -1,9 +1,9 @@
 using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
-using LocoCalcAvalonia.Services;
+using LocoCalc.Services;
 
-namespace LocoCalcAvalonia;
+namespace LocoCalc.Services;
 
 /// <summary>Desktop implementation: OS save-file dialog + Process.Start to open PDF.</summary>
 public class DesktopPdfSaveService(Window owner) : IPdfSaveService

@@ -1,4 +1,4 @@
-namespace LocoCalcAvalonia.Services;
+namespace LocoCalc.Services;
 
 public static class UicFormatter
 {

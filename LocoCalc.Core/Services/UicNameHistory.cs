@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace LocoCalcAvalonia.Services;
+namespace LocoCalc.Services;
 
 /// <summary>Persists per-locomotive-class UIC number history (raw digits only).</summary>
 public class UicNameHistory

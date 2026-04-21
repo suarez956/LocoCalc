@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using LocoCalcAvalonia.Models;
+using LocoCalc.Models;
 
-namespace LocoCalcAvalonia.ViewModels;
+namespace LocoCalc.ViewModels;
 
 /// <summary>
 /// Flat list item — either a group header or a loco row.

@@ -3,11 +3,11 @@ using System.Text;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using LocoCalcAvalonia.Models;
-using LocoCalcAvalonia.Services;
-using LocoCalcAvalonia.ViewModels;
+using LocoCalc.Models;
+using LocoCalc.Services;
+using LocoCalc.ViewModels;
 
-namespace LocoCalcAvalonia.Views;
+namespace LocoCalc.Views;
 
 public partial class MainView : UserControl
 {

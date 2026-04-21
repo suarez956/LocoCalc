@@ -1,11 +1,8 @@
 using Android.Content;
-using Android.Graphics;
-using Android.Graphics.Pdf;
 using AndroidX.Core.Content;
-using LocoCalcAvalonia.Models;
-using LocoCalcAvalonia.Services;
+using LocoCalc.Services;
 
-namespace LocoCalcAvalonia.Android;
+namespace LocoCalc;
 
 /// <summary>
 /// Android PDF implementation using the built-in Android.Graphics.Pdf.PdfDocument API.

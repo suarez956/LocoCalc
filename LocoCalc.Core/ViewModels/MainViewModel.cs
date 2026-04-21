@@ -2,11 +2,11 @@ using System.Collections.ObjectModel;
 using System.Runtime;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using LocoCalcAvalonia.Models;
-using LocoCalcAvalonia.Services;
-using TractionResult = LocoCalcAvalonia.Services.TractionCalculator.TractionResult;
+using LocoCalc.Models;
+using LocoCalc.Services;
+using TractionResult = LocoCalc.Services.TractionCalculator.TractionResult;
 
-namespace LocoCalcAvalonia.ViewModels;
+namespace LocoCalc.ViewModels;
 
 public partial class MainViewModel : ObservableObject
 {
@@ -43,21 +43,11 @@ public partial class MainViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(CanAddLoco))]
     private LocomotiveDefinition? _selectedLoco;
 
-    public bool CanAddLoco      => SelectedLoco is not null;
-    public bool CanGeneratePdf  => ConsistEntries.Count > 0;
-
-    [ObservableProperty]
-    private bool _pdfDarkMode = false;
-
-    [ObservableProperty] private bool _autoOpenPdf = true;
+    public bool CanAddLoco => SelectedLoco is not null;
 
     // Injected by platform project
-    public Services.IPdfSaveService? PdfSaveService  { get; set; }
-    public Services.IPdfGenerator?   PdfGenerator    { get; set; }
-    public Services.IZoBGenerator?   ZoBGenerator    { get; set; }
-
-    /// <summary>True when both PDF services are injected.</summary>
-    public bool IsPdfSupported => PdfSaveService is not null && PdfGenerator is not null;
+    public Services.IPdfSaveService? PdfSaveService { get; set; }
+    public Services.IZoBGenerator?   ZoBGenerator   { get; set; }
 
     /// <summary>True when ZoB generator is available.</summary>
     public bool IsZoBSupported => ZoBGenerator is not null;
@@ -65,10 +55,9 @@ public partial class MainViewModel : ObservableObject
     /// <summary>Required braking percentage input for the ZoB form (field 12-P).</summary>
     [ObservableProperty] private string _requiredBrakingPct = string.Empty;
 
-    /// <summary>Call after injecting PdfSaveService/PdfGenerator to refresh UI binding.</summary>
+    /// <summary>Call after injecting ZoBGenerator to refresh UI binding.</summary>
     public void NotifyPdfSupportChanged()
     {
-        OnPropertyChanged(nameof(IsPdfSupported));
         OnPropertyChanged(nameof(IsZoBSupported));
     }
 
@@ -645,7 +634,6 @@ public partial class MainViewModel : ObservableObject
         SpeedOverride     = null;
         _currentConsistId = Guid.NewGuid().ToString();
         Recalculate();
-        OnPropertyChanged(nameof(CanGeneratePdf));
         ShowToast(L.StatusNew);
     }
 
@@ -656,52 +644,6 @@ public partial class MainViewModel : ObservableObject
 
     [RelayCommand]
     private void ClearError() => ErrorMessage = string.Empty;
-
-    [RelayCommand]
-    private async Task GeneratePdfAsync()
-    {
-        if (ConsistEntries.Count == 0)
-        {
-            ErrorMessage = L.ErrorNothingToPrint;
-            return;
-        }
-        if (PdfSaveService is null || PdfGenerator is null)
-        {
-            ErrorMessage = L.Language == AppLanguage.Czech
-                ? "PDF není na tomto zařízení podporováno."
-                : "PDF is not supported on this device.";
-            return;
-        }
-
-        var suggested = $"LocoCalc_{(ConsistName.Length > 0 ? ConsistName : "Souprava")}_{DateTime.Now:yyyyMMdd_HHmmss}{(PdfDarkMode ? "_dark" : "")}.pdf";
-        var path = await PdfSaveService.PickSavePathAsync(suggested);
-        if (path is null) return;  // user cancelled
-
-        var bytes = PdfGenerator!.Generate(
-            ConsistEntries.Select(e => e.ToModel()).ToList(),
-            ConsistName.Length > 0 ? ConsistName : "Souprava",
-            SpeedOverride ?? EtcsDefSpeed,
-            L.Language == AppLanguage.Czech,
-            PdfDarkMode,
-            StartStation is null ? null : $"{StartStation.Id}  {StartStation.Name}",
-            EndStation   is null ? null : $"{EndStation.Id}  {EndStation.Name}");
-
-        await File.WriteAllBytesAsync(path, bytes);
-        ShowToast(L.Language == AppLanguage.Czech
-            ? $"PDF uloženo: {path}"
-            : $"PDF saved: {path}");
-
-        if (AutoOpenPdf)
-            PdfSaveService.OpenFile(path);
-
-        // Release the large PDF byte array and QuestPDF render allocations from the LOH
-        // LOH compaction is not supported on Android/iOS — guard to desktop only
-        if (OperatingSystem.IsWindows() || OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
-        {
-            GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
-            GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, blocking: true, compacting: true);
-        }
-    }
 
     [RelayCommand]
     private async Task GenerateZoBAsync()
@@ -732,8 +674,7 @@ public partial class MainViewModel : ObservableObject
         await File.WriteAllBytesAsync(path, bytes);
         ShowToast($"ZoB uloženo: {path}");
 
-        if (AutoOpenPdf)
-            PdfSaveService.OpenFile(path);
+        PdfSaveService.OpenFile(path);
     }
 
     [RelayCommand]
@@ -784,7 +725,6 @@ public partial class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(TotalWeightDisplay));
         OnPropertyChanged(nameof(TotalLengthDisplay));
         OnPropertyChanged(nameof(ActiveBrakeWeightDisplay));
-        OnPropertyChanged(nameof(CanGeneratePdf));
         OnPropertyChanged(nameof(CanOpenTraction));
     }
 

@@ -2,10 +2,10 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using LocoCalcAvalonia.ViewModels;
-using LocoCalcAvalonia.Views;
+using LocoCalc.ViewModels;
+using LocoCalc.Views;
 
-namespace LocoCalcAvalonia;
+namespace LocoCalc;
 
 public class App : Application
 {

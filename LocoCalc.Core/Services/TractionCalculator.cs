@@ -1,6 +1,6 @@
-using LocoCalcAvalonia.Models;
+using LocoCalc.Models;
 
-namespace LocoCalcAvalonia.Services;
+namespace LocoCalc.Services;
 
 /// <summary>
 /// Implements the traction weight ratio (poměrové číslo) weight-distribution logic from

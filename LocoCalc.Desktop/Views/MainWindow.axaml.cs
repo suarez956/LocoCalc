@@ -1,7 +1,7 @@
 using Avalonia.Controls;
-using LocoCalcAvalonia.ViewModels;
+using LocoCalc.ViewModels;
 
-namespace LocoCalcAvalonia.Views;
+namespace LocoCalc.Views;
 
 public partial class MainWindow : Window
 {
