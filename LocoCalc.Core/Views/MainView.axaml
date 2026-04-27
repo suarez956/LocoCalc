@@ -114,7 +114,7 @@
           <StackPanel Grid.Row="0" Spacing="6" Margin="10,10,10,6">
             <TextBlock Text="{Binding L.PanelLocos}" FontSize="10" FontWeight="Bold"
                        Foreground="#8888aa" LetterSpacing="1.5"/>
-            <TextBox Text="{Binding SearchText}" Watermark="{Binding L.SearchPlaceholder}"
+            <TextBox Text="{Binding SearchText}" PlaceholderText="{Binding L.SearchPlaceholder}"
                      Background="#1e1e32" BorderBrush="#2e2e50" Foreground="#e8e8ff"
                      FontSize="12" CornerRadius="6" Padding="8,6"
                      IsTabStop="False"/>
@@ -234,7 +234,7 @@
         <!-- Toolbar -->
         <Border Grid.Row="0" Background="#161626" BorderBrush="#2e2e50" BorderThickness="0,0,0,1" Padding="10,8">
           <Grid ColumnDefinitions="*,Auto,Auto">
-            <TextBox Grid.Column="0" Text="{Binding ConsistName}" Watermark="{Binding L.ConsistNamePh}"
+            <TextBox Grid.Column="0" Text="{Binding ConsistName}" PlaceholderText="{Binding L.ConsistNamePh}"
                      Background="#1e1e32" BorderBrush="#2e2e50" Foreground="#e8e8ff"
                      FontSize="13" CornerRadius="6" Padding="10,7" Margin="0,0,8,0"
                      IsTabStop="False"/>
@@ -651,7 +651,7 @@
                                  SelectedItem="{Binding StartStation, Mode=TwoWay}"
                                  FilterMode="Custom"
                                  MinimumPrefixLength="2"
-                                 Watermark="{Binding L.StartStationPh}"
+                                 PlaceholderText="{Binding L.StartStationPh}"
                                  Background="#1a1a2e" Foreground="#e8e8ff"
                                  BorderBrush="#3a3a60" CornerRadius="5" FontSize="12"/>
                 <TextBlock Text="{Binding L.EndStation}" FontSize="10" FontWeight="Bold"
@@ -661,7 +661,7 @@
                                  SelectedItem="{Binding EndStation, Mode=TwoWay}"
                                  FilterMode="Custom"
                                  MinimumPrefixLength="2"
-                                 Watermark="{Binding L.EndStationPh}"
+                                 PlaceholderText="{Binding L.EndStationPh}"
                                  Background="#1a1a2e" Foreground="#e8e8ff"
                                  BorderBrush="#3a3a60" CornerRadius="5" FontSize="12"/>
               </StackPanel>
@@ -670,7 +670,7 @@
               <TextBlock Text="POTŘEBNÁ BRZDÍCÍ %" FontSize="10" FontWeight="Bold"
                          Foreground="#8888aa" LetterSpacing="1"/>
               <TextBox Text="{Binding RequiredBrakingPct}"
-                       Watermark="např. 65"
+                       PlaceholderText="např. 65"
                        Background="#1a1a2e" Foreground="#e8e8ff"
                        BorderBrush="#3a3a60" CornerRadius="5" FontSize="12"/>
 
@@ -947,7 +947,7 @@
         <StackPanel Grid.Row="0" Spacing="6" Margin="10,10,10,6">
           <TextBlock Text="{Binding L.PanelLocos}" FontSize="10" FontWeight="Bold"
                      Foreground="#8888aa" LetterSpacing="1.5"/>
-          <TextBox Text="{Binding SearchText}" Watermark="{Binding L.SearchPlaceholder}"
+          <TextBox Text="{Binding SearchText}" PlaceholderText="{Binding L.SearchPlaceholder}"
                    Background="#1e1e32" BorderBrush="#2e2e50" Foreground="#e8e8ff"
                    FontSize="12" CornerRadius="6" Padding="8,6"
                    IsTabStop="False"/>
@@ -1020,9 +1020,9 @@
                               IsVisible="{Binding Loco.HasRMode}">
                         <TextBlock Text="R" FontSize="10" FontWeight="Bold" Foreground="#3b82f6"/>
                       </Border>
-                      <Border Background="#9400D3" CornerRadius="3" Padding="5, 1"
+                      <Border Background="#9400D3" CornerRadius="3" Padding="5,1"
                               IsVisible="{Binding Loco.MultipleUnit}">
-                        <TextBlock Text="VnŘ" FontSize="10" FontWeight="Bold" Foreground="#EE82EE"></TextBlock>
+                        <TextBlock Text="VnŘ" FontSize="10" FontWeight="Bold" Foreground="#EE82EE"/>
                       </Border>
                     </StackPanel>
                     <TextBlock FontSize="10" Foreground="#8888aa" Margin="0,2,0,0"
@@ -1153,7 +1153,7 @@
             <TextBlock Text="POTŘEBNÁ BRZDÍCÍ %" FontSize="10" FontWeight="Bold"
                        Foreground="#8888aa" LetterSpacing="1"/>
             <TextBox Text="{Binding RequiredBrakingPct}"
-                     Watermark="např. 65"
+                     PlaceholderText="např. 65"
                      Background="#1e1e32" Foreground="#e8e8ff"
                      BorderBrush="#2e2e50" CornerRadius="6" FontSize="13"/>
           </StackPanel>
@@ -1179,7 +1179,7 @@
           <!-- Consist name -->
           <TextBlock Text="{Binding L.MenuConsistInfo}" FontSize="10" FontWeight="Bold"
                      Foreground="#8888aa" LetterSpacing="1.5" Margin="0,0,0,4"/>
-          <TextBox Text="{Binding ConsistName}" Watermark="{Binding L.ConsistNamePh}"
+          <TextBox Text="{Binding ConsistName}" PlaceholderText="{Binding L.ConsistNamePh}"
                    Background="#1e1e32" BorderBrush="#2e2e50" Foreground="#e8e8ff"
                    FontSize="13" CornerRadius="6" Padding="10,9"
                    IsTabStop="False"/>
@@ -1217,7 +1217,7 @@
                            SelectedItem="{Binding StartStation, Mode=TwoWay}"
                            FilterMode="Custom"
                            MinimumPrefixLength="2"
-                           Watermark="{Binding L.StartStationPh}"
+                           PlaceholderText="{Binding L.StartStationPh}"
                            Background="#1e1e32" Foreground="#e8e8ff"
                            BorderBrush="#2e2e50" CornerRadius="6" FontSize="13"/>
           <TextBlock Text="{Binding L.EndStation}" FontSize="10" FontWeight="Bold"
@@ -1227,7 +1227,7 @@
                            SelectedItem="{Binding EndStation, Mode=TwoWay}"
                            FilterMode="Custom"
                            MinimumPrefixLength="2"
-                           Watermark="{Binding L.EndStationPh}"
+                           PlaceholderText="{Binding L.EndStationPh}"
                            Background="#1e1e32" Foreground="#e8e8ff"
                            BorderBrush="#2e2e50" CornerRadius="6" FontSize="13"/>
 
@@ -1437,7 +1437,7 @@
                    BorderBrush="#22c55e" BorderThickness="1"
                    CaretBrush="#e8e8ff" FontSize="15" Padding="10,8" CornerRadius="6"
                    Text="{Binding TractionWeightInput, Mode=TwoWay}"
-                   Watermark="{Binding L.TwrWeightPh}"/>
+                   PlaceholderText="{Binding L.TwrWeightPh}"/>
         </StackPanel>
 
         <!-- No locos warning -->
