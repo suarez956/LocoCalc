@@ -2,7 +2,7 @@ using Avalonia.Data.Converters;
 using Avalonia.Media;
 using System.Globalization;
 
-namespace LocoCalcAvalonia.Converters;
+namespace LocoCalc.Converters;
 
 public class HexColorConverter : IValueConverter
 {

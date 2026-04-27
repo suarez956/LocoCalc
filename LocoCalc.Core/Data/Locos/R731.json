@@ -9,5 +9,8 @@
   "fp": "FP2",
   "uicFormat": "B",
   "axleLoad": "A",
-  "twr30": 11
+  "twr30": 11,
+  "axleCount": 4,
+  "securingForceKn": 18.0,
+  "multipleUnit": true
 }

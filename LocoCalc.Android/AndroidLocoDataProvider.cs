@@ -1,6 +1,6 @@
-using LocoCalcAvalonia.Services;
+using LocoCalc.Services;
 
-namespace LocoCalcAvalonia.Android;
+namespace LocoCalc;
 
 /// <summary>Reads loco JSONs from APK assets (Locos/ folder).</summary>
 public class AndroidLocoDataProvider : ILocoDataProvider

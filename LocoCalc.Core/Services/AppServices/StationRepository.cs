@@ -1,8 +1,8 @@
 using System.Reflection;
 using System.Text.Json;
-using LocoCalcAvalonia.Models;
+using LocoCalc.Models;
 
-namespace LocoCalcAvalonia.Services;
+namespace LocoCalc.Services;
 
 public class StationRepository
 {

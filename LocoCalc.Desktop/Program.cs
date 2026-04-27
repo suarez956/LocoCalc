@@ -1,10 +1,11 @@
 using System.Runtime;
 using Avalonia;
 using Avalonia.Threading;
-using LocoCalcAvalonia;
-using LocoCalcAvalonia.Services;
-using LocoCalcAvalonia.ViewModels;
-using LocoCalcAvalonia.Views;
+using LocoCalc;
+using LocoCalc.Services;
+using LocoCalc.Services.PdfServices;
+using LocoCalc.ViewModels;
+using MainWindow = LocoCalc.Views.MainWindow;
 
 App.WindowFactory = () => new MainWindow();
 
@@ -15,7 +16,7 @@ App.ViewModelFactory = () =>
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "LocoCalc", "Consists");
     var vm = new MainViewModel(locoProvider, consistFolder);
-    vm.PdfGenerator = new LazyPdfGenerator();    // defers QuestPDF init until first PDF
+    vm.ZoBGenerator  = new SkiaZoBGenerator();
     return vm;
 };
 

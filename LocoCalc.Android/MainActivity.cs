@@ -1,13 +1,12 @@
-using Android.App;
 using Android.Content.PM;
-using Android.OS;
 using Android.Views;
 using Avalonia;
 using Avalonia.Android;
-using LocoCalcAvalonia.Services;
-using LocoCalcAvalonia.ViewModels;
+using LocoCalc.Services.PlatformServices;
+using LocoCalc.Services.PdfServices;
+using LocoCalc.ViewModels;
 
-namespace LocoCalcAvalonia.Android;
+namespace LocoCalc;
 
 [Activity(
     Label = "LocoCalc",
@@ -60,8 +59,8 @@ public class MainActivity : AvaloniaMainActivity<App>
             var consistFolder = Path.Combine(ctx.FilesDir!.AbsolutePath, "Consists");
             var vm            = new MainViewModel(locoProvider, consistFolder);
 
-            vm.PdfGenerator   = new AndroidPdfGenerator();
             vm.PdfSaveService = new AndroidPdfSaveService(ctx);
+            vm.ZoBGenerator   = new SkiaZoBGenerator();
 
             return vm;
         };

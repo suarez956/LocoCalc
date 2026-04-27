@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace LocoCalcAvalonia.Models;
+namespace LocoCalc.Models;
 
 public class Station
 {

@@ -1,7 +1,7 @@
 using System.Reflection;
-using LocoCalcAvalonia.Services;
+using LocoCalc.Services;
 
-namespace LocoCalcAvalonia;
+namespace LocoCalc.Services;
 
 /// <summary>
 /// Reads loco JSONs from embedded resources compiled into LocoCalc.Core.

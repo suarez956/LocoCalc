@@ -1,9 +1,10 @@
 using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
-using LocoCalcAvalonia.Services;
+using LocoCalc.Services;
+using LocoCalc.Services.PdfServices;
 
-namespace LocoCalcAvalonia;
+namespace LocoCalc.Services;
 
 /// <summary>Desktop implementation: OS save-file dialog + Process.Start to open PDF.</summary>
 public class DesktopPdfSaveService(Window owner) : IPdfSaveService
@@ -24,9 +25,10 @@ public class DesktopPdfSaveService(Window owner) : IPdfSaveService
         return file?.TryGetLocalPath();
     }
 
-    public void OpenFile(string path)
+    public string? OpenFile(string path)
     {
         try { Process.Start(new ProcessStartInfo(path) { UseShellExecute = true }); }
         catch { /* ignore if OS can't open */ }
+        return path;
     }
 }

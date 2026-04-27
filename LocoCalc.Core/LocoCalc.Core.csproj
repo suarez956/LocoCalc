@@ -7,7 +7,7 @@
     <ExcludeFromAndroidBuild>true</ExcludeFromAndroidBuild>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>LocoCalcAvalonia</RootNamespace>
+    <RootNamespace>LocoCalc</RootNamespace>
     <AssemblyName>LocoCalc.Core</AssemblyName>
   </PropertyGroup>
 
@@ -16,6 +16,7 @@
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.3"/>
     <PackageReference Include="Avalonia.Fonts.Inter"   Version="11.2.3"/>
     <PackageReference Include="CommunityToolkit.Mvvm"  Version="8.3.2"/>
+    <PackageReference Include="SkiaSharp"              Version="2.88.9"/>
   </ItemGroup>
 
   <!-- Loco JSONs embedded — not user-accessible -->

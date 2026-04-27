@@ -8,5 +8,8 @@
   "maxSpeed": 120,
   "fp": "FP2",
   "uicFormat": "B",
-  "axleLoad": "C2"
+  "axleLoad": "C2",
+  "axleCount": 6,
+  "securingForceKn": 36.0,
+  "multipleUnit": false
 }

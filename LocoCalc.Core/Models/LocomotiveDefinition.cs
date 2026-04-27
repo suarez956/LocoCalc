@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace LocoCalcAvalonia.Models;
+namespace LocoCalc.Models;
 
 public class LocomotiveDefinition
 {
@@ -77,6 +77,18 @@ public class LocomotiveDefinition
     /// <summary>True when this loco can participate in traction calculations.</summary>
     [JsonIgnore]
     public bool HasTwr => Twr30.HasValue;
+
+    /// <summary>Number of axles (wheels / 2). E.g. Bo-Bo = 4, Co-Co = 6, B = 2.</summary>
+    [JsonPropertyName("axleCount")]
+    public int AxleCount { get; set; } = 4;
+
+    /// <summary>Parking/securing brake force [kN]. Null = not known for this class.</summary>
+    [JsonPropertyName("securingForceKn")]
+    public double? SecuringForceKn { get; set; }
+
+    /// <summary>True when this loco type supports multiple-unit (VnŘ) operation.</summary>
+    [JsonPropertyName("multipleUnit")]
+    public bool MultipleUnit { get; set; } = false;
 
     public bool HasEDB   => BrakingWeightWithEDB.HasValue;
     public bool HasRMode => BrakingWeightTonnesR.HasValue;

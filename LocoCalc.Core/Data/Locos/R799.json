@@ -8,5 +8,7 @@
   "maxSpeed": 10,
   "fp": "FP2",
   "uicFormat": "B",
-  "axleLoad": "A"
+  "axleLoad": "A",
+  "axleCount": 2,
+  "multipleUnit": false
 }

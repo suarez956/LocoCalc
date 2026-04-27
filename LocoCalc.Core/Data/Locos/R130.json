@@ -10,5 +10,8 @@
   "uicFormat": "B",
   "axleLoad": "C2",
   "twr30": 24,
-  "twr50": 32
+  "twr50": 32,
+  "axleCount": 4,
+  "securingForceKn": 25.0,
+  "multipleUnit": true
 }

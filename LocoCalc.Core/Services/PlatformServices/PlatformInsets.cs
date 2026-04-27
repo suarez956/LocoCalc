@@ -1,4 +1,4 @@
-namespace LocoCalcAvalonia.Services;
+namespace LocoCalc.Services.PlatformServices;
 
 /// <summary>
 /// Carries platform-reported system bar insets to platform-agnostic views.

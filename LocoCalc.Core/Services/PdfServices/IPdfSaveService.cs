@@ -1,4 +1,4 @@
-namespace LocoCalcAvalonia.Services;
+namespace LocoCalc.Services.PdfServices;
 
 /// <summary>
 /// Platform-specific save dialog + file open.
@@ -7,5 +7,6 @@ namespace LocoCalcAvalonia.Services;
 public interface IPdfSaveService
 {
     Task<string?> PickSavePathAsync(string suggestedName);
-    void OpenFile(string path);
+    /// <summary>Opens the file and returns the path to display to the user (may differ from the temp write path on Android).</summary>
+    string? OpenFile(string path);
 }
