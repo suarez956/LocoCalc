@@ -182,8 +182,8 @@ public class SkiaZoBGenerator
 
         // ── Drawing helpers (thin wrappers that capture the current canvas) ───────
 
-        SKPaint Pt(float size, bool bold = false, SKColor? color = null)
-            => CustomSkiaPDFHelpers.CreatePaint(size, bold, color);
+        TextPaint Pt(float size, bool bold = false, SKColor? color = null)
+            => CustomSkiaPDFHelpers.CreateTextStyle(size, bold, color);
 
         void Box(float x, float y, float w, float h, float strokeWidth = 0.8f)
             => CustomSkiaPDFHelpers.StrokeRect(cv, x, y, w, h, strokeWidth);
@@ -191,8 +191,8 @@ public class SkiaZoBGenerator
         void Fill(float x, float y, float w, float h, SKColor color)
             => CustomSkiaPDFHelpers.FillRect(cv, x, y, w, h, color);
 
-        void Txt(string text, float x, float y2, SKPaint paint)
-            => CustomSkiaPDFHelpers.DrawText(cv, text, x, y2, paint);
+        void Txt(string text, float x, float y2, TextPaint tp)
+            => CustomSkiaPDFHelpers.DrawText(cv, text, x, y2, tp);
 
         void Sides(float x, float y, float w, float h, RS sides, float strokeWidth = 0.8f)
             => CustomSkiaPDFHelpers.StrokeRectSides(cv, x, y, w, h, sides, strokeWidth);
@@ -519,7 +519,7 @@ public class SkiaZoBGenerator
                     string val = r12Data[ri][ci];
                     if (!string.IsNullOrEmpty(val))
                     {
-                        SKPaint vp = (ci == 1 && ri == 0) ? boldPt : normalPt;
+                        TextPaint vp = (ci == 1 && ri == 0) ? boldPt : normalPt;
                         float   tw = vp.MeasureText(val);
                         Txt(val, r12x[ci] + (colW - tw) / 2, y + r12DataH - 4, vp);
                     }
@@ -639,7 +639,7 @@ public class SkiaZoBGenerator
         {
             float ry = iy + i * etcsRowH;
             Txt(etcsLabels[i], M2 + etcsPad, ry + 14, p2EtcsLbl);
-            SKPaint valPaint = i switch {
+            TextPaint valPaint = i switch {
                 0 => p2Orange,
                 2 => p2Orange,
                 3 => p2LowBrake ? p2RedV : p2Green,
@@ -712,7 +712,7 @@ public class SkiaZoBGenerator
                 $"{e.LengthM:F0} m",
                 brakesTxt
             };
-            SKPaint[] valPaints = {
+            TextPaint[] valPaints = {
                 p2TblCell,
                 p2TblCell,
                 e.BrakesEnabled ? p2TblCell : p2TblRed,

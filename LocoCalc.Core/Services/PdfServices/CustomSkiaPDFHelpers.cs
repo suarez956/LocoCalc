@@ -2,38 +2,19 @@ using SkiaSharp;
 
 namespace LocoCalc.Services;
 
-/// <summary>
-/// Stateless drawing helpers for SkiaSharp-based PDF generation.
-/// All methods take an explicit <paramref name="canvas"/> so they are
-/// side-effect-free and easy to unit-test without a live document.
-/// </summary>
 public static class CustomSkiaPDFHelpers
 {
-    // ── Color ────────────────────────────────────────────────────────────────
-
-    /// <summary>Parse a CSS hex colour string (e.g. "#f97316") into an SKColor.</summary>
     public static SKColor Color(string hex) => SKColor.Parse(hex);
 
-    // ── Paint factory ────────────────────────────────────────────────────────
+    /// <summary>Create a text style. Caller is responsible for disposing the returned object.</summary>
+    public static TextPaint CreateTextStyle(float fontSize, bool bold = false, SKColor? textColor = null)
+    {
+        var font = new SKFont(SKTypeface.Default, fontSize);
+        if (bold) font.Embolden = true;
+        var paint = new SKPaint { Color = textColor ?? SKColors.Black, IsAntialias = true };
+        return new TextPaint(font, paint);
+    }
 
-    /// <summary>
-    /// Create a text/fill paint.  Caller is responsible for disposing the returned object.
-    /// </summary>
-    /// <param name="fontSize">Text size in points.</param>
-    /// <param name="bold">Apply synthetic bold (FakeBoldText).</param>
-    /// <param name="textColor">Foreground colour; defaults to black.</param>
-    public static SKPaint CreatePaint(float fontSize, bool bold = false, SKColor? textColor = null)
-        => new SKPaint
-        {
-            Color        = textColor ?? SKColors.Black,
-            TextSize     = fontSize,
-            IsAntialias  = true,
-            FakeBoldText = bold
-        };
-
-    // ── Primitives ───────────────────────────────────────────────────────────
-
-    /// <summary>Stroke a rectangle outline on <paramref name="canvas"/>.</summary>
     public static void StrokeRect(
         SKCanvas canvas, float left, float top, float width, float height,
         float strokeWidth = 0.8f)
@@ -48,7 +29,6 @@ public static class CustomSkiaPDFHelpers
         canvas.DrawRect(SKRect.Create(left, top, width, height), paint);
     }
 
-    /// <summary>Fill a rectangle on <paramref name="canvas"/> with a solid colour.</summary>
     public static void FillRect(
         SKCanvas canvas, float left, float top, float width, float height,
         SKColor fillColor)
@@ -57,12 +37,10 @@ public static class CustomSkiaPDFHelpers
         canvas.DrawRect(SKRect.Create(left, top, width, height), paint);
     }
 
-    /// <summary>Draw a text string; <paramref name="baseline"/> is the Y of the text baseline.</summary>
     public static void DrawText(
-        SKCanvas canvas, string text, float x, float baseline, SKPaint paint)
-        => canvas.DrawText(text, x, baseline, paint);
+        SKCanvas canvas, string text, float x, float baseline, TextPaint tp)
+        => canvas.DrawText(text, x, baseline, SKTextAlign.Left, tp.Font, tp.Paint);
 
-    /// <summary>Draw a straight line segment on <paramref name="canvas"/>.</summary>
     public static void DrawLine(
         SKCanvas canvas, float x0, float y0, float x1, float y1,
         float strokeWidth = 0.8f)
@@ -77,12 +55,6 @@ public static class CustomSkiaPDFHelpers
         canvas.DrawLine(x0, y0, x1, y1, paint);
     }
 
-    // ── Selective-border rectangle ────────────────────────────────────────────
-
-    /// <summary>
-    /// Draw only the requested sides of a rectangle.
-    /// Use the <see cref="RectSides"/> flags to specify which edges to render.
-    /// </summary>
     public static void StrokeRectSides(
         SKCanvas canvas, float left, float top, float width, float height,
         RectSides sides, float strokeWidth = 0.8f)
@@ -97,7 +69,17 @@ public static class CustomSkiaPDFHelpers
     }
 }
 
-/// <summary>Flags for selecting individual sides of a rectangle border.</summary>
+/// <summary>Holds an SKFont + SKPaint pair for SkiaSharp 3.x text drawing.</summary>
+public sealed class TextPaint : IDisposable
+{
+    public readonly SKFont  Font;
+    public readonly SKPaint Paint;
+
+    public TextPaint(SKFont font, SKPaint paint) { Font = font; Paint = paint; }
+    public float MeasureText(string text) => Font.MeasureText(text);
+    public void  Dispose() { Font.Dispose(); Paint.Dispose(); }
+}
+
 [Flags]
 public enum RectSides
 {
