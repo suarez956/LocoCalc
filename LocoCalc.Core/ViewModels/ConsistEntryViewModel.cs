@@ -162,8 +162,7 @@ public partial class ConsistEntryViewModel : ObservableObject
         SecuringForceKn       = entry.SecuringForceKn;
         MultipleUnit          = entry.MultipleUnit;
         _position             = entry.Position;
-        // Front and Rear positions always have brakes enabled (locked)
-        _brakesEnabled        = _position != ConsistPosition.Middle || entry.BrakesEnabled;
+        _brakesEnabled        = entry.BrakesEnabled;
         _edbActive            = entry.EdbActive;
         _rModeActive          = entry.RModeActive;
         _customName           = entry.CustomName;
@@ -204,7 +203,13 @@ public partial class ConsistEntryViewModel : ObservableObject
 
     partial void OnPositionChanged(ConsistPosition value)
     {
-        BrakesEnabled = BrakingCalculator.DefaultBrakesEnabled(value);
+        if (value == ConsistPosition.Rear)
+            BrakesEnabled = true;
+        else if (IsTransported)
+            BrakesEnabled = false;
+        else if (!MultipleUnit)
+            BrakesEnabled = BrakingCalculator.DefaultBrakesEnabled(value);
+        // else: active multiple-unit loco — user controls brake state
         if (value != ConsistPosition.Front)
             EdbActive = false;
     }

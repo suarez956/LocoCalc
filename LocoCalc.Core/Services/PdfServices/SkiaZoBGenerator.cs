@@ -1,8 +1,8 @@
-using SkiaSharp;
 using LocoCalc.Models;
+using SkiaSharp;
 using RS = LocoCalc.Services.RectSides;
 
-namespace LocoCalc.Services;
+namespace LocoCalc.Services.PdfServices;
 
 /// <summary>
 /// Generates the MZOB (Mezinárodní zpráva o brzdění) PDF using SkiaSharp.
@@ -48,53 +48,53 @@ public class SkiaZoBGenerator : IZoBGenerator
         var active      = entries.Where(e => !e.IsTransported).ToList();
         var transported = entries.Where(e =>  e.IsTransported).ToList();
 
-        int    actCount    = active.Count;
-        int    tranCount   = transported.Count;
-        double actWeightT  = active.Sum(e => e.TotalWeightTonnes);
-        double tranWeightT = transported.Sum(e => e.TotalWeightTonnes);
-        double actBrakP    = active.Sum(BrakeNoEDB);
-        double tranBrakP   = transported.Sum(BrakeNoEDB);
-        double? actBrakEDB  = active.Any(e => e.HasEDB && e.BrakesEnabled)
-                                ? active.Sum(BrakeWithEDB) : null;
-        double? tranBrakEDB = transported.Any(e => e.HasEDB && e.BrakesEnabled)
-                                ? transported.Sum(BrakeWithEDB) : null;
-        double actLenM    = active.Sum(e => e.LengthM);
-        double tranLenM   = transported.Sum(e => e.LengthM);
-        int    actAxles   = active.Sum(e => e.AxleCount);
-        int    tranAxles  = transported.Sum(e => e.AxleCount);
-        double? actSecKn  = active.Any(e => e.SecuringForceKn.HasValue)
-                              ? active.Sum(e => e.SecuringForceKn ?? 0) : null;
-        double? tranSecKn = transported.Any(e => e.SecuringForceKn.HasValue)
-                              ? transported.Sum(e => e.SecuringForceKn ?? 0) : null;
+        int    activeCount    = active.Count;
+        int    transportedCount   = transported.Count;
+        double activeWeightTotal  = active.Sum(e => e.TotalWeightTonnes);
+        double transportedWeightTotal = transported.Sum(e => e.TotalWeightTonnes);
+        double activeBrakesNoEdb    = active.Sum(BrakeNoEDB);
+        double transportedBrakesNoEdb   = transported.Sum(BrakeNoEDB);
+        double? activeBrakesWithEdb      = active.Where(e => e is { HasEDB: true, BrakesEnabled: true }).Any()
+                                             ? active.Sum(BrakeWithEDB) : null;
+        double? transportedBrakesWithEdb = transported.Where(e => e is { HasEDB: true, BrakesEnabled: true }).Any()
+                                             ? transported.Sum(BrakeWithEDB) : null;
+        double activeLengthM    = active.Sum(e => e.LengthM);
+        double transportedLengthM   = transported.Sum(e => e.LengthM);
+        int    activeAxles   = active.Sum(e => e.AxleCount);
+        int    transportedAxles  = transported.Sum(e => e.AxleCount);
+        double? activeSecuringForce      = active.Where(e => e.SecuringForceKn.HasValue)
+                                             .Aggregate((double?)null, (sum, e) => (sum ?? 0) + e.SecuringForceKn!.Value);
+        double? transportedSecuringForce = transported.Where(e => e.SecuringForceKn.HasValue)
+                                             .Aggregate((double?)null, (sum, e) => (sum ?? 0) + e.SecuringForceKn!.Value);
 
         // ── Totals for braking % ───────────────────────────────────────────────
-        double totW        = actWeightT + tranWeightT;
-        double actualEDB   = totW > 0 ? Math.Floor(((actBrakEDB ?? actBrakP) + (tranBrakEDB ?? tranBrakP)) / totW * 100) : 0;
-        double actualNoEDB = totW > 0 ? Math.Floor((actBrakP + tranBrakP) / totW * 100) : 0;
-        string actualStr   = (actBrakEDB.HasValue || tranBrakEDB.HasValue)
-                                 ? $"{actualEDB:F0} / {actualNoEDB:F0}"
-                                 : $"{actualNoEDB:F0}";
+        double weightTotal        = activeWeightTotal + transportedWeightTotal;
+        double actualEdb   = weightTotal > 0 ? Math.Floor(((activeBrakesWithEdb ?? activeBrakesNoEdb) + (transportedBrakesWithEdb ?? transportedBrakesNoEdb)) / weightTotal * 100) : 0;
+        double actualNoEdb = weightTotal > 0 ? Math.Floor((activeBrakesNoEdb + transportedBrakesNoEdb) / weightTotal * 100) : 0;
+        string actualStr   = (activeBrakesWithEdb.HasValue || transportedBrakesWithEdb.HasValue)
+                                 ? $"{actualEdb:F0} / {actualNoEdb:F0}"
+                                 : $"{actualNoEdb:F0}";
 
-        double? reqPct = null;
+        double? requiredPct = null;
         if (!string.IsNullOrWhiteSpace(requiredBrakingPct) &&
             double.TryParse(requiredBrakingPct!.Replace(',', '.'),
                 System.Globalization.NumberStyles.Any,
                 System.Globalization.CultureInfo.InvariantCulture, out var rp))
-            reqPct = rp;
+            requiredPct = rp;
 
         string missingStr = string.Empty;
-        if (reqPct.HasValue)
+        if (requiredPct.HasValue)
         {
-            if (actBrakEDB.HasValue || tranBrakEDB.HasValue)
+            if (activeBrakesWithEdb.HasValue || transportedBrakesWithEdb.HasValue)
             {
-                double diffEDB   = actualEDB   - reqPct.Value;
-                double diffNoEDB = actualNoEDB - reqPct.Value;
+                double diffEDB   = actualEdb   - requiredPct.Value;
+                double diffNoEDB = actualNoEdb - requiredPct.Value;
                 if (diffEDB < 0 || diffNoEDB < 0)
                     missingStr = $"{Math.Max(0, -diffEDB):F0} / {Math.Max(0, -diffNoEDB):F0}";
             }
             else
             {
-                double diff = actualNoEDB - reqPct.Value;
+                double diff = actualNoEdb - requiredPct.Value;
                 if (diff < 0) missingStr = $"{-diff:F0}";
             }
         }
@@ -105,72 +105,70 @@ public class SkiaZoBGenerator : IZoBGenerator
         int securingCount = entries.Count(e => e.SecuringForceKn is > 0);
         bool anyR         = entries.Any(e => e.RModeActive && !e.IsTransported);
         string bMode      = anyR ? "R" : "P";
-        var    lead       = entries.FirstOrDefault(e => !e.IsTransported) ?? entries.FirstOrDefault();
+        var    lead       = entries.FirstOrDefault();
         var    last       = entries.LastOrDefault();
         string leadNum    = lead?.CustomName ?? string.Empty;
         string lastNum    = last?.CustomName ?? string.Empty;
         var    now        = DateTime.Now;
 
-        static string Bv(double? withEDB, double withoutEDB)
+        static string BrakingTextValue(double? withEDB, double withoutEDB)
             => withEDB.HasValue && Math.Abs(withEDB.Value - withoutEDB) > 0.5
                 ? $"{withEDB:F0} / {withoutEDB:F0}"
                 : $"{withoutEDB:F0}";
 
-        static string Len(double lenM, int axles)
+        static string LengthAxleText(double lenM, int axles)
             => axles > 0 ? $"{lenM:F0} / {axles}" : string.Empty;
 
         // ── Row 6–10 aggregate values ──────────────────────────────────────────
         string[][] rowData = new string[5][];
-        rowData[0] = new[]
-        {
-            actCount  > 0 ? actCount.ToString()  : string.Empty,
-            tranCount > 0 ? tranCount.ToString()  : string.Empty,
+        rowData[0] =
+        [
+            activeCount  > 0 ? activeCount.ToString()  : string.Empty,
+            transportedCount > 0 ? transportedCount.ToString()  : string.Empty,
             "0",
-            tranCount > 0 ? tranCount.ToString()  : "0",
-            (actCount + tranCount).ToString()
-        };
-        rowData[1] = new[]
-        {
-            actWeightT  > 0 ? $"{actWeightT:F0}"  : string.Empty,
-            tranWeightT > 0 ? $"{tranWeightT:F0}" : string.Empty,
+            transportedCount > 0 ? transportedCount.ToString()  : "0",
+            (activeCount + transportedCount).ToString()
+        ];
+        rowData[1] =
+        [
+            activeWeightTotal  > 0 ? $"{activeWeightTotal:F0}"  : string.Empty,
+            transportedWeightTotal > 0 ? $"{transportedWeightTotal:F0}" : string.Empty,
             "0",
-            tranWeightT > 0 ? $"{tranWeightT:F0}" : "0",
-            $"{actWeightT + tranWeightT:F0}"
-        };
-        double? totalBrakEDB = actBrakEDB.HasValue || tranBrakEDB.HasValue
-            ? (actBrakEDB ?? actBrakP) + (tranBrakEDB ?? tranBrakP)
-            : (double?)null;
-        rowData[2] = new[]
-        {
-            actCount  > 0 ? Bv(actBrakEDB,  actBrakP)  : string.Empty,
-            tranCount > 0 ? Bv(tranBrakEDB, tranBrakP) : string.Empty,
-            "/",
-            tranCount > 0 ? Bv(tranBrakEDB, tranBrakP) : "/",
-            Bv(totalBrakEDB, actBrakP + tranBrakP)
-        };
-        rowData[3] = new[]
-        {
-            actCount  > 0 ? Len(actLenM,  actAxles)  : string.Empty,
-            tranCount > 0 ? Len(tranLenM, tranAxles) : string.Empty,
-            "/",
-            tranCount > 0 ? Len(tranLenM, tranAxles) : "/",
-            Len(actLenM + tranLenM, actAxles + tranAxles)
-        };
-        double totSecKn = (actSecKn ?? 0) + (tranSecKn ?? 0);
-        rowData[4] = new[]
-        {
-            actCount  > 0 && actSecKn.HasValue  ? $"{actSecKn:F0}"  : string.Empty,
-            tranCount > 0 && tranSecKn.HasValue ? $"{tranSecKn:F0}" : string.Empty,
+            transportedWeightTotal > 0 ? $"{transportedWeightTotal:F0}" : "0",
+            $"{activeWeightTotal + transportedWeightTotal:F0}"
+        ];
+        double? totalBrakEDB = activeBrakesWithEdb.HasValue || transportedBrakesWithEdb.HasValue
+            ? (activeBrakesWithEdb ?? activeBrakesNoEdb) + (transportedBrakesWithEdb ?? transportedBrakesNoEdb)
+            : null;
+        rowData[2] =
+        [
+            activeCount  > 0 ? BrakingTextValue(activeBrakesWithEdb,  activeBrakesNoEdb)  : string.Empty,
+            transportedCount > 0 ? BrakingTextValue(transportedBrakesWithEdb, transportedBrakesNoEdb) : string.Empty,
             string.Empty,
-            tranCount > 0 && tranSecKn.HasValue ? $"{tranSecKn:F0}" : string.Empty,
+            transportedCount > 0 ? BrakingTextValue(transportedBrakesWithEdb, transportedBrakesNoEdb) : "/",
+            BrakingTextValue(totalBrakEDB, activeBrakesNoEdb + transportedBrakesNoEdb)
+        ];
+        rowData[3] =
+        [
+            activeCount  > 0 ? LengthAxleText(activeLengthM,  activeAxles)  : string.Empty,
+            transportedCount > 0 ? LengthAxleText(transportedLengthM, transportedAxles) : "/",
+            "/",
+            transportedCount > 0 ? LengthAxleText(transportedLengthM, transportedAxles) : "/",
+            LengthAxleText(activeLengthM + transportedLengthM, activeAxles + transportedAxles)
+        ];
+        double totSecKn = (activeSecuringForce ?? 0) + (transportedSecuringForce ?? 0);
+        rowData[4] =
+        [
+            activeCount  > 0 && activeSecuringForce.HasValue  ? $"{activeSecuringForce:F0}"  : string.Empty,
+            transportedCount > 0 && transportedSecuringForce.HasValue ? $"{transportedSecuringForce:F0}" : string.Empty,
+            string.Empty,
+            transportedCount > 0 && transportedSecuringForce.HasValue ? $"{transportedSecuringForce:F0}" : string.Empty,
             totSecKn > 0 ? $"{totSecKn:F0}" : string.Empty
-        };
+        ];
 
         // ── Page 2: ETCS values ────────────────────────────────────────────────
-        double p2Total    = entries.Sum(e => e.TotalWeightTonnes);
-        double p2Len      = entries.Sum(e => e.LengthM);
-        double p2Ab       = entries.Where(e => e.BrakesEnabled).Sum(e => BrakingCalculator.ActiveBrake(e));
-        double p2Pct      = p2Total > 0 ? Math.Floor(p2Ab / p2Total * 100.0) : 0;
+        double p2Ab  = entries.Where(e => e.BrakesEnabled).Sum(e => BrakingCalculator.ActiveBrake(e));
+        double p2Pct = weightTotal > 0 ? Math.Floor(p2Ab / weightTotal * 100.0) : 0;
         string p2Fp       = BrakingCalculator.ConsistFpClass(entries);
         int    p2FpMm     = p2Fp == "FP3" ? 130 : 100;
         string p2AxleLoad = BrakingCalculator.ConsistAxleLoad(entries) ?? "—";
@@ -199,24 +197,6 @@ public class SkiaZoBGenerator : IZoBGenerator
         void Sides(float x, float y, float w, float h, RS sides, float strokeWidth = 0.8f)
             => CustomSkiaPDFHelpers.StrokeRectSides(cv, x, y, w, h, sides, strokeWidth);
 
-        float[] Cols() // label | sub | A | B | C | D | E | end
-        {
-            float lw  = ContentW * 0.24f;
-            float sw2 = ContentW * 0.045f;
-            float dw  = (ContentW - lw - sw2) / 5f;
-            return new[]
-            {
-                Margin,
-                Margin + lw,
-                Margin + lw + sw2,
-                Margin + lw + sw2 + dw,
-                Margin + lw + sw2 + dw * 2,
-                Margin + lw + sw2 + dw * 3,
-                Margin + lw + sw2 + dw * 4,
-                Margin + ContentW
-            };
-        }
-
         // ═══════════════════════════════════════════════════════════════════════
         // PAGE 1 — MZOB form
         // ═══════════════════════════════════════════════════════════════════════
@@ -229,8 +209,21 @@ public class SkiaZoBGenerator : IZoBGenerator
         using var titlePt  = Pt(13,   bold: true);
         using var logoPt   = Pt(11,   bold: true, color: C("#000000"));
 
-        float y = Margin;
-        float[] cx = Cols();
+        float y   = Margin;
+        float lw  = ContentW * 0.24f;
+        float sw2 = ContentW * 0.045f;
+        float dw  = (ContentW - lw - sw2) / 5f;
+        float[] cx = // label | sub | A | B | C | D | E | end
+        {
+            Margin,
+            Margin + lw,
+            Margin + lw + sw2,
+            Margin + lw + sw2 + dw,
+            Margin + lw + sw2 + dw * 2,
+            Margin + lw + sw2 + dw * 3,
+            Margin + lw + sw2 + dw * 4,
+            Margin + ContentW
+        };
 
         // ── Header ─────────────────────────────────────────────────────────────
         float hdrH = 38;
@@ -321,9 +314,22 @@ public class SkiaZoBGenerator : IZoBGenerator
                 {
                     float x0 = cx[ci + 2], w0 = cx[ci + 3] - x0;
                     Box(x0, sy, w0, subH, strokeWidth: 0.5f);
-                    string val = sub == 0 ? rowData[row][ci] : string.Empty;
+                    string val;
+                    if (sub == 0)
+                        val = rowData[row][ci];
+                    else if (row == 3)
+                        val = "/";                                            // 9.2-3: all cols
+                    else if (row == 2 && ci is 0 or 4)
+                        val = "/";                                            // 8.2-3: A and E
+                    else if (row == 2 && ci == 3 && transportedCount == 0)
+                        val = "/";                                            // 8.2-3: D, no transported
+                    else
+                        val = string.Empty;
                     if (!string.IsNullOrEmpty(val))
-                        Txt(val, x0 + 3, sy + subH - 3, normalPt);
+                    {
+                        float tw = normalPt.MeasureText(val);
+                        Txt(val, x0 + (w0 - tw) / 2, sy + subH - 3, normalPt);
+                    }
                 }
             }
             y += rowTotalH;
@@ -399,11 +405,18 @@ public class SkiaZoBGenerator : IZoBGenerator
             y += ch11ModeH;
 
             // — Data rows 11.1–11.3 ————————————————————————————————————————————
-            string[] r11Val = new string[9];
-            r11Val[4] = pCount        > 0 ? pCount.ToString()        : string.Empty;
-            r11Val[5] = rCount        > 0 ? rCount.ToString()        : string.Empty;
-            r11Val[7] = securingCount > 0 ? securingCount.ToString() : string.Empty;
-            r11Val[8] = disabledCount > 0 ? disabledCount.ToString() : string.Empty;
+            string[] r11Val =
+            [
+                string.Empty,                                                 // 0 — unused (loop starts at 1)
+                string.Empty,                                                 // 1: F  (D brake)  — not tracked
+                string.Empty,                                                 // 2: G  (K,L,LL)  — not tracked
+                string.Empty,                                                 // 3: H  (G brake) — not tracked
+                pCount        > 0 ? pCount.ToString()        : string.Empty, // 4: I  (P mode)
+                rCount        > 0 ? rCount.ToString()        : string.Empty, // 5: J  (R mode)
+                string.Empty,                                                 // 6: K  (R+Mg)    — not tracked
+                securingCount > 0 ? securingCount.ToString() : string.Empty, // 7: L  (securing)
+                disabledCount > 0 ? disabledCount.ToString() : string.Empty, // 8: M  (disabled)
+            ];
 
             using var r11SubPt = Pt(5.5f, color: C("#000000"));
             for (int ri = 0; ri < 3; ri++)
@@ -416,7 +429,7 @@ public class SkiaZoBGenerator : IZoBGenerator
                 for (int ci = 1; ci < 9; ci++)
                 {
                     Sides(X11(ci), y, cw11Data, d11H, RS.Right | RS.Bottom);
-                    string val = ri == 0 ? (r11Val[ci] ?? string.Empty) : string.Empty;
+                    string val = ri == 0 ? r11Val[ci] : string.Empty;
                     if (!string.IsNullOrEmpty(val))
                     {
                         float tw = normalPt.MeasureText(val);
@@ -481,12 +494,14 @@ public class SkiaZoBGenerator : IZoBGenerator
             y += r12LtrH;
 
             // Data rows 12.1–12.3
-            string[][] r12Data = {
-                new[] { startStation ?? string.Empty, bMode,
-                        reqPct.HasValue ? $"{reqPct:F0}" : string.Empty,
-                        actualStr, missingStr, string.Empty, leadNum },
-                new[] { string.Empty, string.Empty, string.Empty, "/", "/", string.Empty, string.Empty },
-                new[] { string.Empty, string.Empty, string.Empty, "/", "/", string.Empty, string.Empty },
+            string[] r12BlankRow = [string.Empty, string.Empty, string.Empty, "/", "/", string.Empty, string.Empty];
+            string[][] r12Data =
+            {
+                [startStation ?? string.Empty, bMode,
+                 requiredPct.HasValue ? $"{requiredPct:F0}" : string.Empty,
+                 actualStr, missingStr.Length > 0 ? missingStr : "/", string.Empty, leadNum],
+                r12BlankRow,
+                r12BlankRow,
             };
 
             using var r12SubPt = Pt(5.5f, color: C("#000000"));
@@ -572,7 +587,6 @@ public class SkiaZoBGenerator : IZoBGenerator
         using var p2TblHdr   = Pt(9,  bold: true,  color: C("#ffffff"));
         using var p2TblCell  = Pt(10,               color: C("#111111"));
         using var p2TblBold  = Pt(10, bold: true,  color: C("#111111"));
-        using var p2TblMeta  = Pt(10,               color: C("#888888"));
         using var p2TblRed   = Pt(10,               color: C("#c0392b"));
         using var p2TblGreen = Pt(10,               color: C("#27ae60"));
         using var p2SecTitle = Pt(9,  bold: true,  color: C("#666666"));
@@ -607,7 +621,7 @@ public class SkiaZoBGenerator : IZoBGenerator
             $"{p2Fp}  ({p2FpMm} mm)",
             $"{maxSpeed} km/h",
             $"{p2Pct:F0} %",
-            $"{p2Len:F0} m",
+            $"{activeLengthM + transportedLengthM:F0} m",
             p2AxleLoad
         };
 
@@ -644,19 +658,18 @@ public class SkiaZoBGenerator : IZoBGenerator
             M2,
             M2 + CW2 * (3f / 13f),
             M2 + CW2 * (5f / 13f),
-            M2 + CW2 * (7f / 13f),
             M2 + CW2 * (9f / 13f),
             M2 + CW2 * (11f / 13f),
             M2 + CW2
         };
         string[] tHdrs = {
-            "Lokomotivy", "Hmotnost", "Brd. váha", "Brd. váha EDB", "Délka", "Brzdy"
+            "Lokomotivy", "Hmotnost", "Brd. váha / EDB", "Délka", "Brzdy"
         };
         const float thdrH = 24f;
         const float trowH = 22f;
 
         Fill(M2, y2, CW2, thdrH, C("#1a1a2e"));
-        for (int ci = 0; ci < 6; ci++)
+        for (int ci = 0; ci < 5; ci++)
         {
             float colX = tc[ci], colW = tc[ci + 1] - colX;
             float tw   = p2TblHdr.MeasureText(tHdrs[ci]);
@@ -664,26 +677,27 @@ public class SkiaZoBGenerator : IZoBGenerator
         }
         y2 += thdrH;
 
-        double abBase2    = 0;
+        double totalBwNoEdb  = 0;
+        double totalBwWithEdb = 0;
         string[] rowBgHex = { "#ffffff", "#f9f9f9" };
         for (int i = 0; i < entries.Count; i++)
         {
             var e = entries[i];
             Fill(M2, y2, CW2, trowH, C(rowBgHex[i % 2]));
 
-            double bwBase = e.BrakesEnabled
-                ? (e.RModeActive && e.BrakingWeightTonnesR.HasValue
-                    ? e.BrakingWeightTonnesR!.Value
-                    : e.BrakingWeightTonnes)
-                : 0;
-            abBase2 += bwBase;
+            double bwBase  = BrakeNoEDB(e);
+            double? bwEdb  = !e.BrakesEnabled ? null
+                : e.RModeActive  && e.BrakingWeightWithEDBR.HasValue ? e.BrakingWeightWithEDBR!.Value
+                : !e.RModeActive && e.BrakingWeightWithEDB.HasValue  ? e.BrakingWeightWithEDB!.Value
+                : (double?)null;
 
-            string bwEdbStr = !e.BrakesEnabled ? "—"
-                : e.RModeActive && e.BrakingWeightWithEDBR.HasValue
-                    ? $"{e.BrakingWeightWithEDBR!.Value:F0} t"
-                : !e.RModeActive && e.BrakingWeightWithEDB.HasValue
-                    ? $"{e.BrakingWeightWithEDB!.Value:F0} t"
-                : "—";
+            totalBwNoEdb  += bwBase;
+            totalBwWithEdb += bwEdb ?? bwBase;
+
+            string bwCombined = !e.BrakesEnabled ? "—"
+                : bwEdb.HasValue && Math.Abs(bwEdb.Value - bwBase) > 0.5
+                    ? $"{bwBase:F0} / {bwEdb.Value:F0} t"
+                    : $"{bwBase:F0} t";
 
             string brakesTxt = e.BrakesEnabled
                 ? (e.EdbActive ? (e.RModeActive ? "R+E" : "P+E") : (e.RModeActive ? "R" : "P"))
@@ -692,8 +706,7 @@ public class SkiaZoBGenerator : IZoBGenerator
             string[] vals = {
                 e.CustomName ?? e.Designation,
                 $"{e.TotalWeightTonnes:F1} t",
-                $"{bwBase:F0} t",
-                bwEdbStr,
+                bwCombined,
                 $"{e.LengthM:F0} m",
                 brakesTxt
             };
@@ -701,12 +714,11 @@ public class SkiaZoBGenerator : IZoBGenerator
                 p2TblCell,
                 p2TblCell,
                 e.BrakesEnabled ? p2TblCell : p2TblRed,
-                bwEdbStr == "—" ? p2TblMeta : p2TblCell,
                 p2TblCell,
                 e.BrakesEnabled ? p2TblGreen : p2TblRed
             };
 
-            for (int ci = 0; ci < 6; ci++)
+            for (int ci = 0; ci < 5; ci++)
             {
                 float colX = tc[ci], colW = tc[ci + 1] - colX;
                 float tw   = valPaints[ci].MeasureText(vals[ci]);
@@ -718,15 +730,17 @@ public class SkiaZoBGenerator : IZoBGenerator
 
         // Totals row
         Fill(M2, y2, CW2, trowH, C("#f0f0f0"));
+        string totalBwStr = Math.Abs(totalBwWithEdb - totalBwNoEdb) > 0.5
+            ? $"{totalBwNoEdb:F0} / {totalBwWithEdb:F0} t"
+            : $"{totalBwNoEdb:F0} t";
         string[] totVals = {
             "Celkem",
-            $"{p2Total:F1} t",
-            $"{abBase2:F0} t",
-            $"{p2Ab:F0} t",
-            $"{p2Len:F0} m",
+            $"{weightTotal:F1} t",
+            totalBwStr,
+            $"{activeLengthM + transportedLengthM:F0} m",
             "—"
         };
-        for (int ci = 0; ci < 6; ci++)
+        for (int ci = 0; ci < 5; ci++)
         {
             float colX = tc[ci], colW = tc[ci + 1] - colX;
             float tw   = p2TblBold.MeasureText(totVals[ci]);

@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Threading;
 using LocoCalc;
 using LocoCalc.Services;
+using LocoCalc.Services.PdfServices;
 using LocoCalc.ViewModels;
 using MainWindow = LocoCalc.Views.MainWindow;
 

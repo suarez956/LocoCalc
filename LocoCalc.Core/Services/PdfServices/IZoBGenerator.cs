@@ -1,6 +1,6 @@
 using LocoCalc.Models;
 
-namespace LocoCalc.Services;
+namespace LocoCalc.Services.PdfServices;
 
 public interface IZoBGenerator
 {

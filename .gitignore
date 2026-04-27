@@ -37,5 +37,6 @@ Thumbs.db
 # Loco images — not distributed with source, add your own to Assets/LocoImages/
 *.webp
 *.ttf
+*.kra
 
 *.bak

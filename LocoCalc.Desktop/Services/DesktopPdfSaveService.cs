@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using LocoCalc.Services;
+using LocoCalc.Services.PdfServices;
 
 namespace LocoCalc.Services;
 
@@ -24,9 +25,10 @@ public class DesktopPdfSaveService(Window owner) : IPdfSaveService
         return file?.TryGetLocalPath();
     }
 
-    public void OpenFile(string path)
+    public string? OpenFile(string path)
     {
         try { Process.Start(new ProcessStartInfo(path) { UseShellExecute = true }); }
         catch { /* ignore if OS can't open */ }
+        return path;
     }
 }

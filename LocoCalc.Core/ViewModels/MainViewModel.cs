@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LocoCalc.Models;
 using LocoCalc.Services;
+using LocoCalc.Services.PdfServices;
 using TractionResult = LocoCalc.Services.TractionCalculator.TractionResult;
 
 namespace LocoCalc.ViewModels;
@@ -46,8 +47,8 @@ public partial class MainViewModel : ObservableObject
     public bool CanAddLoco => SelectedLoco is not null;
 
     // Injected by platform project
-    public Services.IPdfSaveService? PdfSaveService { get; set; }
-    public Services.IZoBGenerator?   ZoBGenerator   { get; set; }
+    public IPdfSaveService? PdfSaveService { get; set; }
+    public IZoBGenerator?   ZoBGenerator   { get; set; }
 
     /// <summary>True when ZoB generator is available.</summary>
     public bool IsZoBSupported => ZoBGenerator is not null;
@@ -312,9 +313,19 @@ public partial class MainViewModel : ObservableObject
         if (SelectedLoco is null) return;
         ClearError();
 
-        var fi = ConsistEntries.Count;
-        var ft = ConsistEntries.Count + 1;
-        var pos = BrakingCalculator.DerivePosition(fi, ft);
+        var consistCount = ConsistEntries.Count;
+        var locoPosition = BrakingCalculator.DerivePosition(consistCount, consistCount + 1);
+
+        // Active multiple-unit block: contiguous same-type locos at the start of the consist.
+        // Requires the first loco's type to support VnŘ and all existing entries to be the same type.
+        bool isMultipleUnit =
+            consistCount > 0
+            && consistCount < 4
+            && SelectedLoco.MultipleUnit
+            && SelectedLoco.Designation == ConsistEntries[0].Designation
+            && ConsistEntries.All(e => e.Designation == SelectedLoco.Designation);
+
+        bool isTransported = consistCount > 0 && !isMultipleUnit;
 
         var entry = new ConsistEntry
         {
@@ -334,8 +345,9 @@ public partial class MainViewModel : ObservableObject
             UicPrefixOffset      = SelectedLoco.UicPrefixOffset,
             UicValidateCheck     = SelectedLoco.UicValidateCheck,
             UicTypePrefix        = SelectedLoco.UicTypePrefix,
-            Position             = pos,
-            BrakesEnabled        = BrakingCalculator.DefaultBrakesEnabled(pos),
+            Position             = locoPosition,
+            BrakesEnabled        = true,
+            IsTransported        = isTransported,
             EdbActive            = false,
             Twr30                = SelectedLoco.Twr30,
             Twr50                = SelectedLoco.Twr50,
@@ -344,7 +356,7 @@ public partial class MainViewModel : ObservableObject
             MultipleUnit         = SelectedLoco.MultipleUnit,
         };
 
-        if (SelectedLoco.HasEDB && pos == ConsistPosition.Front)
+        if (SelectedLoco.HasEDB && (locoPosition == ConsistPosition.Front || isMultipleUnit))
         {
             _pendingEntry      = entry;
             _pendingEdbWith    = SelectedLoco.BrakingWeightWithEDB!.Value;
@@ -544,7 +556,17 @@ public partial class MainViewModel : ObservableObject
         {
             Id      = _currentConsistId,
             Name    = ConsistName,
-            Entries = ConsistEntries.Select(e => e.ToModel()).ToList(),
+            Entries = ConsistEntries.Select(e => new StoredConsistEntry
+            {
+                DefinitionId  = e.DefinitionId,
+                Designation   = e.Designation,
+                Position      = e.Position,
+                BrakesEnabled = e.BrakesEnabled,
+                IsTransported = e.IsTransported,
+                EdbActive     = e.EdbActive,
+                RModeActive   = e.RModeActive,
+                CustomName    = e.CustomName,
+            }).ToList(),
             StartStationId     = StartStation?.Id,
             StartStationName   = StartStation?.Name,
             EndStationId       = EndStation?.Id,
@@ -564,29 +586,50 @@ public partial class MainViewModel : ObservableObject
         foreach (var vm in ConsistEntries) vm.PropertyChanged -= OnEntryChanged;
         ConsistEntries.Clear();
         var defLookup = _locoRepo.GetAll().ToDictionary(l => l.Id);
-        foreach (var entry in consist.Entries)
+        int skipped = 0;
+        foreach (var stored in consist.Entries)
         {
-            // Always use the loco definition's UicFormat/prefixes — handles old saves that predate these fields
-            if (defLookup.TryGetValue(entry.DefinitionId, out var def))
+            if (!defLookup.TryGetValue(stored.DefinitionId, out var def))
             {
-                entry.UicFormat             = def.UicFormat;
-                entry.UicPrefixes           = def.UicPrefixes;
-                entry.UicPrefixOffset       = def.UicPrefixOffset;
-                entry.UicValidateCheck      = def.UicValidateCheck;
-                entry.UicTypePrefix         = def.UicTypePrefix;
-                entry.AxleLoad              = def.AxleLoad;
-                entry.BrakingWeightTonnesR  = def.BrakingWeightTonnesR;
-                entry.BrakingWeightWithEDBR = def.BrakingWeightWithEDBR;
-                entry.Twr30                 = def.Twr30;
-                entry.Twr50                 = def.Twr50;
-                entry.AxleCount             = def.AxleCount;
-                entry.SecuringForceKn       = def.SecuringForceKn;
-                entry.MultipleUnit          = def.MultipleUnit;
+                skipped++;
+                continue;
             }
+            var entry = new ConsistEntry
+            {
+                DefinitionId          = def.Id,
+                Designation           = def.Designation,
+                TotalWeightTonnes     = def.TotalWeightTonnes,
+                BrakingWeightTonnes   = def.BrakingWeightTonnes,
+                BrakingWeightTonnesR  = def.BrakingWeightTonnesR,
+                BrakingWeightWithEDB  = def.BrakingWeightWithEDB,
+                BrakingWeightWithEDBR = def.BrakingWeightWithEDBR,
+                LengthM               = def.LengthM,
+                MaxSpeed              = def.MaxSpeed,
+                FpClass               = def.FpClass,
+                AxleLoad              = def.AxleLoad,
+                UicFormat             = def.UicFormat,
+                UicPrefixes           = def.UicPrefixes,
+                UicPrefixOffset       = def.UicPrefixOffset,
+                UicValidateCheck      = def.UicValidateCheck,
+                UicTypePrefix         = def.UicTypePrefix,
+                Twr30                 = def.Twr30,
+                Twr50                 = def.Twr50,
+                AxleCount             = def.AxleCount,
+                SecuringForceKn       = def.SecuringForceKn,
+                MultipleUnit          = def.MultipleUnit,
+                Position              = stored.Position,
+                BrakesEnabled         = stored.BrakesEnabled,
+                IsTransported         = stored.IsTransported,
+                EdbActive             = stored.EdbActive,
+                RModeActive           = stored.RModeActive,
+                CustomName            = stored.CustomName,
+            };
             var vm = new ConsistEntryViewModel(entry);
             vm.PropertyChanged += OnEntryChanged;
             ConsistEntries.Add(vm);
         }
+        if (skipped > 0)
+            ShowToast($"{skipped} lok nenalezeno v definicích", isError: true);
         SpeedOverride     = null;
         ConsistName       = consist.Name;
         _currentConsistId = consist.Id;
@@ -672,9 +715,10 @@ public partial class MainViewModel : ObservableObject
             EndStation   is null ? null : $"{EndStation.Id}  {EndStation.Name}");
 
         await File.WriteAllBytesAsync(path, bytes);
-        ShowToast($"ZoB uloženo: {path}");
 
-        PdfSaveService.OpenFile(path);
+        var displayPath = PdfSaveService.OpenFile(path);
+        if (displayPath is not null)
+            ShowToast($"ZoB uloženo: {displayPath}");
     }
 
     [RelayCommand]

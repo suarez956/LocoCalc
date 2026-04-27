@@ -4,6 +4,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using LocoCalc.Models;
+using LocoCalc.Services.PlatformServices;
 using LocoCalc.Services;
 using LocoCalc.ViewModels;
 

@@ -2,8 +2,8 @@ using Android.Content.PM;
 using Android.Views;
 using Avalonia;
 using Avalonia.Android;
-using LocoCalc;
-using LocoCalc.Services;
+using LocoCalc.Services.PlatformServices;
+using LocoCalc.Services.PdfServices;
 using LocoCalc.ViewModels;
 
 namespace LocoCalc;
