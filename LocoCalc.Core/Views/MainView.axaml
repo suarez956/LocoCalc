@@ -102,16 +102,6 @@
       </Grid>
     </Border>
 
-    <!-- ═══ ERROR BAR ════════════════════════════════════════════════════════ -->
-    <Border Grid.Row="1" Background="#3f0f0f" BorderBrush="#7f2020" BorderThickness="0,0,0,1"
-            Padding="14,8" IsVisible="{Binding ErrorVisible}">
-      <Grid ColumnDefinitions="*,Auto">
-        <TextBlock Grid.Column="0" Text="{Binding ErrorMessage}" Foreground="#fca5a5" FontSize="13" TextWrapping="Wrap"/>
-        <Button Grid.Column="1" Content="✕" Background="Transparent" Foreground="#fca5a5"
-                BorderThickness="0" FontSize="16" Command="{Binding ClearErrorCommand}" Cursor="Hand"/>
-      </Grid>
-    </Border>
-
     <!-- ═══ BODY ══════════════════════════════════════════════════════════════ -->
     <Grid Grid.Row="2" ColumnDefinitions="270,*,220,265">
 
@@ -718,16 +708,6 @@
           <TextBlock Text="🚂" FontSize="22" VerticalAlignment="Center" FontFamily="{StaticResource EmojiFont}" Margin="0,1,0,0"/>
           <TextBlock Text="LocoCalc" FontSize="22" FontWeight="Bold" Foreground="#f97316"/>
         </StackPanel>
-      </Grid>
-    </Border>
-
-    <!-- Error bar -->
-    <Border Grid.Row="1" Background="#3f0f0f" BorderBrush="#7f2020" BorderThickness="0,0,0,1"
-            Padding="12,8" IsVisible="{Binding ErrorVisible}">
-      <Grid ColumnDefinitions="*,Auto">
-        <TextBlock Grid.Column="0" Text="{Binding ErrorMessage}" Foreground="#fca5a5" FontSize="12" TextWrapping="Wrap"/>
-        <Button Grid.Column="1" Content="✕" Background="Transparent" Foreground="#fca5a5"
-                BorderThickness="0" FontSize="15" Command="{Binding ClearErrorCommand}"/>
       </Grid>
     </Border>
 

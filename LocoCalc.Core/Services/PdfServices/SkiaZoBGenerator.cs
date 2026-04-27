@@ -8,7 +8,7 @@ namespace LocoCalc.Services.PdfServices;
 /// Generates the MZOB (Mezinárodní zpráva o brzdění) PDF using SkiaSharp.
 /// Shared by Desktop and Android — no platform-specific dependencies.
 /// </summary>
-public class SkiaZoBGenerator : IZoBGenerator
+public class SkiaZoBGenerator
 {
     private const float PageW   = 595f;
     private const float PageH   = 842f;
@@ -679,6 +679,7 @@ public class SkiaZoBGenerator : IZoBGenerator
 
         double totalBwNoEdb  = 0;
         double totalBwWithEdb = 0;
+        bool   anyEdb        = false;
         string[] rowBgHex = { "#ffffff", "#f9f9f9" };
         for (int i = 0; i < entries.Count; i++)
         {
@@ -693,11 +694,12 @@ public class SkiaZoBGenerator : IZoBGenerator
 
             totalBwNoEdb  += bwBase;
             totalBwWithEdb += bwEdb ?? bwBase;
+            if (bwEdb.HasValue) anyEdb = true;
 
             string bwCombined = !e.BrakesEnabled ? "—"
-                : bwEdb.HasValue && Math.Abs(bwEdb.Value - bwBase) > 0.5
+                : bwEdb.HasValue
                     ? $"{bwBase:F0} / {bwEdb.Value:F0} t"
-                    : $"{bwBase:F0} t";
+                    : $"{bwBase:F0} / --- t";
 
             string brakesTxt = e.BrakesEnabled
                 ? (e.EdbActive ? (e.RModeActive ? "R+E" : "P+E") : (e.RModeActive ? "R" : "P"))
@@ -730,9 +732,9 @@ public class SkiaZoBGenerator : IZoBGenerator
 
         // Totals row
         Fill(M2, y2, CW2, trowH, C("#f0f0f0"));
-        string totalBwStr = Math.Abs(totalBwWithEdb - totalBwNoEdb) > 0.5
+        string totalBwStr = anyEdb
             ? $"{totalBwNoEdb:F0} / {totalBwWithEdb:F0} t"
-            : $"{totalBwNoEdb:F0} t";
+            : $"{totalBwNoEdb:F0} / --- t";
         string[] totVals = {
             "Celkem",
             $"{weightTotal:F1} t",

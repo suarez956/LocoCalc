@@ -48,7 +48,7 @@ public partial class MainViewModel : ObservableObject
 
     // Injected by platform project
     public IPdfSaveService? PdfSaveService { get; set; }
-    public IZoBGenerator?   ZoBGenerator   { get; set; }
+    public SkiaZoBGenerator? ZoBGenerator  { get; set; }
 
     /// <summary>True when ZoB generator is available.</summary>
     public bool IsZoBSupported => ZoBGenerator is not null;
@@ -127,11 +127,6 @@ public partial class MainViewModel : ObservableObject
         IsErrorToast   = isError;
         StatusMessage  = msg;
     }
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ErrorVisible))]
-    private string _errorMessage = string.Empty;
-    public bool ErrorVisible => !string.IsNullOrEmpty(ErrorMessage);
-
     // ── EDB dialog ────────────────────────────────────────────────────────────
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(EdbDialogVisible))]
@@ -311,7 +306,7 @@ public partial class MainViewModel : ObservableObject
     private void AddLocoToConsist()
     {
         if (SelectedLoco is null) return;
-        ClearError();
+
 
         var consistCount = ConsistEntries.Count;
         var locoPosition = BrakingCalculator.DerivePosition(consistCount, consistCount + 1);
@@ -479,7 +474,7 @@ public partial class MainViewModel : ObservableObject
     private void RemoveEntry(ConsistEntryViewModel? vm)
     {
         if (vm is null) return;
-        ClearError();
+
         var name = vm.Designation;
         vm.PropertyChanged -= OnEntryChanged;
         ConsistEntries.Remove(vm);
@@ -520,7 +515,7 @@ public partial class MainViewModel : ObservableObject
     private void ToggleBrakes(ConsistEntryViewModel? vm)
     {
         if (vm is null || vm.BrakesLocked) return;
-        ClearError();
+
         vm.BrakesEnabled = !vm.BrakesEnabled;
         Recalculate();
     }
@@ -551,7 +546,7 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     private void SaveConsist()
     {
-        ClearError();
+
         var consist = new Consist
         {
             Id      = _currentConsistId,
@@ -582,7 +577,7 @@ public partial class MainViewModel : ObservableObject
     private void LoadConsist(Consist? consist)
     {
         if (consist is null) return;
-        ClearError();
+
         foreach (var vm in ConsistEntries) vm.PropertyChanged -= OnEntryChanged;
         ConsistEntries.Clear();
         var defLookup = _locoRepo.GetAll().ToDictionary(l => l.Id);
@@ -670,7 +665,7 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     private void NewConsist()
     {
-        ClearError();
+
         foreach (var vm in ConsistEntries) vm.PropertyChanged -= OnEntryChanged;
         ConsistEntries.Clear();
         ConsistName       = string.Empty;
@@ -686,19 +681,16 @@ public partial class MainViewModel : ObservableObject
     private void SetEnglish() { IsEnglish = true; }
 
     [RelayCommand]
-    private void ClearError() => ErrorMessage = string.Empty;
-
-    [RelayCommand]
     private async Task GenerateZoBAsync()
     {
         if (ConsistEntries.Count == 0)
         {
-            ErrorMessage = "Souprava je prázdná.";
+            ShowToast("Souprava je prázdná.", isError: true);
             return;
         }
         if (PdfSaveService is null || ZoBGenerator is null)
         {
-            ErrorMessage = "ZoB PDF není na tomto zařízení podporováno.";
+            ShowToast("ZoB PDF není na tomto zařízení podporováno.", isError: true);
             return;
         }
 
