@@ -1020,6 +1020,10 @@
                               IsVisible="{Binding Loco.HasRMode}">
                         <TextBlock Text="R" FontSize="10" FontWeight="Bold" Foreground="#3b82f6"/>
                       </Border>
+                      <Border Background="#9400D3" CornerRadius="3" Padding="5, 1"
+                              IsVisible="{Binding Loco.MultipleUnit}">
+                        <TextBlock Text="VnŘ" FontSize="10" FontWeight="Bold" Foreground="#EE82EE"></TextBlock>
+                      </Border>
                     </StackPanel>
                     <TextBlock FontSize="10" Foreground="#8888aa" Margin="0,2,0,0"
                                FontFamily="Consolas,monospace">
